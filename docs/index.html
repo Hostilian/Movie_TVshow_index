@@ -998,39 +998,81 @@
 
     <script>
         let db = null;
+        let indexData = [];
 
-        // Sample index data - you'll replace this with your 2TB movie list
-        const indexData = [
-            { type: 'movie', name: 'The Dark Knight', year: 2008, quality: '4K', hdr: true, codec: 'x265', size: '45.2 GB', date: '2024-12-01', seeds: 2847, category: 'Action' },
-            { type: 'movie', name: 'Inception', year: 2010, quality: '4K', hdr: true, codec: 'x265', size: '52.1 GB', date: '2024-11-28', seeds: 1923, category: 'Sci-Fi' },
-            { type: 'movie', name: 'Interstellar', year: 2014, quality: '4K', hdr: true, codec: 'x265', size: '68.4 GB', date: '2024-11-25', seeds: 3421, category: 'Sci-Fi' },
-            { type: 'tv', name: 'Breaking Bad', year: 2008, quality: '1080p', hdr: false, codec: 'x264', size: '78.3 GB', date: '2024-11-20', seeds: 892, category: 'Drama', extra: 'Complete Series' },
-            { type: 'movie', name: 'The Matrix', year: 1999, quality: '4K', hdr: true, codec: 'x265', size: '41.7 GB', date: '2024-11-18', seeds: 1567, category: 'Sci-Fi' },
-            { type: 'anime', name: 'Attack on Titan', year: 2013, quality: '1080p', hdr: false, codec: 'x265', size: '95.2 GB', date: '2024-11-15', seeds: 2341, category: 'Anime', extra: 'Complete' },
-            { type: 'movie', name: 'Pulp Fiction', year: 1994, quality: '4K', hdr: false, codec: 'x265', size: '38.9 GB', date: '2024-11-12', seeds: 1234, category: 'Crime' },
-            { type: 'tv', name: 'Game of Thrones', year: 2011, quality: '4K', hdr: true, codec: 'x265', size: '420.5 GB', date: '2024-11-10', seeds: 4521, category: 'Fantasy', extra: 'Complete Series' },
-            { type: 'movie', name: 'The Shawshank Redemption', year: 1994, quality: '4K', hdr: true, codec: 'x265', size: '42.3 GB', date: '2024-11-08', seeds: 1876, category: 'Drama' },
-            { type: 'anime', name: 'Demon Slayer', year: 2019, quality: '4K', hdr: true, codec: 'x265', size: '125.8 GB', date: '2024-11-05', seeds: 3892, category: 'Anime', extra: 'S1-S4' },
-            { type: 'movie', name: 'Fight Club', year: 1999, quality: '4K', hdr: false, codec: 'x265', size: '35.6 GB', date: '2024-11-02', seeds: 1456, category: 'Drama' },
-            { type: 'tv', name: 'The Office (US)', year: 2005, quality: '1080p', hdr: false, codec: 'x264', size: '145.2 GB', date: '2024-10-28', seeds: 2134, category: 'Comedy', extra: 'Complete Series' },
-            { type: 'movie', name: 'Gladiator', year: 2000, quality: '4K', hdr: true, codec: 'x265', size: '48.9 GB', date: '2024-10-25', seeds: 1678, category: 'Action' },
-            { type: 'movie', name: 'The Godfather', year: 1972, quality: '4K', hdr: true, codec: 'x265', size: '55.2 GB', date: '2024-10-22', seeds: 2345, category: 'Crime' },
-            { type: 'anime', name: 'Death Note', year: 2006, quality: '1080p', hdr: false, codec: 'x265', size: '18.4 GB', date: '2024-10-20', seeds: 1789, category: 'Anime' },
-            { type: 'movie', name: 'Avengers: Endgame', year: 2019, quality: '4K', hdr: true, codec: 'x265', size: '72.1 GB', date: '2024-10-18', seeds: 5678, category: 'Action' },
-            { type: 'tv', name: 'Stranger Things', year: 2016, quality: '4K', hdr: true, codec: 'x265', size: '285.6 GB', date: '2024-10-15', seeds: 3456, category: 'Sci-Fi', extra: 'S1-S4' },
-            { type: 'movie', name: 'Parasite', year: 2019, quality: '4K', hdr: true, codec: 'x265', size: '38.7 GB', date: '2024-10-12', seeds: 2134, category: 'Thriller' },
-            { type: 'movie', name: 'Joker', year: 2019, quality: '4K', hdr: true, codec: 'x265', size: '44.5 GB', date: '2024-10-10', seeds: 2987, category: 'Drama' },
-            { type: 'anime', name: 'One Piece', year: 1999, quality: '1080p', hdr: false, codec: 'x265', size: '850.2 GB', date: '2024-10-08', seeds: 4521, category: 'Anime', extra: 'Ep 1-1100' },
-        ];
+        // Generate index data from database + sample additional content
+        function generateIndexData() {
+            let data = [];
+            
+            // Add movies from database
+            if (db && db.movies) {
+                db.movies.forEach(movie => {
+                    const genre = db.genres.find(g => movie.genres.includes(g.genre_id))?.genre_name || 'Drama';
+                    data.push({
+                        type: 'movie',
+                        name: movie.title,
+                        year: movie.year,
+                        quality: '4K',
+                        hdr: true,
+                        codec: 'x265',
+                        size: `${(movie.runtime * 0.3 + Math.random() * 20).toFixed(1)} GB`,
+                        date: movie.release_date || '2024-01-01',
+                        seeds: Math.floor(movie.imdb_votes / 1000) || Math.floor(Math.random() * 3000),
+                        category: genre,
+                        imdb: movie.imdb_rating,
+                        movie_id: movie.movie_id
+                    });
+                });
+            }
+            
+            // Add sample TV shows and anime for variety
+            const additionalContent = [
+                { type: 'tv', name: 'Breaking Bad', year: 2008, quality: '1080p', hdr: false, codec: 'x264', size: '78.3 GB', date: '2024-11-20', seeds: 892, category: 'Drama', extra: 'Complete Series' },
+                { type: 'anime', name: 'Attack on Titan', year: 2013, quality: '1080p', hdr: false, codec: 'x265', size: '95.2 GB', date: '2024-11-15', seeds: 2341, category: 'Anime', extra: 'Complete' },
+                { type: 'tv', name: 'Game of Thrones', year: 2011, quality: '4K', hdr: true, codec: 'x265', size: '420.5 GB', date: '2024-11-10', seeds: 4521, category: 'Fantasy', extra: 'Complete Series' },
+                { type: 'anime', name: 'Demon Slayer', year: 2019, quality: '4K', hdr: true, codec: 'x265', size: '125.8 GB', date: '2024-11-05', seeds: 3892, category: 'Anime', extra: 'S1-S4' },
+                { type: 'tv', name: 'The Office (US)', year: 2005, quality: '1080p', hdr: false, codec: 'x264', size: '145.2 GB', date: '2024-10-28', seeds: 2134, category: 'Comedy', extra: 'Complete Series' },
+                { type: 'anime', name: 'Death Note', year: 2006, quality: '1080p', hdr: false, codec: 'x265', size: '18.4 GB', date: '2024-10-20', seeds: 1789, category: 'Anime' },
+                { type: 'tv', name: 'Stranger Things', year: 2016, quality: '4K', hdr: true, codec: 'x265', size: '285.6 GB', date: '2024-10-15', seeds: 3456, category: 'Sci-Fi', extra: 'S1-S4' },
+                { type: 'anime', name: 'One Piece', year: 1999, quality: '1080p', hdr: false, codec: 'x265', size: '850.2 GB', date: '2024-10-08', seeds: 4521, category: 'Anime', extra: 'Ep 1-1100' },
+                { type: 'tv', name: 'The Mandalorian', year: 2019, quality: '4K', hdr: true, codec: 'x265', size: '180.4 GB', date: '2024-09-28', seeds: 3215, category: 'Sci-Fi', extra: 'S1-S3' },
+                { type: 'anime', name: 'Naruto Shippuden', year: 2007, quality: '1080p', hdr: false, codec: 'x265', size: '450.8 GB', date: '2024-09-15', seeds: 2876, category: 'Anime', extra: 'Complete' },
+                { type: 'tv', name: 'The Last of Us', year: 2023, quality: '4K', hdr: true, codec: 'x265', size: '85.2 GB', date: '2024-09-10', seeds: 4123, category: 'Drama', extra: 'S1' },
+                { type: 'movie', name: 'The Matrix', year: 1999, quality: '4K', hdr: true, codec: 'x265', size: '41.7 GB', date: '2024-11-18', seeds: 1567, category: 'Sci-Fi' },
+                { type: 'movie', name: 'The Shawshank Redemption', year: 1994, quality: '4K', hdr: true, codec: 'x265', size: '42.3 GB', date: '2024-11-08', seeds: 1876, category: 'Drama' },
+                { type: 'movie', name: 'The Godfather', year: 1972, quality: '4K', hdr: true, codec: 'x265', size: '55.2 GB', date: '2024-10-22', seeds: 2345, category: 'Crime' },
+                { type: 'movie', name: 'Avengers: Endgame', year: 2019, quality: '4K', hdr: true, codec: 'x265', size: '72.1 GB', date: '2024-10-18', seeds: 5678, category: 'Action' },
+                { type: 'movie', name: 'Joker', year: 2019, quality: '4K', hdr: true, codec: 'x265', size: '44.5 GB', date: '2024-10-10', seeds: 2987, category: 'Drama' },
+                { type: 'movie', name: 'Interstellar', year: 2014, quality: '4K', hdr: true, codec: 'x265', size: '68.4 GB', date: '2024-11-25', seeds: 3421, category: 'Sci-Fi' },
+            ];
+            
+            data = [...data, ...additionalContent];
+            
+            // Sort by date (newest first)
+            data.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            return data;
+        }
 
         async function loadDatabase() {
             try {
                 const response = await fetch('data/database.json');
                 db = await response.json();
+                indexData = generateIndexData();
                 initializeApp();
+                updateStats();
             } catch (error) {
-                console.log('Loading sample data');
+                console.error('Error loading database:', error);
+                indexData = generateIndexData();
                 initializeApp();
+            }
+        }
+
+        function updateStats() {
+            if (db) {
+                document.getElementById('movieCount').textContent = db.movies.length + '+';
+                document.getElementById('directorCount').textContent = db.directors.length;
+                document.getElementById('indexTotalFiles').textContent = indexData.length.toLocaleString();
             }
         }
 
