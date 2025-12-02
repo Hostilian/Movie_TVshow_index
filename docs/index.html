@@ -508,312 +508,323 @@
         .modal-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
         .modal-tag { background: var(--glass); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem; }
 
-        /* ==================== INDEX VIEW - PIRATE BAY STYLE ==================== */
-        .index-container {
+        /* ==================== INDEX VIEW - MINIMAL DATA SHEET ==================== */
+        body.index-mode header { display: none; }
+        body.index-mode .back-to-main { display: flex; }
+
+        .index-shell {
             min-height: 100vh;
-            padding-top: 80px;
-            background: var(--idx-bg);
-        }
-
-        .index-header {
-            background: linear-gradient(135deg, var(--idx-surface) 0%, #0f0f23 100%);
-            padding: 3rem 2rem;
-            text-align: center;
-            border-bottom: 2px solid var(--idx-accent);
-        }
-
-        .index-logo {
-            font-size: 3rem;
-            font-weight: 700;
-            color: var(--idx-accent);
-            margin-bottom: 0.5rem;
-            font-family: 'Ubuntu Mono', monospace;
-            text-shadow: 0 0 20px rgba(233, 69, 96, 0.5);
-        }
-
-        .index-logo i { margin-right: 0.5rem; }
-
-        .index-tagline {
-            color: var(--idx-muted);
-            font-size: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .index-search {
-            max-width: 700px;
+            max-width: 1200px;
             margin: 0 auto;
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .index-search input {
-            flex: 1;
-            padding: 1rem 1.5rem;
-            background: var(--idx-surface);
-            border: 2px solid var(--idx-border);
-            border-radius: 8px;
-            color: var(--idx-text);
-            font-size: 1rem;
-            font-family: inherit;
-            outline: none;
-            transition: all 0.3s;
-        }
-
-        .index-search input:focus {
-            border-color: var(--idx-accent);
-            box-shadow: 0 0 20px rgba(233, 69, 96, 0.2);
-        }
-
-        .index-search input::placeholder { color: var(--idx-muted); }
-
-        .index-search button {
-            padding: 1rem 2rem;
-            background: var(--idx-accent);
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: inherit;
-        }
-
-        .index-search button:hover { background: #ff6b6b; transform: translateY(-2px); }
-
-        .index-stats {
-            display: flex;
-            justify-content: center;
-            gap: 3rem;
-            margin-top: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .index-stat {
-            text-align: center;
-        }
-
-        .index-stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--idx-green);
-        }
-
-        .index-stat-label {
-            font-size: 0.8rem;
-            color: var(--idx-muted);
-            text-transform: uppercase;
-        }
-
-        .index-nav {
-            background: var(--idx-surface);
-            padding: 1rem 2rem;
-            border-bottom: 1px solid var(--idx-border);
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .index-nav-btn {
-            padding: 0.6rem 1.2rem;
-            background: transparent;
-            border: 1px solid var(--idx-border);
-            border-radius: 4px;
-            color: var(--idx-text);
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: inherit;
-            font-size: 0.85rem;
-        }
-
-        .index-nav-btn:hover, .index-nav-btn.active {
-            background: var(--idx-accent);
-            border-color: var(--idx-accent);
-        }
-
-        .index-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .index-table-header {
-            display: grid;
-            grid-template-columns: 40px 2fr 120px 100px 100px 80px 150px;
-            gap: 1rem;
-            padding: 1rem;
-            background: var(--idx-surface);
-            border: 1px solid var(--idx-border);
-            border-radius: 8px 8px 0 0;
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: var(--idx-accent);
-            text-transform: uppercase;
-        }
-
-        .index-table-body {
-            background: rgba(22, 33, 62, 0.5);
-            border: 1px solid var(--idx-border);
-            border-top: none;
-            border-radius: 0 0 8px 8px;
-        }
-
-        .index-row {
-            display: grid;
-            grid-template-columns: 40px 2fr 120px 100px 100px 80px 150px;
-            gap: 1rem;
-            padding: 1rem;
-            border-bottom: 1px solid var(--idx-border);
-            transition: all 0.2s;
-            align-items: center;
-        }
-
-        .index-row:last-child { border-bottom: none; }
-        .index-row:hover { background: rgba(233, 69, 96, 0.1); }
-
-        .index-row-type {
-            text-align: center;
-        }
-
-        .index-row-type i {
-            font-size: 1.2rem;
-        }
-
-        .type-movie { color: var(--idx-accent); }
-        .type-tv { color: var(--blue); }
-        .type-anime { color: var(--purple); }
-
-        .index-row-name {
+            padding: 6rem 2rem 4rem;
             display: flex;
             flex-direction: column;
-            gap: 0.3rem;
+            gap: 3rem;
         }
 
-        .index-row-title {
-            color: var(--idx-green);
-            font-weight: 500;
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-
-        .index-row-title:hover { color: #00ffaa; text-decoration: underline; }
-
-        .index-row-tags {
+        .index-top {
             display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 1.5rem;
         }
 
-        .index-tag {
-            padding: 0.2rem 0.5rem;
-            background: var(--idx-border);
-            border-radius: 3px;
-            font-size: 0.7rem;
+        .index-prefix {
+            font-size: 0.75rem;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
             color: var(--idx-muted);
         }
 
-        .index-tag.quality { background: var(--idx-accent); color: white; }
-        .index-tag.hdr { background: #9b59b6; color: white; }
-        .index-tag.x265 { background: #27ae60; color: white; }
-
-        .index-row-category { color: var(--idx-muted); font-size: 0.85rem; }
-        .index-row-size { color: var(--idx-text); font-weight: 500; }
-        .index-row-date { color: var(--idx-muted); font-size: 0.85rem; }
-        .index-row-seeds { color: var(--idx-green); font-weight: 600; }
-        .index-row-actions { display: flex; gap: 0.5rem; }
-
-        .index-action-btn {
-            padding: 0.4rem 0.8rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: all 0.3s;
-        }
-
-        .index-action-btn.magnet {
-            background: var(--idx-green);
-            color: #000;
-        }
-
-        .index-action-btn.info {
-            background: var(--idx-border);
+        .index-top h1 {
+            font-size: clamp(2rem, 3vw, 2.9rem);
+            font-weight: 700;
             color: var(--idx-text);
         }
 
-        .index-action-btn:hover { transform: translateY(-2px); }
-
-        .index-pagination {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-top: 2rem;
+        .index-description {
+            max-width: 720px;
+            color: rgba(241, 245, 249, 0.72);
+            line-height: 1.6;
         }
 
-        .index-page-btn {
-            padding: 0.5rem 1rem;
+        .index-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+
+        .index-metric {
             background: var(--idx-surface);
             border: 1px solid var(--idx-border);
-            border-radius: 4px;
-            color: var(--idx-text);
-            cursor: pointer;
-            transition: all 0.3s;
+            border-radius: 10px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
         }
 
-        .index-page-btn:hover, .index-page-btn.active {
+        .index-metric-label {
+            font-size: 0.75rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--idx-muted);
+        }
+
+        .index-metric-value {
+            font-size: 1.85rem;
+            font-weight: 600;
+            color: var(--idx-highlight);
+        }
+
+        .index-controls {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .index-search-block,
+        .index-filter-block {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .index-search-block label,
+        .index-filter-label {
+            font-size: 0.75rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--idx-muted);
+        }
+
+        .index-search-field {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--idx-border);
+            background: var(--idx-bg);
+            color: var(--idx-text);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .index-search-field:focus {
+            outline: none;
+            border-color: var(--idx-accent);
+            box-shadow: 0 0 0 3px rgba(78, 205, 246, 0.15);
+        }
+
+        .index-filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .index-filter-button {
+            padding: 0.55rem 1.1rem;
+            border-radius: 999px;
+            border: 1px solid var(--idx-border);
+            background: transparent;
+            color: var(--idx-text);
+            font-family: inherit;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        }
+
+        .index-filter-button:hover {
+            border-color: var(--idx-accent);
+            color: var(--idx-accent);
+        }
+
+        .index-filter-button.active {
             background: var(--idx-accent);
             border-color: var(--idx-accent);
+            color: #04121c;
         }
 
-        .index-footer {
-            background: var(--idx-surface);
-            padding: 2rem;
-            margin-top: 3rem;
-            border-top: 1px solid var(--idx-border);
-            text-align: center;
+        .index-taxonomy {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .index-taxonomy h2 {
+            font-size: 1rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
             color: var(--idx-muted);
+        }
+
+        .index-taxonomy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+
+        .index-taxonomy-card {
+            background: var(--idx-surface);
+            border: 1px solid var(--idx-border);
+            border-radius: 10px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+        }
+
+        .index-taxonomy-card h3 {
+            font-size: 0.95rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--idx-text);
+        }
+
+        .index-taxonomy-metric {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: var(--idx-highlight);
+        }
+
+        .index-taxonomy-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            color: var(--idx-muted);
+            font-size: 0.88rem;
+        }
+
+        .index-table-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .index-table-section header {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: baseline;
+            justify-content: space-between;
+        }
+
+        .index-table-section h2 {
+            font-size: 0.95rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--idx-muted);
+        }
+
+        .index-table-meta {
+            font-size: 0.8rem;
+            color: var(--idx-muted);
+        }
+
+        .index-table-wrapper {
+            border: 1px solid var(--idx-border);
+            border-radius: 10px;
+            background: var(--idx-surface);
+            overflow-x: auto;
+        }
+
+        .index-table {
+            width: 100%;
+            min-width: 760px;
+            border-collapse: collapse;
+        }
+
+        .index-table thead {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .index-table th {
+            padding: 0.9rem 1rem;
+            font-size: 0.72rem;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            text-align: left;
+            color: var(--idx-muted);
+            border-bottom: 1px solid var(--idx-border);
+            position: sticky;
+            top: 0;
+            background: inherit;
+        }
+
+        .index-table td {
+            padding: 0.9rem 1rem;
+            border-bottom: 1px solid var(--idx-border);
+            font-size: 0.9rem;
+            color: var(--idx-text);
+        }
+
+        .index-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .index-table td.type-col {
+            white-space: nowrap;
+            color: var(--idx-muted);
+            font-weight: 600;
             font-size: 0.85rem;
+        }
+
+        .index-table td.title-col {
+            font-weight: 600;
+        }
+
+        .index-table td.flags-col {
+            font-size: 0.8rem;
+            color: var(--idx-muted);
+            white-space: nowrap;
+        }
+
+        .index-table td.flags-col span {
+            margin-right: 1rem;
+        }
+
+        .index-empty {
+            text-align: center;
+            padding: 2.5rem 1rem;
+            color: var(--idx-muted);
+            font-size: 0.9rem;
+        }
+
+        .index-footnote {
+            font-size: 0.75rem;
+            line-height: 1.6;
+            color: var(--idx-muted);
         }
 
         .back-to-main {
             position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            padding: 1rem 1.5rem;
-            background: var(--idx-accent);
-            color: white;
-            border: none;
-            border-radius: 50px;
+            top: 1.5rem;
+            left: 1.5rem;
+            padding: 0.75rem 1.3rem;
+            background: transparent;
+            border: 1px solid var(--idx-border);
+            border-radius: 999px;
+            color: var(--idx-text);
             cursor: pointer;
-            font-weight: 600;
-            box-shadow: 0 4px 20px rgba(233, 69, 96, 0.4);
-            z-index: 999;
+            font-weight: 500;
             display: none;
             align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s;
+            gap: 0.6rem;
+            transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+            z-index: 1000;
         }
 
-        body.index-mode .back-to-main { display: flex; }
-        .back-to-main:hover { transform: translateY(-3px); box-shadow: 0 6px 30px rgba(233, 69, 96, 0.6); }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .index-table-header, .index-row {
-                grid-template-columns: 40px 1fr 80px 80px;
-            }
-            .index-row-category, .index-row-date, .index-row-actions { display: none; }
+        .back-to-main:hover {
+            border-color: var(--idx-accent);
+            color: var(--idx-accent);
+            background: rgba(78, 205, 246, 0.1);
         }
 
         @media (max-width: 768px) {
-            .hero h1 { font-size: 2.5rem; }
-            .nav-links { display: none; }
-            .hero-stats { flex-direction: column; gap: 1.5rem; }
-            .index-table-header, .index-row {
-                grid-template-columns: 1fr 80px;
-            }
-            .index-row-type { display: none; }
-            .index-search { flex-direction: column; }
+            .index-shell { padding: 5rem 1.5rem 3rem; }
+            .index-table { min-width: 640px; }
+            .back-to-main { top: auto; bottom: 1.5rem; left: 50%; transform: translateX(-50%); }
         }
 
         .fade-in { opacity: 0; transform: translateY(20px); animation: fadeIn 0.6s ease forwards; }
@@ -916,66 +927,72 @@
         </footer>
     </div>
 
-    <!-- ==================== INDEX VIEW - PIRATE BAY STYLE ==================== -->
+    <!-- ==================== INDEX VIEW - DATA SHEET ==================== -->
     <div id="indexView">
-        <div class="index-container">
-            <div class="index-header">
-                <div class="index-logo"><i class="fas fa-skull-crossbones"></i> MovieDB Index</div>
-                <p class="index-tagline">The galaxy's most resilient movie index · 2TB+ indexed</p>
-                <div class="index-search">
-                    <input type="text" id="indexSearchInput" placeholder="Search movies, TV shows, anime...">
-                    <button onclick="searchIndex()"><i class="fas fa-search"></i> Search</button>
+        <div class="index-shell">
+            <section class="index-top">
+                <span class="index-prefix">Movie &amp; TV Catalogue Index</span>
+                <h1>Structured Index Ledger</h1>
+                <p class="index-description">A performance-oriented lookup that concentrates solely on indexed metadata for films and serialised television. Every entry is lightweight, searchable, and categorised for rapid retrieval.</p>
+                <div class="index-metrics">
+                    <div class="index-metric"><span class="index-metric-label">Catalogue Entries</span><span class="index-metric-value" id="indexMetricEntries">0</span></div>
+                    <div class="index-metric"><span class="index-metric-label">Movies Indexed</span><span class="index-metric-value" id="indexMetricMovies">0</span></div>
+                    <div class="index-metric"><span class="index-metric-label">Series Indexed</span><span class="index-metric-value" id="indexMetricTv">0</span></div>
+                    <div class="index-metric"><span class="index-metric-label">Distinct Categories</span><span class="index-metric-value" id="indexMetricCategories">0</span></div>
+                    <div class="index-metric"><span class="index-metric-label">Estimated Volume</span><span class="index-metric-value" id="indexMetricVolume">0 GB</span></div>
                 </div>
-                <div class="index-stats">
-                    <div class="index-stat"><div class="index-stat-value" id="indexTotalFiles">2,847</div><div class="index-stat-label">Total Files</div></div>
-                    <div class="index-stat"><div class="index-stat-value">2.1 TB</div><div class="index-stat-label">Total Size</div></div>
-                    <div class="index-stat"><div class="index-stat-value">1,423</div><div class="index-stat-label">Movies</div></div>
-                    <div class="index-stat"><div class="index-stat-value">892</div><div class="index-stat-label">TV Shows</div></div>
-                    <div class="index-stat"><div class="index-stat-value">532</div><div class="index-stat-label">Anime</div></div>
-                </div>
-            </div>
+            </section>
 
-            <nav class="index-nav">
-                <button class="index-nav-btn active" data-cat="all">All</button>
-                <button class="index-nav-btn" data-cat="movie"><i class="fas fa-film"></i> Movies</button>
-                <button class="index-nav-btn" data-cat="tv"><i class="fas fa-tv"></i> TV Shows</button>
-                <button class="index-nav-btn" data-cat="anime"><i class="fas fa-dragon"></i> Anime</button>
-                <button class="index-nav-btn" data-cat="4k"><i class="fas fa-4k"></i> 4K/UHD</button>
-                <button class="index-nav-btn" data-cat="hdr"><i class="fas fa-sun"></i> HDR</button>
-                <button class="index-nav-btn" data-cat="recent"><i class="fas fa-clock"></i> Recent</button>
-            </nav>
-
-            <div class="index-content">
-                <div class="index-table-header">
-                    <div>Type</div>
-                    <div>Name</div>
-                    <div>Category</div>
-                    <div>Size</div>
-                    <div>Date</div>
-                    <div>SE</div>
-                    <div>Actions</div>
+            <section class="index-controls">
+                <div class="index-search-block">
+                    <label for="indexSearchInput">Search catalogue</label>
+                    <input type="search" id="indexSearchInput" class="index-search-field" placeholder="Filter by title, category, codec, or year">
                 </div>
-                <div class="index-table-body" id="indexTableBody">
-                    <!-- Rows will be generated by JS -->
+                <div class="index-filter-block">
+                    <span class="index-filter-label">Collection focus</span>
+                    <div class="index-filter-buttons" id="indexCategoryButtons">
+                        <button class="index-filter-button active" data-cat="all">All Entries</button>
+                        <button class="index-filter-button" data-cat="movie">Movies</button>
+                        <button class="index-filter-button" data-cat="series">Series</button>
+                        <button class="index-filter-button" data-cat="4k">4K</button>
+                        <button class="index-filter-button" data-cat="hdr">HDR</button>
+                        <button class="index-filter-button" data-cat="recent">Recent 30</button>
+                    </div>
                 </div>
+            </section>
 
-                <div class="index-pagination">
-                    <button class="index-page-btn">«</button>
-                    <button class="index-page-btn active">1</button>
-                    <button class="index-page-btn">2</button>
-                    <button class="index-page-btn">3</button>
-                    <button class="index-page-btn">4</button>
-                    <button class="index-page-btn">5</button>
-                    <button class="index-page-btn">...</button>
-                    <button class="index-page-btn">142</button>
-                    <button class="index-page-btn">»</button>
+            <section class="index-taxonomy">
+                <h2>Type Breakdown</h2>
+                <div class="index-taxonomy-grid" id="indexTaxonomyGrid"></div>
+            </section>
+
+            <section class="index-table-section">
+                <header>
+                    <h2>Catalogue Listing</h2>
+                    <div class="index-table-meta" id="indexTableMeta">Sorted by latest availability</div>
+                </header>
+                <div class="index-table-wrapper">
+                    <table class="index-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Type</th>
+                                <th scope="col">Title</</th>
+                                <th scope="col">Year</th>
+                                <th scope="col">Collection</th>
+                                <th scope="col">Quality</th>
+                                <th scope="col">Size</th>
+                                <th scope="col">Updated</th>
+                                <th scope="col">Seeds</th>
+                            </tr>
+                        </thead>
+                        <tbody id="indexTableBody">
+                            <tr><td colspan="8" class="index-empty">Loading index…</td></tr>
+                        </tbody>
+                    </table>
                 </div>
-            </div>
+            </section>
 
-            <div class="index-footer">
-                <p><i class="fas fa-skull-crossbones"></i> MovieDB Index · For educational purposes only</p>
-                <p style="margin-top: 0.5rem;">Built for EIE36E Database Systems · Czech University of Life Sciences Prague</p>
-            </div>
+            <p class="index-footnote">This view is intentionally minimal: it tracks only the index data for films and serialised television sources to keep the experience precise and fast.</p>
         </div>
     </div>
 
@@ -1000,6 +1017,7 @@
     <script>
         let db = null;
         let indexData = [];
+        let currentIndexFilter = 'all';
 
         // Generate index data from database + sample additional content
         function generateIndexData() {

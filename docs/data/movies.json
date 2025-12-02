@@ -1,5 +1,167 @@
 [
-  {"title":"Inception","year":2010},
-  {"title":"The Dark Knight","year":2008},
-  {"title":"Pulp Fiction","year":1994}
+  {
+    "movie_id": 1,
+    "title": "Inception",
+    "release_year": 2010,
+    "duration_minutes": 148,
+    "box_office_usd": 836848102,
+    "imdb_id": "tt1375666",
+    "plot_summary": "A thief who steals corporate secrets through dream-sharing technology is given the task of planting an idea into the mind of a CEO.",
+    "director_name": "Christopher Nolan",
+    "studio_name": "Warner Bros."
+  },
+  {
+    "movie_id": 2,
+    "title": "The Shawshank Redemption",
+    "release_year": 1994,
+    "duration_minutes": 142,
+    "box_office_usd": 58300000,
+    "imdb_id": "tt0111161",
+    "plot_summary": "Two imprisoned men bond over years, finding solace and eventual redemption through acts of common decency.",
+    "director_name": "Frank Darabont",
+    "studio_name": "Columbia Pictures"
+  },
+  {
+    "movie_id": 3,
+    "title": "Pulp Fiction",
+    "release_year": 1994,
+    "duration_minutes": 154,
+    "box_office_usd": 213928762,
+    "imdb_id": "tt0110912",
+    "plot_summary": "The lives of two mob hitmen, a boxer, a gangster and his wife intertwine in four tales of violence and redemption.",
+    "director_name": "Quentin Tarantino",
+    "studio_name": "Miramax Films"
+  },
+  {
+    "movie_id": 4,
+    "title": "The Dark Knight",
+    "release_year": 2008,
+    "duration_minutes": 152,
+    "box_office_usd": 1004558444,
+    "imdb_id": "tt0468569",
+    "plot_summary": "When the menace known as the Joker wreaks havoc on Gotham, Batman must accept one of the greatest psychological tests of his ability.",
+    "director_name": "Christopher Nolan",
+    "studio_name": "Warner Bros."
+  },
+  {
+    "movie_id": 5,
+    "title": "Forrest Gump",
+    "release_year": 1994,
+    "duration_minutes": 142,
+    "box_office_usd": 678226465,
+    "imdb_id": "tt0109830",
+    "plot_summary": "The presidencies of Kennedy and Johnson, the Vietnam War, and other events unfold from the perspective of an Alabama man.",
+    "director_name": "Robert Zemeckis",
+    "studio_name": "Paramount Pictures"
+  },
+  {
+    "movie_id": 6,
+    "title": "Interstellar",
+    "release_year": 2014,
+    "duration_minutes": 169,
+    "box_office_usd": 701729206,
+    "imdb_id": "tt0816692",
+    "plot_summary": "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
+    "director_name": "Christopher Nolan",
+    "studio_name": "Warner Bros."
+  },
+  {
+    "movie_id": 7,
+    "title": "The Matrix",
+    "release_year": 1999,
+    "duration_minutes": 136,
+    "box_office_usd": 466621024,
+    "imdb_id": "tt0133093",
+    "plot_summary": "A computer hacker learns about the true nature of reality and his role in the war against its controllers.",
+    "director_name": "The Wachowskis",
+    "studio_name": "Warner Bros."
+  },
+  {
+    "movie_id": 8,
+    "title": "Fight Club",
+    "release_year": 1999,
+    "duration_minutes": 139,
+    "box_office_usd": 101209702,
+    "imdb_id": "tt0137523",
+    "plot_summary": "An insomniac office worker and a soap salesman build a global organization to help vent male aggression.",
+    "director_name": "David Fincher",
+    "studio_name": "20th Century Fox"
+  },
+  {
+    "movie_id": 9,
+    "title": "Goodfellas",
+    "release_year": 1990,
+    "duration_minutes": 146,
+    "box_office_usd": 46836394,
+    "imdb_id": "tt0099685",
+    "plot_summary": "The story of Henry Hill and his life in the mob, covering his relationship with his wife Karen Hill.",
+    "director_name": "Martin Scorsese",
+    "studio_name": "Warner Bros."
+  },
+  {
+    "movie_id": 10,
+    "title": "The Godfather",
+    "release_year": 1972,
+    "duration_minutes": 175,
+    "box_office_usd": 286392174,
+    "imdb_id": "tt0068646",
+    "plot_summary": "The aging patriarch of an organized crime dynasty transfers control to his reluctant youngest son.",
+    "director_name": "Francis Ford Coppola",
+    "studio_name": "Paramount Pictures"
+  },
+  {
+    "movie_id": 11,
+    "title": "Schindler's List",
+    "release_year": 1993,
+    "duration_minutes": 195,
+    "box_office_usd": 322139355,
+    "imdb_id": "tt0108052",
+    "plot_summary": "In German-occupied Poland during WWII, Oskar Schindler gradually becomes concerned for his Jewish workforce.",
+    "director_name": "Steven Spielberg",
+    "studio_name": "Universal Pictures"
+  },
+  {
+    "movie_id": 12,
+    "title": "Saving Private Ryan",
+    "release_year": 1998,
+    "duration_minutes": 169,
+    "box_office_usd": 482349603,
+    "imdb_id": "tt0120815",
+    "plot_summary": "Following the Normandy Landings, a group of U.S. soldiers go behind enemy lines to retrieve a paratrooper.",
+    "director_name": "Steven Spielberg",
+    "studio_name": "DreamWorks"
+  },
+  {
+    "movie_id": 13,
+    "title": "The Silence of the Lambs",
+    "release_year": 1991,
+    "duration_minutes": 118,
+    "box_office_usd": 272742922,
+    "imdb_id": "tt0102926",
+    "plot_summary": "A young FBI cadet must receive the help of an incarcerated and manipulative cannibal killer.",
+    "director_name": "Jonathan Demme",
+    "studio_name": "Orion Pictures"
+  },
+  {
+    "movie_id": 14,
+    "title": "Se7en",
+    "release_year": 1995,
+    "duration_minutes": 127,
+    "box_office_usd": 327311859,
+    "imdb_id": "tt0114369",
+    "plot_summary": "Two detectives hunt a serial killer who uses the seven deadly sins as his motives.",
+    "director_name": "David Fincher",
+    "studio_name": "New Line Cinema"
+  },
+  {
+    "movie_id": 15,
+    "title": "Gladiator",
+    "release_year": 2000,
+    "duration_minutes": 155,
+    "box_office_usd": 460583960,
+    "imdb_id": "tt0172495",
+    "plot_summary": "A former Roman General sets out to exact vengeance against the corrupt emperor who murdered his family.",
+    "director_name": "Ridley Scott",
+    "studio_name": "DreamWorks"
+  }
 ]
