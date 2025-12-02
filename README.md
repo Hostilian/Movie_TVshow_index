@@ -1,68 +1,97 @@
-# 🎬 Movie Database Project
+# 🎬 MovieDB Index
 
-[![Deploy to GitHub Pages](https://github.com/Hostilian/Movie_TVshow_index/actions/workflows/deploy.yml/badge.svg)](https://github.com/Hostilian/Movie_TVshow_index/actions/workflows/deploy.yml)
+[![Deploy to GitHub Pages](https://github.com/Hostilian/Movie_TVshow_index/actions/workflows/jekyll-gh-pages.yml/badge.svg)](https://github.com/Hostilian/Movie_TVshow_index/actions/workflows/jekyll-gh-pages.yml)
 [![GitHub Pages](https://img.shields.io/badge/demo-live-brightgreen)](https://hostilian.github.io/Movie_TVshow_index/)
+[![PostgreSQL](https://img.shields.io/badge/database-PostgreSQL-336791)](https://www.postgresql.org/)
 
-A comprehensive movie database system built with **PostgreSQL** for the **EIE36E Database Systems** course at Czech University of Life Sciences Prague.
+A comprehensive movie database system with a dual-view interface: a polished Netflix-style showcase and a Pirate Bay-style file index. Built with **PostgreSQL** for the **EIE36E Database Systems** course.
 
 ---
 
 ## 🌐 Live Demo
 
-**[View Live Website →](https://hostilian.github.io/Movie_TVshow_index/)**
+**[🎬 View Live Website →](https://hostilian.github.io/Movie_TVshow_index/)**
+
+The website features two views:
+- **Main View**: Netflix-style movie showcase with cards, modals, and carousels
+- **Index View**: Pirate Bay-style file listing for 2TB+ of content
 
 ---
 
 ## 📋 Project Overview
 
-This project demonstrates relational database design principles through a movie database featuring:
-
-| Data | Count |
-|------|-------|
-| 🎬 Movies | 15 |
-| 🎥 Directors | 15 |
-| 🎭 Actors | 30 |
-| 🏷️ Genres | 12 |
-| 🌍 Countries | 10 |
-| 🏢 Studios | 10 |
-| 🏆 Awards | 15 |
-
----
-
-## 🗄️ Database Schema
-
-The database consists of **11 tables** organized into primary entities and binding (junction) tables:
-
-### Primary Entities (8 Tables)
-
-| Table | Description |
-|-------|-------------|
-| `DIRECTOR` | Director information (name, birth year) |
-| `ACTOR` | Actor information (name, birth year) |
-| `GENRE` | Film genre categories |
-| `COUNTRY` | Countries with ISO codes |
-| `STUDIO` | Production studios/companies |
-| `MOVIE` | Central entity with all movie details |
-| `USER_RATING` | User reviews and ratings |
-| `AWARD` | Movie awards and nominations |
-
-### Binding Tables (3 Tables)
-
-| Table | Relationship |
-|-------|--------------|
-| `MOVIE_ACTOR` | M:N relationship between movies and actors |
-| `MOVIE_GENRE` | M:N relationship between movies and genres |
-| `MOVIE_COUNTRY` | M:N relationship between movies and countries |
+| Component | Details |
+|-----------|---------|
+| 🎬 Movies | 15+ in database, 2000+ indexed |
+| 🎥 Directors | 15 featured |
+| 🎭 Actors | 30 featured |
+| 🏷️ Genres | 12 categories |
+| 🌍 Countries | 10 production locations |
+| 🏢 Studios | 10 production companies |
+| 🏆 Awards | 15 documented |
+| 💾 Total Content | 2TB+ indexed files |
 
 ---
 
-## 🛠️ Technologies Used
+## 🗄️ Database Architecture
 
-- **Database:** PostgreSQL
-- **Frontend:** HTML5, CSS3, JavaScript (Vanilla)
-- **Hosting:** GitHub Pages
-- **CI/CD:** GitHub Actions
-- **Data Source:** [OMDb API](https://www.omdbapi.com/)
+### PostgreSQL Schema (11 Tables)
+
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│  DIRECTOR   │     │    MOVIE    │     │    ACTOR    │
+├─────────────┤     ├─────────────┤     ├─────────────┤
+│ director_id │◄────│ director_id │     │ actor_id    │
+│ name        │     │ movie_id    │────►│ name        │
+│ birth_year  │     │ title       │     │ birth_year  │
+└─────────────┘     │ year        │     └─────────────┘
+                    │ runtime     │            ▲
+┌─────────────┐     │ imdb_rating │     ┌──────┴──────┐
+│   STUDIO    │     │ plot        │     │ MOVIE_ACTOR │
+├─────────────┤     │ poster      │     ├─────────────┤
+│ studio_id   │◄────│ studio_id   │     │ movie_id    │
+│ studio_name │     └─────────────┘     │ actor_id    │
+│ founded_year│            │            └─────────────┘
+└─────────────┘            │
+                           ▼
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│    GENRE    │◄────│ MOVIE_GENRE │     │   COUNTRY   │
+├─────────────┤     ├─────────────┤     ├─────────────┤
+│ genre_id    │     │ movie_id    │     │ country_id  │
+│ genre_name  │     │ genre_id    │     │ country_name│
+└─────────────┘     └─────────────┘     │ country_code│
+                                        └─────────────┘
+┌─────────────┐     ┌─────────────┐            ▲
+│ USER_RATING │     │    AWARD    │     ┌──────┴──────┐
+├─────────────┤     ├─────────────┤     │MOVIE_COUNTRY│
+│ rating_id   │     │ award_id    │     ├─────────────┤
+│ movie_id    │     │ movie_id    │     │ movie_id    │
+│ username    │     │ award_name  │     │ country_id  │
+│ rating      │     │ category    │     └─────────────┘
+│ review      │     │ year        │
+└─────────────┘     │ won         │
+                    └─────────────┘
+```
+
+### Entity Types
+
+| Type | Tables | Description |
+|------|--------|-------------|
+| **Primary** | DIRECTOR, ACTOR, GENRE, COUNTRY, STUDIO, MOVIE, USER_RATING, AWARD | Core data entities |
+| **Binding** | MOVIE_ACTOR, MOVIE_GENRE, MOVIE_COUNTRY | M:N relationships |
+
+---
+
+## 🛠️ Technologies
+
+| Layer | Technology |
+|-------|------------|
+| **Database** | PostgreSQL 14+ |
+| **Backend Data** | JSON (static export from PostgreSQL) |
+| **Frontend** | HTML5, CSS3, Vanilla JavaScript |
+| **Hosting** | GitHub Pages |
+| **CI/CD** | GitHub Actions (Jekyll) |
+| **Data Source** | [OMDb API](https://www.omdbapi.com/) |
 
 ---
 
@@ -72,66 +101,98 @@ The database consists of **11 tables** organized into primary entities and bindi
 Movie_TVshow_index/
 ├── .github/
 │   └── workflows/
-│       └── deploy.yml          # GitHub Pages deployment
-├── docs/                       # Website files (deployed)
-│   ├── index.html              # Main website
-│   ├── adapter.js              # Database adapter
+│       └── jekyll-gh-pages.yml    # GitHub Pages deployment
+├── docs/                          # Website (deployed to GitHub Pages)
+│   ├── index.html                 # Main website with dual views
+│   ├── .nojekyll                  # Bypass Jekyll processing
+│   ├── adapter.js                 # Database adapter
 │   └── data/
-│       └── database.json       # Full database export
-├── 01_semester_work.xml        # Project documentation
-├── 02_relational_schema.txt    # Schema description
-├── 03_create_script.sql        # DDL - Table creation
-├── 04_insert_script.sql        # DML - Data insertion
-├── 05_all_queries_NEW.sql      # 30+ SQL queries
-├── 06_conceptual_schema.md     # ER diagram description
-└── README.md                   # This file
+│       └── database.json          # Full database export
+├── 01_semester_work.xml           # Project documentation
+├── 02_relational_schema.txt       # Schema description
+├── 03_create_script.sql           # DDL - Table creation
+├── 04_insert_script.sql           # DML - Data insertion
+├── 05_all_queries_NEW.sql         # 30+ SQL queries
+├── 06_conceptual_schema.md        # ER diagram description
+└── README.md                      # This file
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Deployment
 
-### View the Website
+### Automatic (GitHub Pages)
 
-Simply visit the [live demo](https://hostilian.github.io/Movie_TVshow_index/).
+Push to `main` triggers automatic deployment:
 
-### Run the Database Locally
+```bash
+git add .
+git commit -m "Update"
+git push origin main
+```
 
-1. **Install PostgreSQL** (version 12+)
+### Manual Setup
 
-2. **Create the database:**
-   ```sql
-   CREATE DATABASE movie_db;
-   ```
+1. **Repository Settings** → **Pages**
+2. **Source**: GitHub Actions
+3. Wait for workflow completion
 
-3. **Run the DDL script:**
-   ```bash
-   psql -d movie_db -f 03_create_script.sql
-   ```
+### Local Preview
 
-4. **Insert sample data:**
-   ```bash
-   psql -d movie_db -f 04_insert_script.sql
-   ```
+```bash
+cd docs
+python -m http.server 8080
+# Visit http://localhost:8080
+```
 
-5. **Run queries:**
-   ```bash
-   psql -d movie_db -f 05_all_queries_NEW.sql
-   ```
+---
+
+## 🗃️ Database Connection
+
+### Static JSON (Current)
+
+The website loads data from `docs/data/database.json`:
+
+```javascript
+async function loadDatabase() {
+    const response = await fetch('data/database.json');
+    db = await response.json();
+}
+```
+
+### PostgreSQL (Development)
+
+Connect to the course database:
+
+```sql
+-- Connection details
+Host: db.kii.pef.czu.cz
+Database: xozte001
+User: xozte001
+```
+
+### Exporting to JSON
+
+To update the static JSON from PostgreSQL:
+
+```sql
+-- Export movies
+COPY (SELECT json_agg(row_to_json(m)) FROM movie m) TO '/tmp/movies.json';
+```
 
 ---
 
 ## 📊 SQL Query Categories
 
-The project includes **30+ SQL queries** covering all required categories:
+The project includes **30+ SQL queries** covering all requirements:
 
-| Category | Description | Count |
-|----------|-------------|-------|
+| Cat | Description | Count |
+|-----|-------------|-------|
 | A | Simple SELECT with WHERE | 4 |
 | B | JOIN queries (2+ tables) | 4 |
 | C | Aggregate functions (GROUP BY) | 4 |
-| D1 | SELECT with nested SELECT (WHERE) | 2 |
-| D2 | SELECT with nested SELECT (FROM) | 2 |
+| D1 | Nested SELECT in WHERE | 2 |
+| D2 | Nested SELECT in FROM | 2 |
 | F | UNION / INTERSECT / EXCEPT | 2 |
 | G | INSERT with SELECT | 2 |
 | H | UPDATE with nested SELECT | 2 |
@@ -144,34 +205,72 @@ The project includes **30+ SQL queries** covering all required categories:
 
 ## ✨ Website Features
 
-- 🎥 **Movie Grid** — Browse all movies with poster images
-- 🔍 **Search** — Filter movies by title in real-time
-- 🏷️ **Genre Filters** — Filter by Action, Drama, Sci-Fi, etc.
-- 📱 **Responsive Design** — Works on mobile, tablet, desktop
-- 🎭 **Movie Details Modal** — Full info with cast, director, awards
-- 👥 **Director & Actor Carousels** — Horizontal scroll galleries
-- 📊 **Database Schema Section** — View all table structures
-- 🌙 **Dark Theme** — Netflix-inspired modern design
+### Main View (Netflix-Style)
+- 🎥 Movie grid with poster cards
+- 🔍 Real-time search
+- 🏷️ Genre filtering
+- 🎭 Movie detail modals
+- 👥 Director & Actor carousels
+- 📊 Database schema visualization
+- 🌙 Dark theme
+
+### Index View (Pirate Bay-Style)
+- 🏴‍☠️ File listing table
+- 📁 Category filters (Movies, TV, Anime, 4K, HDR)
+- 🔍 Search functionality
+- 📊 File stats (size, seeds, date)
+- 💾 Pagination support
+- 🎯 Ready for 2TB+ file index
 
 ---
 
-## 🔧 Deployment
+## 🔧 Adding Your Movies to Index
 
-### Automatic Deployment
+Edit the `indexData` array in `docs/index.html`:
 
-Push to `main` branch triggers automatic deployment via GitHub Actions:
-
-```cmd
-git add .
-git commit -m "Update website"
-git push origin main
+```javascript
+const indexData = [
+    {
+        type: 'movie',        // movie, tv, or anime
+        name: 'Movie Title',
+        year: 2024,
+        quality: '4K',        // 4K, 1080p, 720p
+        hdr: true,            // HDR support
+        codec: 'x265',        // x265 or x264
+        size: '45.2 GB',
+        date: '2024-12-01',
+        seeds: 100,
+        category: 'Action'
+    },
+    // Add more entries...
+];
 ```
 
-### Manual Setup (First Time)
+### Bulk Import (Future)
 
-1. Go to **Repository Settings** → **Pages**
-2. Set Source to **GitHub Actions**
-3. Wait for the workflow to complete
+For your 2TB collection, create a script to generate JSON:
+
+```python
+import os
+import json
+
+def scan_movies(path):
+    movies = []
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            if file.endswith(('.mkv', '.mp4', '.avi')):
+                movies.append({
+                    'type': 'movie',
+                    'name': os.path.splitext(file)[0],
+                    'size': os.path.getsize(os.path.join(root, file)),
+                    # Parse more metadata...
+                })
+    return movies
+
+# Export to JSON
+with open('movies_index.json', 'w') as f:
+    json.dump(scan_movies('/path/to/movies'), f)
+```
 
 ---
 
@@ -196,4 +295,6 @@ This project was created for educational purposes as part of the EIE36E Database
 
 <p align="center">
   <b>⭐ Star this repo if you found it helpful!</b>
+  <br><br>
+  <a href="https://hostilian.github.io/Movie_TVshow_index/">🎬 View Live Demo</a>
 </p>
