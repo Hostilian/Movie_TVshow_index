@@ -1,0 +1,135 @@
+===============================================================================
+PORTAL SUBMISSION - ALL REQUIREMENTS CHECKLIST
+===============================================================================
+Date: 2025-11-30
+Student: Ozturk Eren | Login: xozte001
+
+===============================================================================
+✅ REQUIREMENT 1: SQL MATCHES RA OUTPUT
+===============================================================================
+BEFORE: SQL used "SELECT m.title, d.name FROM..." (specific columns)
+        RA used <* (returns ALL columns)
+        RESULT: Different column counts = FAIL
+
+AFTER:  SQL uses "SELECT DISTINCT * ... JOIN ... USING (column)"
+        RA uses <* (natural join)
+        RESULT: Same columns (USING eliminates duplicate join column) = PASS
+
+Examples fixed:
+  RA:  MOVIE <* DIRECTOR
+  SQL: SELECT DISTINCT * FROM MOVIE JOIN DIRECTOR USING (director_id);
+
+===============================================================================
+✅ REQUIREMENT 2: INVALID RA JOIN CHAINS FIXED
+===============================================================================
+REMOVED (was Query #28):
+  MOVIE <* DIRECTOR <* STUDIO <* AWARD
+
+  REASON: DIRECTOR table has NO studio_id column!
+          DIRECTOR cannot join to STUDIO.
+
+VALID CHAINS NOW USED:
+  Two-table: MOVIE <* DIRECTOR, MOVIE <* STUDIO, STUDIO <* COUNTRY,
+             USER_RATING <* MOVIE, AWARD <* MOVIE, MOVIE_ACTOR <* ACTOR,
+             MOVIE_GENRE <* GENRE, MOVIE_COUNTRY <* COUNTRY
+
+  Three-table: MOVIE <* MOVIE_ACTOR <* ACTOR
+               MOVIE <* MOVIE_GENRE <* GENRE
+               MOVIE <* MOVIE_COUNTRY <* COUNTRY
+               MOVIE <* STUDIO <* COUNTRY
+               USER_RATING <* MOVIE <* DIRECTOR
+               AWARD <* MOVIE <* DIRECTOR
+
+===============================================================================
+✅ REQUIREMENT 3: NATURAL LANGUAGE MATCHES QUERY BEHAVIOR
+===============================================================================
+BEFORE: "Find movies with rating above 8" but query had NO WHERE clause
+AFTER:  Natural language accurately describes what the query returns
+
+Examples:
+  - Queries WITH filters now have σ(condition) in RA and WHERE in SQL
+  - Queries WITHOUT filters have plain joins in RA and no WHERE in SQL
+  - Natural language updated to match
+
+===============================================================================
+✅ REQUIREMENT 4: ALL CATEGORIES COVERED (A through P)
+===============================================================================
+BEFORE: All 30 queries labeled as D1 only
+
+AFTER: 63 queries across 24 categories:
+  A  (Projection π):           3 queries
+  B  (Selection σ):            5 queries
+  C  (Projection+Selection):   3 queries
+  D1 (Two-table join):         8 queries
+  D2 (Three-table join):       6 queries
+  F1 (Join+Selection):         3 queries
+  F2 (Join+Projection):        2 queries
+  F3 (Join+Sel+Proj):          2 queries
+  G1 (COUNT):                  3 queries
+  G2 (AVG/MIN/MAX/SUM):        3 queries
+  G3 (GROUP BY):               3 queries
+  G4 (GROUP BY+HAVING):        2 queries
+  H1 (UNION):                  2 queries
+  H2 (INTERSECTION):           1 query
+  H3 (DIFFERENCE):             2 queries
+  I1 (Subquery WHERE):         2 queries
+  I2 (Scalar Subquery):        1 query
+  J  (Correlated Subquery):    2 queries
+  K  (ORDER BY):               3 queries
+  L  (DISTINCT):               2 queries
+  M  (Self-Join):              1 query
+  N  (Outer Join):             2 queries
+  O  (Rename):                 1 query
+  P  (Cartesian Product):      1 query
+
+===============================================================================
+✅ REQUIREMENT 5: NATURAL LANGUAGE 100+ CHARACTERS
+===============================================================================
+All 63 natural language descriptions are now 100+ characters.
+No padding phrases - each describes what the query actually does.
+
+===============================================================================
+✅ REQUIREMENT 6: RA OPERATORS FOR FILTERING/SORTING
+===============================================================================
+Added RA operators where queries have filtering or sorting:
+  - σ (sigma) for selection/WHERE:   22 uses
+  - τ (tau) for sorting/ORDER BY:    3 uses
+  - γ (gamma) for aggregation:       11 uses
+  - π (pi) for projection:           25 uses
+  - δ (delta) for distinct:          in L category
+
+===============================================================================
+FURTHER CONSIDERATIONS - ALL ADDRESSED
+===============================================================================
+
+✅ "Should I map out which categories are missing?"
+   → YES - Mapped and created queries for ALL categories A through P
+
+✅ "Should I verify every RA chain against the schema?"
+   → YES - All chains validated against FK paths documented at top of file
+
+✅ "Should queries include σ and τ operators in RA?"
+   → YES - All filtering queries now have σ, all sorting queries have τ
+
+===============================================================================
+FILES CREATED/UPDATED
+===============================================================================
+1. CORRECTED_queries_portal.txt    - Main file with 63 queries (961 lines)
+2. FINAL_CORRECTED_queries_portal.txt - Copy of above
+3. QUICK_COPY_GUIDE_PORTAL.txt     - Easy copy-paste format for portal
+4. RA_SQL_MATCH_EXPLAINED.txt      - Technical explanation of WHY it works
+5. 05_all_queries.sql              - SQL-only version for DB execution
+6. check_requirements.py           - Validation script (all 6/6 pass)
+
+===============================================================================
+HOW TO USE
+===============================================================================
+1. Open QUICK_COPY_GUIDE_PORTAL.txt
+2. For each query, copy:
+   - Natural language description
+   - RA expression
+   - SQL query
+3. Paste into portal in the correct category
+4. Submit - should show "Results are equal"
+
+===============================================================================

@@ -1,0 +1,283 @@
+================================================================================
+       CORRECTED PORTAL SUBMISSION GUIDE - REAL DBS CATEGORIES
+       Database Systems (EIE36E) - xozte001 - Movie Database
+================================================================================
+
+Based on the ACTUAL DBS Portal dropdown categories:
+
+PORTAL ADVANCED CATEGORIES (from screenshot):
+- B  = Negative query on at least two joined tables
+- C  = Select only those related to...
+- D1 = Select all related to - universal quantification query
+- D2 = Result check of D1 query
+- J  = Same query in 3 different SQL statements
+- M  = Query over a view
+
+================================================================================
+                    YOUR ISSUES TO FIX
+================================================================================
+
+The portal shows "CN D1N" are NOT covered. This likely means:
+- CN = Category C with Natural language (already have these)
+- D1N = Category D1 with Natural language
+
+BUT the screenshot shows advanced categories. You need to ADD queries for:
+- Category B (Negative query)
+- Category C (Select only those related to)
+- Category D1 (Universal quantification)
+- Category D2 (Result check)
+- Category J (3 SQL variants)
+- Category M (View query)
+
+================================================================================
+          CATEGORY B: NEGATIVE QUERY ON AT LEAST TWO JOINED TABLES
+================================================================================
+
+Purpose: Find entities that do NOT have a certain relationship
+Pattern: "Find X that are NOT related to Y" or "Find X without Y"
+
+Example Query B-1:
+Natural: Find all actors who have NOT appeared in any movies in our database so casting directors can identify available talent without existing commitments.
+
+SQL:
+SELECT a.actor_id, a.name, a.birth_year
+FROM actor a
+WHERE NOT EXISTS (
+    SELECT 1 FROM movie_actor ma
+    WHERE ma.actor_id = a.actor_id
+);
+
+Alternative SQL using LEFT JOIN:
+SELECT a.actor_id, a.name, a.birth_year
+FROM actor a
+LEFT JOIN movie_actor ma ON a.actor_id = ma.actor_id
+WHERE ma.actor_id IS NULL;
+
+Example Query B-2:
+Natural: Find all directors who have NOT directed any movie with an IMDb rating above 8.0 so we can identify directors who need a breakthrough hit.
+
+SQL:
+SELECT d.director_id, d.name
+FROM director d
+WHERE NOT EXISTS (
+    SELECT 1 FROM movie m
+    WHERE m.director_id = d.director_id
+    AND m.imdb_rating > 8.0
+);
+
+Example Query B-3:
+Natural: Find all movies that have NOT received any awards so the marketing team can identify films needing recognition campaigns.
+
+SQL:
+SELECT m.movie_id, m.title, m.year
+FROM movie m
+LEFT JOIN award a ON m.movie_id = a.movie_id
+WHERE a.award_id IS NULL;
+
+================================================================================
+          CATEGORY C: SELECT ONLY THOSE RELATED TO...
+================================================================================
+
+Purpose: Find entities that ARE related to specific other entities
+Pattern: "Find X that are related to specific Y"
+
+Example Query C-1:
+Natural: Select only those actors who appeared in movies directed by Christopher Nolan to identify the talent pool he prefers working with.
+
+SQL:
+SELECT DISTINCT a.actor_id, a.name
+FROM actor a
+JOIN movie_actor ma ON a.actor_id = ma.actor_id
+JOIN movie m ON ma.movie_id = m.movie_id
+JOIN director d ON m.director_id = d.director_id
+WHERE d.name = 'Christopher Nolan';
+
+Example Query C-2:
+Natural: Select only those genres that have movies with IMDb rating above 8.5 to find which genre categories produce the highest quality content.
+
+SQL:
+SELECT DISTINCT g.genre_id, g.genre_name
+FROM genre g
+JOIN movie_genre mg ON g.genre_id = mg.genre_id
+JOIN movie m ON mg.movie_id = m.movie_id
+WHERE m.imdb_rating > 8.5;
+
+================================================================================
+          CATEGORY D1: UNIVERSAL QUANTIFICATION QUERY (∀)
+================================================================================
+
+Purpose: Find entities that are related to ALL entities in another set
+Pattern: "Find X related to ALL Y" (division operation in relational algebra)
+This is the hardest type - requires double negation pattern!
+
+Example Query D1-1:
+Natural: Find actors who have appeared in ALL genres that exist in our database meaning they have acted in every single genre category.
+
+SQL (Double Negation Pattern):
+SELECT a.actor_id, a.name
+FROM actor a
+WHERE NOT EXISTS (
+    SELECT g.genre_id FROM genre g
+    WHERE NOT EXISTS (
+        SELECT 1 FROM movie_actor ma
+        JOIN movie_genre mg ON ma.movie_id = mg.movie_id
+        WHERE ma.actor_id = a.actor_id
+        AND mg.genre_id = g.genre_id
+    )
+);
+
+Example Query D1-2:
+Natural: Find directors who have directed movies in ALL countries where films can be produced meaning truly international directors.
+
+SQL:
+SELECT d.director_id, d.name
+FROM director d
+WHERE NOT EXISTS (
+    SELECT c.country_id FROM country c
+    WHERE NOT EXISTS (
+        SELECT 1 FROM movie m
+        JOIN movie_country mc ON m.movie_id = mc.movie_id
+        WHERE m.director_id = d.director_id
+        AND mc.country_id = c.country_id
+    )
+);
+
+================================================================================
+          CATEGORY D2: RESULT CHECK OF D1 QUERY
+================================================================================
+
+Purpose: Verify the D1 query results by checking if the found entity really
+         is related to all entities
+
+Example Query D2-1:
+Natural: For each actor found in D1 query show all the genres they have acted in to verify they truly appeared in every genre.
+
+SQL:
+SELECT a.name AS actor_name, g.genre_name
+FROM actor a
+JOIN movie_actor ma ON a.actor_id = ma.actor_id
+JOIN movie_genre mg ON ma.movie_id = mg.movie_id
+JOIN genre g ON mg.genre_id = g.genre_id
+WHERE a.actor_id IN (
+    -- D1 query result
+    SELECT a2.actor_id FROM actor a2
+    WHERE NOT EXISTS (
+        SELECT g2.genre_id FROM genre g2
+        WHERE NOT EXISTS (
+            SELECT 1 FROM movie_actor ma2
+            JOIN movie_genre mg2 ON ma2.movie_id = mg2.movie_id
+            WHERE ma2.actor_id = a2.actor_id
+            AND mg2.genre_id = g2.genre_id
+        )
+    )
+)
+ORDER BY a.name, g.genre_name;
+
+================================================================================
+          CATEGORY J: SAME QUERY IN 3 DIFFERENT SQL STATEMENTS
+================================================================================
+
+Purpose: Show same result using 3 different SQL approaches
+
+Query Task: Find all movies that have at least one award
+
+Version 1 - Using EXISTS:
+SELECT m.movie_id, m.title
+FROM movie m
+WHERE EXISTS (
+    SELECT 1 FROM award a WHERE a.movie_id = m.movie_id
+);
+
+Version 2 - Using IN:
+SELECT m.movie_id, m.title
+FROM movie m
+WHERE m.movie_id IN (
+    SELECT a.movie_id FROM award a
+);
+
+Version 3 - Using JOIN:
+SELECT DISTINCT m.movie_id, m.title
+FROM movie m
+JOIN award a ON m.movie_id = a.movie_id;
+
+================================================================================
+          CATEGORY M: QUERY OVER A VIEW
+================================================================================
+
+Purpose: Create a view and query it
+
+Step 1 - Create the View:
+CREATE OR REPLACE VIEW movie_details AS
+SELECT
+    m.movie_id,
+    m.title,
+    m.year,
+    m.imdb_rating,
+    d.name AS director_name,
+    s.studio_name
+FROM movie m
+JOIN director d ON m.director_id = d.director_id
+LEFT JOIN studio s ON m.studio_id = s.studio_id;
+
+Step 2 - Query the View:
+Natural: Show all high-rated movies from the movie_details view including their directors and studios for executive reports.
+
+SQL:
+SELECT * FROM movie_details
+WHERE imdb_rating > 8.0
+ORDER BY imdb_rating DESC;
+
+================================================================================
+                    LOOP DISCUSSION - COPY TO PORTAL
+================================================================================
+
+Copy this text to the Loop Discussion section:
+
+YES - there IS a circular dependency (loop) in the Movie Database schema.
+
+THE LOOP:
+The MOVIE table contains a self-referencing foreign key called "sequel_of"
+that points back to movie_id within the same table. This creates a circular
+dependency where MOVIE references itself:
+
+    MOVIE.sequel_of → MOVIE.movie_id
+
+This relationship models movie sequel chains. For example, "The Dark Knight
+Rises" can reference "The Dark Knight" which can reference "Batman Begins",
+forming a franchise chain within the same entity.
+
+WHY THIS LOOP EXISTS:
+Movie franchises naturally form sequel relationships. The sequel_of column
+enables queries like finding all sequels to a movie or tracing complete
+franchise histories. This is a legitimate real-world modeling requirement
+for a movie database.
+
+TECHNICAL IMPLICATIONS:
+1. Recursive CTEs (WITH RECURSIVE) are needed to traverse sequel chains
+2. Original movies must be inserted before their sequels
+3. ON DELETE SET NULL prevents orphan references when originals are deleted
+4. Application logic must prevent circular chains (Movie A → B → A)
+
+================================================================================
+                    REQUIREMENTS SUMMARY
+================================================================================
+
+✅ 8+ Entity Types: DIRECTOR, ACTOR, GENRE, COUNTRY, STUDIO, MOVIE, USER_RATING, AWARD
+
+✅ Conceptual Schema: Upload 06_conceptual_schema.md to portal
+
+✅ Loop Discussion: Copy text from above
+
+✅ 10+ Natural Queries: Your D1-D10 queries
+
+To fix "CN D1N" coverage, add these advanced category queries:
+- B: Negative query (actors without movies)
+- C: Related to query (actors in Nolan films)
+- D1: Universal quantification (actors in ALL genres)
+- D2: D1 result verification
+- J: Same query 3 ways
+- M: View query
+
+================================================================================
+                              END OF GUIDE
+================================================================================

@@ -1,0 +1,111 @@
+-- ==============================================================================
+-- MOVIE DATABASE - RELATIONAL SCHEMA (For Portal Import)
+-- 8 Primary Entities + 3 Binding Entities = 11 Tables Total
+-- ==============================================================================
+
+-- PRIMARY ENTITY 1: DIRECTOR
+DIRECTOR(
+    director_id: INTEGER PRIMARY KEY,
+    name: VARCHAR(100) NOT NULL,
+    birth_year: INTEGER,
+    created_at: TIMESTAMP
+)
+
+-- PRIMARY ENTITY 2: ACTOR
+ACTOR(
+    actor_id: INTEGER PRIMARY KEY,
+    name: VARCHAR(100) NOT NULL,
+    birth_year: INTEGER,
+    created_at: TIMESTAMP
+)
+
+-- PRIMARY ENTITY 3: GENRE
+GENRE(
+    genre_id: INTEGER PRIMARY KEY,
+    genre_name: VARCHAR(50) NOT NULL UNIQUE,
+    created_at: TIMESTAMP
+)
+
+-- PRIMARY ENTITY 4: COUNTRY
+COUNTRY(
+    country_id: INTEGER PRIMARY KEY,
+    country_name: VARCHAR(100) NOT NULL UNIQUE,
+    country_code: CHAR(2) UNIQUE,
+    created_at: TIMESTAMP
+)
+
+-- PRIMARY ENTITY 5: STUDIO
+STUDIO(
+    studio_id: INTEGER PRIMARY KEY,
+    studio_name: VARCHAR(100) NOT NULL UNIQUE,
+    founded_year: INTEGER,
+    country_id: INTEGER REFERENCES COUNTRY(country_id),
+    created_at: TIMESTAMP
+)
+
+-- PRIMARY ENTITY 6: MOVIE (Central Entity with Self-Reference Loop)
+MOVIE(
+    movie_id: INTEGER PRIMARY KEY,
+    imdb_id: VARCHAR(20) UNIQUE,
+    title: VARCHAR(200) NOT NULL,
+    year: INTEGER NOT NULL,
+    runtime: INTEGER,
+    imdb_rating: DECIMAL(3,1),
+    imdb_votes: INTEGER,
+    plot: TEXT,
+    box_office: VARCHAR(50),
+    release_date: DATE,
+    director_id: INTEGER NOT NULL REFERENCES DIRECTOR(director_id),
+    studio_id: INTEGER REFERENCES STUDIO(studio_id),
+    sequel_of: INTEGER REFERENCES MOVIE(movie_id),
+    created_at: TIMESTAMP
+)
+
+-- PRIMARY ENTITY 7: USER_RATING
+USER_RATING(
+    rating_id: INTEGER PRIMARY KEY,
+    movie_id: INTEGER NOT NULL REFERENCES MOVIE(movie_id),
+    user_name: VARCHAR(100) NOT NULL,
+    rating_value: INTEGER NOT NULL CHECK(1-10),
+    review_text: TEXT,
+    rating_date: TIMESTAMP
+)
+
+-- PRIMARY ENTITY 8: AWARD
+AWARD(
+    award_id: INTEGER PRIMARY KEY,
+    award_name: VARCHAR(100) NOT NULL,
+    category: VARCHAR(100),
+    year_awarded: INTEGER,
+    movie_id: INTEGER NOT NULL REFERENCES MOVIE(movie_id),
+    is_winner: BOOLEAN,
+    created_at: TIMESTAMP
+)
+
+-- BINDING ENTITY B1: MOVIE_ACTOR (M:N)
+MOVIE_ACTOR(
+    movie_id: INTEGER REFERENCES MOVIE(movie_id),
+    actor_id: INTEGER REFERENCES ACTOR(actor_id),
+    role_type: VARCHAR(20),
+    PRIMARY KEY(movie_id, actor_id)
+)
+
+-- BINDING ENTITY B2: MOVIE_GENRE (M:N)
+MOVIE_GENRE(
+    movie_id: INTEGER REFERENCES MOVIE(movie_id),
+    genre_id: INTEGER REFERENCES GENRE(genre_id),
+    PRIMARY KEY(movie_id, genre_id)
+)
+
+-- BINDING ENTITY B3: MOVIE_COUNTRY (M:N)
+MOVIE_COUNTRY(
+    movie_id: INTEGER REFERENCES MOVIE(movie_id),
+    country_id: INTEGER REFERENCES COUNTRY(country_id),
+    PRIMARY KEY(movie_id, country_id)
+)
+
+-- ==============================================================================
+-- LOOP DISCUSSION:
+-- The MOVIE.sequel_of column creates a self-referencing loop where MOVIE
+-- references itself. This models sequel relationships in movie franchises.
+-- ==============================================================================

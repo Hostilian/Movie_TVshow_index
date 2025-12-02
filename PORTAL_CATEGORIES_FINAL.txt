@@ -1,0 +1,718 @@
+================================================================================
+     🎬 FINAL PORTAL COPY-PASTE - CORRECT CATEGORIES 🎬
+     BI-DBS.21 DBS-2025 - xozte001 - Movie Database
+================================================================================
+
+PORTAL CATEGORIES (from dropdown):
+  B  - Negative query on at least two joined tables
+  C  - Select only those related to...
+  D1 - Select all related to - universal quantification query
+  D2 - Result check of D1 query
+  J  - Same query in 3 different SQL statements
+  M  - Query over a view
+
+================================================================================
+                    SECTION 1: TITLE (paste in Title field)
+================================================================================
+
+Movie and TV Database Management System
+
+
+================================================================================
+                    SECTION 2: DESCRIPTION (285 words - paste in Description)
+================================================================================
+
+This comprehensive database system is designed to manage and organize detailed information about movies and television productions from around the world. The system serves as a centralized repository for film metadata, enabling users to explore relationships between movies, their cast members, directors, genres, and production details.
+
+The primary purpose of this database is to support a movie information platform similar to IMDb, providing functionality for movie discovery, cast analysis, genre exploration, and ratings aggregation. Users can search for films by various criteria including title, release year, genre, actor, or director. The system tracks many-to-many relationships between movies and actors, as well as movies and genres, reflecting the real-world complexity of film production.
+
+Key features include storage of movie ratings from both IMDb and user-submitted reviews, allowing for comprehensive quality assessment. The database also maintains information about production studios and countries of origin, supporting analysis of international co-productions and studio output patterns.
+
+Data is sourced from the OMDb API (Open Movie Database), which provides reliable, well-structured movie metadata including titles, release dates, runtime, plot summaries, cast lists, and ratings. This ensures the database contains realistic, verifiable information rather than fabricated test data.
+
+The system architecture follows best practices in relational database design, implementing proper normalization to Third Normal Form (3NF), establishing referential integrity through foreign key constraints, and utilizing indexes for query optimization. The design specifically avoids circular dependencies to ensure clean query paths and straightforward data maintenance operations. The database handles complex relationships between directors, actors, studios, genres, countries, awards, and user ratings to provide a complete film information management solution.
+
+
+================================================================================
+                    SECTION 3: LOOP DISCUSSION (paste in Loop discussion)
+================================================================================
+
+YES - there IS a circular dependency (loop) in the Movie Database schema.
+
+THE LOOP:
+The MOVIE table contains a self-referencing foreign key called "sequel_of" that points back to movie_id within the same table. This creates a circular dependency where MOVIE references itself:
+
+MOVIE.sequel_of → MOVIE.movie_id
+
+This relationship models movie sequel chains. For example, "The Dark Knight Rises" can reference "The Dark Knight" which can reference "Batman Begins", forming a franchise chain within the same entity.
+
+WHY THIS LOOP EXISTS:
+Movie franchises naturally form sequel relationships. The sequel_of column enables queries like finding all sequels to a movie or tracing complete franchise histories. This is a legitimate real-world modeling requirement for a movie database.
+
+TECHNICAL IMPLICATIONS:
+1. Recursive CTEs (WITH RECURSIVE) are needed to traverse sequel chains
+2. Original movies must be inserted before their sequels
+3. ON DELETE SET NULL prevents orphan references when originals are deleted
+4. Application logic must prevent circular chains (Movie A → B → A)
+
+BENEFITS:
+Enables franchise analysis, sequel chain traversal, and maintains normalized relationships between related movies without requiring a separate table.
+
+
+================================================================================
+                    SECTION 4: REFERENCES (paste in References field)
+================================================================================
+
+1. OMDb API (Open Movie Database) - https://www.omdbapi.com/
+   Used for sourcing movie metadata including titles, ratings, and plot summaries.
+
+2. PostgreSQL Documentation - https://www.postgresql.org/docs/
+   Reference for SQL syntax and database functions.
+
+3. IMDb - https://www.imdb.com/
+   Reference for verifying movie information accuracy.
+
+
+================================================================================
+================================================================================
+                    QUERIES BY PORTAL CATEGORY
+================================================================================
+================================================================================
+
+Each query needs: Natural Language + RA + SQL
+
+================================================================================
+        CATEGORY B: NEGATIVE QUERY ON AT LEAST TWO JOINED TABLES
+        (Find things that do NOT have a certain relationship)
+================================================================================
+
+--- B1 ---
+NATURAL:
+Find all directors who have NOT directed any movie in the Action genre by joining director with movie and movie_genre tables and using NOT EXISTS to exclude those with action films.
+
+RA:
+π(director_id, name)(DIRECTOR) - π(director_id, name)(DIRECTOR ⋈ MOVIE ⋈ MOVIE_GENRE ⋈ σ(genre_name='Action')(GENRE))
+
+SQL:
+SELECT d.director_id, d.name
+FROM director d
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM movie m
+    JOIN movie_genre mg ON m.movie_id = mg.movie_id
+    JOIN genre g ON mg.genre_id = g.genre_id
+    WHERE m.director_id = d.director_id
+    AND g.genre_name = 'Action'
+);
+
+
+--- B2 ---
+NATURAL:
+Find all actors who have never appeared in any movie that won an award by joining actor with movie_actor and award tables and filtering those without award-winning appearances.
+
+RA:
+π(actor_id, name)(ACTOR) - π(actor_id, name)(ACTOR ⋈ MOVIE_ACTOR ⋈ MOVIE ⋈ σ(is_winner=TRUE)(AWARD))
+
+SQL:
+SELECT a.actor_id, a.name
+FROM actor a
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM movie_actor ma
+    JOIN movie m ON ma.movie_id = m.movie_id
+    JOIN award aw ON m.movie_id = aw.movie_id
+    WHERE ma.actor_id = a.actor_id
+    AND aw.is_winner = TRUE
+);
+
+
+--- B3 ---
+NATURAL:
+Find all movies that have no user ratings by joining movie with user_rating table and selecting only those movies where no corresponding rating records exist in the database.
+
+RA:
+π(movie_id, title)(MOVIE) - π(movie_id, title)(MOVIE ⋈ USER_RATING)
+
+SQL:
+SELECT m.movie_id, m.title
+FROM movie m
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM user_rating ur
+    WHERE ur.movie_id = m.movie_id
+);
+
+
+--- B4 ---
+NATURAL:
+Find all genres that have no movies with IMDb rating above 8.0 by joining genre with movie_genre and movie tables to identify underperforming genre categories.
+
+RA:
+π(genre_id, genre_name)(GENRE) - π(genre_id, genre_name)(GENRE ⋈ MOVIE_GENRE ⋈ σ(imdb_rating > 8.0)(MOVIE))
+
+SQL:
+SELECT g.genre_id, g.genre_name
+FROM genre g
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM movie_genre mg
+    JOIN movie m ON mg.movie_id = m.movie_id
+    WHERE mg.genre_id = g.genre_id
+    AND m.imdb_rating > 8.0
+);
+
+
+--- B5 ---
+NATURAL:
+Find all studios that have not produced any movie released after 2015 by joining studio with movie table and excluding studios with recent film productions.
+
+RA:
+π(studio_id, studio_name)(STUDIO) - π(studio_id, studio_name)(STUDIO ⋈ σ(year > 2015)(MOVIE))
+
+SQL:
+SELECT s.studio_id, s.studio_name
+FROM studio s
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM movie m
+    WHERE m.studio_id = s.studio_id
+    AND m.year > 2015
+);
+
+
+================================================================================
+        CATEGORY C: SELECT ONLY THOSE RELATED TO...
+        (Find entities that have a specific relationship)
+================================================================================
+
+--- C1 ---
+NATURAL:
+Select only those actors who appeared in movies directed by Christopher Nolan by joining actor, movie_actor, movie, and director tables filtering by director name.
+
+RA:
+π(actor_id, name)(ACTOR ⋈ MOVIE_ACTOR ⋈ MOVIE ⋈ σ(name='Christopher Nolan')(DIRECTOR))
+
+SQL:
+SELECT DISTINCT a.actor_id, a.name
+FROM actor a
+JOIN movie_actor ma ON a.actor_id = ma.actor_id
+JOIN movie m ON ma.movie_id = m.movie_id
+JOIN director d ON m.director_id = d.director_id
+WHERE d.name = 'Christopher Nolan';
+
+
+--- C2 ---
+NATURAL:
+Select only those movies that belong to the Sci-Fi genre by joining movie with movie_genre and genre tables and filtering for science fiction category films.
+
+RA:
+π(movie_id, title, year)(MOVIE ⋈ MOVIE_GENRE ⋈ σ(genre_name='Sci-Fi')(GENRE))
+
+SQL:
+SELECT m.movie_id, m.title, m.year
+FROM movie m
+JOIN movie_genre mg ON m.movie_id = mg.movie_id
+JOIN genre g ON mg.genre_id = g.genre_id
+WHERE g.genre_name = 'Sci-Fi';
+
+
+--- C3 ---
+NATURAL:
+Select only those directors who have directed movies with IMDb rating above 8.5 by joining director with movie table filtering for highly rated productions.
+
+RA:
+π(director_id, name)(DIRECTOR ⋈ σ(imdb_rating > 8.5)(MOVIE))
+
+SQL:
+SELECT DISTINCT d.director_id, d.name
+FROM director d
+JOIN movie m ON d.director_id = m.director_id
+WHERE m.imdb_rating > 8.5;
+
+
+--- C4 ---
+NATURAL:
+Select only those studios that have produced award-winning movies by joining studio with movie and award tables filtering for actual winners only.
+
+RA:
+π(studio_id, studio_name)(STUDIO ⋈ MOVIE ⋈ σ(is_winner=TRUE)(AWARD))
+
+SQL:
+SELECT DISTINCT s.studio_id, s.studio_name
+FROM studio s
+JOIN movie m ON s.studio_id = m.studio_id
+JOIN award aw ON m.movie_id = aw.movie_id
+WHERE aw.is_winner = TRUE;
+
+
+--- C5 ---
+NATURAL:
+Select only those countries that have movies produced in them by joining country with movie_country and movie tables to find active production locations.
+
+RA:
+π(country_id, country_name)(COUNTRY ⋈ MOVIE_COUNTRY ⋈ MOVIE)
+
+SQL:
+SELECT DISTINCT c.country_id, c.country_name
+FROM country c
+JOIN movie_country mc ON c.country_id = mc.country_id
+JOIN movie m ON mc.movie_id = m.movie_id;
+
+
+================================================================================
+        CATEGORY D1: SELECT ALL RELATED TO - UNIVERSAL QUANTIFICATION
+        (Find entities related to ALL of something - division operation)
+================================================================================
+
+--- D1-1 ---
+NATURAL:
+Find actors who have appeared in ALL movies directed by Christopher Nolan, meaning every single film by this director features this actor in the cast.
+
+RA:
+π(actor_id, movie_id)(MOVIE_ACTOR) ÷ π(movie_id)(σ(name='Christopher Nolan')(DIRECTOR) ⋈ MOVIE)
+
+SQL:
+SELECT a.actor_id, a.name
+FROM actor a
+WHERE NOT EXISTS (
+    SELECT m.movie_id
+    FROM movie m
+    JOIN director d ON m.director_id = d.director_id
+    WHERE d.name = 'Christopher Nolan'
+    AND NOT EXISTS (
+        SELECT 1
+        FROM movie_actor ma
+        WHERE ma.actor_id = a.actor_id
+        AND ma.movie_id = m.movie_id
+    )
+);
+
+
+--- D1-2 ---
+NATURAL:
+Find movies that belong to ALL genres in the database, meaning the film is categorized under every single genre type we have defined.
+
+RA:
+π(movie_id, genre_id)(MOVIE_GENRE) ÷ π(genre_id)(GENRE)
+
+SQL:
+SELECT m.movie_id, m.title
+FROM movie m
+WHERE NOT EXISTS (
+    SELECT g.genre_id
+    FROM genre g
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM movie_genre mg
+        WHERE mg.movie_id = m.movie_id
+        AND mg.genre_id = g.genre_id
+    )
+);
+
+
+--- D1-3 ---
+NATURAL:
+Find directors who have directed movies in ALL genres available in the database, showing the most versatile filmmakers who work across every category.
+
+RA:
+π(director_id, genre_id)(MOVIE ⋈ MOVIE_GENRE) ÷ π(genre_id)(GENRE)
+
+SQL:
+SELECT d.director_id, d.name
+FROM director d
+WHERE NOT EXISTS (
+    SELECT g.genre_id
+    FROM genre g
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM movie m
+        JOIN movie_genre mg ON m.movie_id = mg.movie_id
+        WHERE m.director_id = d.director_id
+        AND mg.genre_id = g.genre_id
+    )
+);
+
+
+--- D1-4 ---
+NATURAL:
+Find studios that have produced movies in ALL countries in the database, identifying truly global production companies with worldwide presence.
+
+RA:
+π(studio_id, country_id)(MOVIE ⋈ MOVIE_COUNTRY) ÷ π(country_id)(COUNTRY)
+
+SQL:
+SELECT s.studio_id, s.studio_name
+FROM studio s
+WHERE NOT EXISTS (
+    SELECT c.country_id
+    FROM country c
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM movie m
+        JOIN movie_country mc ON m.movie_id = mc.movie_id
+        WHERE m.studio_id = s.studio_id
+        AND mc.country_id = c.country_id
+    )
+);
+
+
+================================================================================
+        CATEGORY D2: RESULT CHECK OF D1 QUERY
+        (Verify the D1 query result by showing the relationships)
+================================================================================
+
+--- D2-1 (Check for D1-1) ---
+NATURAL:
+Verify actors in Christopher Nolan films by listing all actor-movie combinations for Nolan-directed movies to confirm the universal quantification result is correct.
+
+RA:
+π(actor_id, name, movie_id, title)(ACTOR ⋈ MOVIE_ACTOR ⋈ MOVIE ⋈ σ(name='Christopher Nolan')(DIRECTOR))
+
+SQL:
+SELECT a.actor_id, a.name, m.movie_id, m.title
+FROM actor a
+JOIN movie_actor ma ON a.actor_id = ma.actor_id
+JOIN movie m ON ma.movie_id = m.movie_id
+JOIN director d ON m.director_id = d.director_id
+WHERE d.name = 'Christopher Nolan'
+ORDER BY a.actor_id, m.movie_id;
+
+
+--- D2-2 (Check for D1-2) ---
+NATURAL:
+Verify movies with all genres by listing all movie-genre combinations to confirm which movies are actually categorized in every available genre type.
+
+RA:
+π(movie_id, title, genre_id, genre_name)(MOVIE ⋈ MOVIE_GENRE ⋈ GENRE)
+
+SQL:
+SELECT m.movie_id, m.title, g.genre_id, g.genre_name
+FROM movie m
+JOIN movie_genre mg ON m.movie_id = mg.movie_id
+JOIN genre g ON mg.genre_id = g.genre_id
+ORDER BY m.movie_id, g.genre_id;
+
+
+--- D2-3 (Check for D1-3) ---
+NATURAL:
+Verify directors working in all genres by listing all director-genre combinations through their movies to confirm versatility across all categories.
+
+RA:
+π(director_id, name, genre_id, genre_name)(DIRECTOR ⋈ MOVIE ⋈ MOVIE_GENRE ⋈ GENRE)
+
+SQL:
+SELECT DISTINCT d.director_id, d.name, g.genre_id, g.genre_name
+FROM director d
+JOIN movie m ON d.director_id = m.director_id
+JOIN movie_genre mg ON m.movie_id = mg.movie_id
+JOIN genre g ON mg.genre_id = g.genre_id
+ORDER BY d.director_id, g.genre_id;
+
+
+--- D2-4 (Check for D1-4) ---
+NATURAL:
+Verify studios with productions in all countries by listing all studio-country combinations through movies to confirm global production presence.
+
+RA:
+π(studio_id, studio_name, country_id, country_name)(STUDIO ⋈ MOVIE ⋈ MOVIE_COUNTRY ⋈ COUNTRY)
+
+SQL:
+SELECT DISTINCT s.studio_id, s.studio_name, c.country_id, c.country_name
+FROM studio s
+JOIN movie m ON s.studio_id = m.studio_id
+JOIN movie_country mc ON m.movie_id = mc.movie_id
+JOIN country c ON mc.country_id = c.country_id
+ORDER BY s.studio_id, c.country_id;
+
+
+================================================================================
+        CATEGORY J: SAME QUERY IN 3 DIFFERENT SQL STATEMENTS
+        (Express the same query using different SQL constructs)
+================================================================================
+
+--- J1: Find movies with rating above 8.0 (3 ways) ---
+
+NATURAL:
+Find all movies with IMDb rating above 8.0 expressed in three different SQL syntax variations using WHERE clause, HAVING with grouping, and subquery approaches.
+
+RA:
+σ(imdb_rating > 8.0)(MOVIE)
+
+SQL VERSION 1 (Simple WHERE):
+SELECT movie_id, title, imdb_rating
+FROM movie
+WHERE imdb_rating > 8.0;
+
+SQL VERSION 2 (Using HAVING):
+SELECT movie_id, title, MAX(imdb_rating) AS imdb_rating
+FROM movie
+GROUP BY movie_id, title
+HAVING MAX(imdb_rating) > 8.0;
+
+SQL VERSION 3 (Using Subquery):
+SELECT movie_id, title, imdb_rating
+FROM movie
+WHERE movie_id IN (
+    SELECT movie_id
+    FROM movie
+    WHERE imdb_rating > 8.0
+);
+
+
+--- J2: Find actors in Inception (3 ways) ---
+
+NATURAL:
+Find all actors who appeared in the movie Inception expressed in three different SQL approaches using JOIN, IN subquery, and EXISTS subquery methods.
+
+RA:
+π(actor_id, name)(ACTOR ⋈ MOVIE_ACTOR ⋈ σ(title='Inception')(MOVIE))
+
+SQL VERSION 1 (Using JOIN):
+SELECT a.actor_id, a.name
+FROM actor a
+JOIN movie_actor ma ON a.actor_id = ma.actor_id
+JOIN movie m ON ma.movie_id = m.movie_id
+WHERE m.title = 'Inception';
+
+SQL VERSION 2 (Using IN):
+SELECT actor_id, name
+FROM actor
+WHERE actor_id IN (
+    SELECT ma.actor_id
+    FROM movie_actor ma
+    JOIN movie m ON ma.movie_id = m.movie_id
+    WHERE m.title = 'Inception'
+);
+
+SQL VERSION 3 (Using EXISTS):
+SELECT a.actor_id, a.name
+FROM actor a
+WHERE EXISTS (
+    SELECT 1
+    FROM movie_actor ma
+    JOIN movie m ON ma.movie_id = m.movie_id
+    WHERE ma.actor_id = a.actor_id
+    AND m.title = 'Inception'
+);
+
+
+--- J3: Find directors with award-winning movies (3 ways) ---
+
+NATURAL:
+Find all directors whose movies have won awards expressed using three different SQL constructs including direct join, correlated subquery, and IN clause approaches.
+
+RA:
+π(director_id, name)(DIRECTOR ⋈ MOVIE ⋈ σ(is_winner=TRUE)(AWARD))
+
+SQL VERSION 1 (Using JOIN):
+SELECT DISTINCT d.director_id, d.name
+FROM director d
+JOIN movie m ON d.director_id = m.director_id
+JOIN award aw ON m.movie_id = aw.movie_id
+WHERE aw.is_winner = TRUE;
+
+SQL VERSION 2 (Using IN):
+SELECT director_id, name
+FROM director
+WHERE director_id IN (
+    SELECT m.director_id
+    FROM movie m
+    JOIN award aw ON m.movie_id = aw.movie_id
+    WHERE aw.is_winner = TRUE
+);
+
+SQL VERSION 3 (Using EXISTS):
+SELECT d.director_id, d.name
+FROM director d
+WHERE EXISTS (
+    SELECT 1
+    FROM movie m
+    JOIN award aw ON m.movie_id = aw.movie_id
+    WHERE m.director_id = d.director_id
+    AND aw.is_winner = TRUE
+);
+
+
+================================================================================
+        CATEGORY M: QUERY OVER A VIEW
+        (Create a view and query it)
+================================================================================
+
+--- M1: View of high-rated movies ---
+
+NATURAL:
+Create a view containing all movies with IMDb rating above 7.5 and then query this view to find high-rated films released after 2010 for recent quality content.
+
+VIEW CREATION:
+CREATE OR REPLACE VIEW high_rated_movies AS
+SELECT movie_id, title, year, imdb_rating, director_id
+FROM movie
+WHERE imdb_rating > 7.5;
+
+SQL QUERY ON VIEW:
+SELECT *
+FROM high_rated_movies
+WHERE year > 2010
+ORDER BY imdb_rating DESC;
+
+
+--- M2: View of movie statistics ---
+
+NATURAL:
+Create a view with movie statistics including actor count and genre count per movie, then query to find movies with large casts and multiple genre classifications.
+
+VIEW CREATION:
+CREATE OR REPLACE VIEW movie_statistics AS
+SELECT m.movie_id, m.title, m.year, m.imdb_rating,
+       (SELECT COUNT(*) FROM movie_actor ma WHERE ma.movie_id = m.movie_id) AS actor_count,
+       (SELECT COUNT(*) FROM movie_genre mg WHERE mg.movie_id = m.movie_id) AS genre_count
+FROM movie m;
+
+SQL QUERY ON VIEW:
+SELECT *
+FROM movie_statistics
+WHERE actor_count > 1 AND genre_count > 2
+ORDER BY actor_count DESC;
+
+
+--- M3: View of director filmography ---
+
+NATURAL:
+Create a view showing director names with their movie count and average rating, then query to find prolific directors with good average ratings.
+
+VIEW CREATION:
+CREATE OR REPLACE VIEW director_filmography AS
+SELECT d.director_id, d.name,
+       COUNT(m.movie_id) AS movie_count,
+       ROUND(AVG(m.imdb_rating), 2) AS avg_rating
+FROM director d
+LEFT JOIN movie m ON d.director_id = m.director_id
+GROUP BY d.director_id, d.name;
+
+SQL QUERY ON VIEW:
+SELECT *
+FROM director_filmography
+WHERE movie_count > 0
+ORDER BY avg_rating DESC;
+
+
+--- M4: View of genre popularity ---
+
+NATURAL:
+Create a view calculating genre popularity based on movie count and average ratings, then query to identify the most popular and highest quality genres.
+
+VIEW CREATION:
+CREATE OR REPLACE VIEW genre_popularity AS
+SELECT g.genre_id, g.genre_name,
+       COUNT(mg.movie_id) AS movie_count,
+       ROUND(AVG(m.imdb_rating), 2) AS avg_rating
+FROM genre g
+LEFT JOIN movie_genre mg ON g.genre_id = mg.genre_id
+LEFT JOIN movie m ON mg.movie_id = m.movie_id
+GROUP BY g.genre_id, g.genre_name;
+
+SQL QUERY ON VIEW:
+SELECT *
+FROM genre_popularity
+WHERE movie_count > 0
+ORDER BY movie_count DESC, avg_rating DESC;
+
+
+================================================================================
+                    ADDITIONAL SIMPLE QUERIES
+================================================================================
+
+--- Simple Query 1 ---
+NATURAL:
+List all movies together with their director names by joining movie and director tables to display the complete filmography sorted by release year.
+
+SQL:
+SELECT m.title, m.year, d.name AS director_name
+FROM movie m
+JOIN director d ON m.director_id = d.director_id
+ORDER BY m.year DESC;
+
+
+--- Simple Query 2 ---
+NATURAL:
+Display all user ratings for movies showing the movie title, user name, rating value, and review text sorted by rating value in descending order.
+
+SQL:
+SELECT m.title, ur.user_name, ur.rating_value, ur.review_text
+FROM user_rating ur
+JOIN movie m ON ur.movie_id = m.movie_id
+ORDER BY ur.rating_value DESC;
+
+
+--- Simple Query 3 ---
+NATURAL:
+Count the total number of movies in each genre to analyze which categories have the most content in our film database collection.
+
+SQL:
+SELECT g.genre_name, COUNT(mg.movie_id) AS movie_count
+FROM genre g
+LEFT JOIN movie_genre mg ON g.genre_id = mg.genre_id
+GROUP BY g.genre_id, g.genre_name
+ORDER BY movie_count DESC;
+
+
+--- Simple Query 4 ---
+NATURAL:
+Find the average IMDb rating for all movies in the database to establish a quality baseline for our film collection analysis.
+
+SQL:
+SELECT ROUND(AVG(imdb_rating), 2) AS average_rating
+FROM movie;
+
+
+--- Simple Query 5 ---
+NATURAL:
+List all awards won by movies showing movie title, award name, category, and year to track recognition received by films in our database.
+
+SQL:
+SELECT m.title, aw.award_name, aw.category, aw.year_awarded
+FROM award aw
+JOIN movie m ON aw.movie_id = m.movie_id
+WHERE aw.is_winner = TRUE
+ORDER BY aw.year_awarded DESC;
+
+
+================================================================================
+                    QUICK ACTION CHECKLIST
+================================================================================
+
+□ 1. Title and Description → Paste title and description (Section 1 & 2)
+□ 2. Conceptual Schema → Upload 06_conceptual_schema.md
+□ 3. Loop Discussion → Paste loop text (Section 3)
+□ 4. References → Paste references (Section 4)
+□ 5. Create Script → Upload 03_create_script.sql
+□ 6. Insert Script → Upload 04_insert_script.sql
+□ 7. Queries → Add queries with correct categories:
+     - B queries (Negative on joined tables)
+     - C queries (Select related to)
+     - D1 queries (Universal quantification)
+     - D2 queries (Check D1 result)
+     - J queries (3 SQL versions)
+     - M queries (Query over view - CREATE VIEW first!)
+□ 8. Check and Submit each iteration
+
+================================================================================
+                    IMPORTANT NOTES
+================================================================================
+
+For M (View) queries:
+- You need to first run the CREATE VIEW statement on the database
+- Then the query over the view will work
+- Upload CREATE VIEW statements in your create script OR run them separately
+
+For J queries:
+- You must provide 3 DIFFERENT SQL statements that return the SAME result
+- All 3 versions should be equivalent
+
+For D1/D2:
+- D1 uses double NOT EXISTS pattern (division)
+- D2 is a verification query showing the relationships
+
+================================================================================
+                              END OF GUIDE
+================================================================================

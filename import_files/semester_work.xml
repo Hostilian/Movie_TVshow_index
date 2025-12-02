@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+============================================================
+    MOVIE DATABASE - XML SEMESTER WORK FILE
+    Database Systems (EIE36E) Project - DBS Portal Import
+
+    Student: Ozturk Eren
+    Login: xozte001
+    Database: xozte001
+    Server: db.kii.pef.czu.cz
+    Date: 2025-11-30
+============================================================
+-->
+<semester_work>
+    <metadata>
+        <student_name>Ozturk Eren</student_name>
+        <student_login>xozte001</student_login>
+        <project_title>Movie and TV Database Management System</project_title>
+        <database_server>db.kii.pef.czu.cz</database_server>
+        <database_name>xozte001</database_name>
+        <submission_date>2025-11-30</submission_date>
+        <course>EIE36E - Database Systems</course>
+    </metadata>
+
+    <title>Movie and TV Database Management System</title>
+
+    <description>
+        This comprehensive database system is designed to manage and organize detailed
+        information about movies and television productions from around the world. The
+        system serves as a centralized repository for film metadata, enabling users to
+        explore relationships between movies, their cast members, directors, genres,
+        and production details.
+
+        The primary purpose of this database is to support a movie information platform
+        similar to IMDb, providing functionality for movie discovery, cast analysis,
+        genre exploration, and ratings aggregation. Users can search for films by
+        various criteria including title, release year, genre, actor, or director.
+        The system tracks many-to-many relationships between movies and actors, as
+        well as movies and genres, reflecting the real-world complexity of film
+        production.
+
+        Key features include storage of movie ratings from both IMDb and user-submitted
+        reviews, allowing for comprehensive quality assessment. The database also
+        maintains information about production studios and countries of origin,
+        supporting analysis of international co-productions and studio output patterns.
+
+        Data is sourced from the OMDb API (Open Movie Database), which provides
+        reliable, well-structured movie metadata including titles, release dates,
+        runtime, plot summaries, cast lists, and ratings. This ensures the database
+        contains realistic, verifiable information rather than fabricated test data.
+
+        The system architecture follows best practices in relational database design,
+        implementing proper normalization to Third Normal Form (3NF), establishing
+        referential integrity through foreign key constraints, and utilizing indexes
+        for query optimization. The design includes a self-referencing relationship
+        for movie sequels which creates a controlled loop in the schema.
+    </description>
+
+    <entity_types count="8">
+        <entity_type name="DIRECTOR">Stores information about film directors including name and birth year</entity_type>
+        <entity_type name="ACTOR">Stores information about film actors</entity_type>
+        <entity_type name="GENRE">Stores film genre categories</entity_type>
+        <entity_type name="COUNTRY">Stores country information for production origins</entity_type>
+        <entity_type name="STUDIO">Stores production studio/company information</entity_type>
+        <entity_type name="MOVIE">Central entity storing core movie information with self-reference</entity_type>
+        <entity_type name="USER_RATING">Stores user-submitted ratings and reviews for movies</entity_type>
+        <entity_type name="AWARD">Stores awards and nominations received by movies</entity_type>
+    </entity_types>
+
+    <binding_tables note="Simple M:N decomposition tables - not counted in entity types">
+        <binding_table name="MOVIE_ACTOR">M:N relationship between movies and actors with role_type attribute</binding_table>
+        <binding_table name="MOVIE_GENRE">M:N relationship between movies and genres</binding_table>
+        <binding_table name="MOVIE_COUNTRY">M:N relationship for international co-productions</binding_table>
+    </binding_tables>
+
+    <loops_discussion>
+        YES - there IS a circular dependency (loop) in the Movie Database schema.
+
+        THE LOOP:
+        The MOVIE table contains a self-referencing foreign key called "sequel_of"
+        that points back to movie_id within the same table. This creates a circular
+        dependency where MOVIE references itself:
+
+        MOVIE.sequel_of → MOVIE.movie_id
+
+        This relationship models movie sequel chains. For example, "The Dark Knight
+        Rises" can reference "The Dark Knight" which can reference "Batman Begins",
+        forming a franchise chain within the same entity.
+
+        WHY THIS LOOP EXISTS:
+        Movie franchises naturally form sequel relationships. The sequel_of column
+        enables queries like finding all sequels to a movie or tracing complete
+        franchise histories. This is a legitimate real-world modeling requirement
+        for a movie database.
+
+        TECHNICAL IMPLICATIONS:
+        1. Recursive CTEs (WITH RECURSIVE) are needed to traverse sequel chains
+        2. Original movies must be inserted before their sequels
+        3. ON DELETE SET NULL prevents orphan references when originals are deleted
+        4. Application logic must prevent circular chains (Movie A to B to A)
+    </loops_discussion>
+</semester_work>

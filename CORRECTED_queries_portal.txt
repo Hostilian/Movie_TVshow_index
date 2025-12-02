@@ -1,0 +1,117 @@
+===============================================================================
+PORTAL QUERIES – ITERATIONS 1 & 2 ONLY
+Copy each block into the DBS portal. RA expressions use the portal symbols π, σ, ⟕, and <*.
+===============================================================================
+
+--- Query 1 (Category C) ---
+Natural: Find all movies released after the year 2010 so the dashboard can highlight recent titles without mixing in classics.
+RA:
+π(movie_id, title, year, imdb_rating)(σ(year > 2010)(MOVIE))
+SQL:
+SELECT movie_id, title, year, imdb_rating
+FROM movie
+WHERE year > 2010;
+
+===============================================================================
+
+--- Query 2 (Category C) ---
+Natural: Show the title and IMDb rating for every movie so the curation team can gauge overall quality at a glance.
+RA:
+π(movie_id, title, imdb_rating)(MOVIE)
+SQL:
+SELECT movie_id, title, imdb_rating
+FROM movie;
+
+===============================================================================
+
+--- Query 3 (Category C) ---
+Natural: List every actor born before 1970 so festival planners can identify veteran performers for lifetime awards.
+RA:
+π(actor_id, name, birth_year)(σ(birth_year < 1970)(ACTOR))
+SQL:
+SELECT actor_id, name, birth_year
+FROM actor
+WHERE birth_year < 1970;
+
+===============================================================================
+
+--- Query 4 (Category D1) ---
+Natural: List every movie together with its director name so scheduling can match films to promotional interviews.
+RA:
+π(movie_id, title, year, director_id, name)(MOVIE <* DIRECTOR)
+SQL:
+SELECT m.movie_id, m.title, m.year, d.director_id, d.name
+FROM movie AS m
+JOIN director AS d ON m.director_id = d.director_id;
+
+===============================================================================
+
+--- Query 5 (Category D1) ---
+Natural: Find all actors who appeared in the movie "Inception" so casting records stay consistent with payroll notes.
+RA:
+π(actor_id, name, role_type)(σ(title = 'Inception')(ACTOR <* MOVIE_ACTOR <* MOVIE))
+SQL:
+SELECT a.actor_id, a.name, ma.role_type
+FROM actor AS a
+JOIN movie_actor AS ma ON a.actor_id = ma.actor_id
+JOIN movie AS m ON ma.movie_id = m.movie_id
+WHERE m.title = 'Inception';
+
+===============================================================================
+
+--- Query 6 (Category D1) ---
+Natural: Show every Action movie with its IMDb rating so the genre lead can prioritize stunt coordination resources.
+RA:
+π(movie_id, title, year, imdb_rating)(σ(genre_name = 'Action')(MOVIE <* MOVIE_GENRE <* GENRE))
+SQL:
+SELECT m.movie_id, m.title, m.year, m.imdb_rating
+FROM movie AS m
+JOIN movie_genre AS mg ON m.movie_id = mg.movie_id
+JOIN genre AS g ON mg.genre_id = g.genre_id
+WHERE g.genre_name = 'Action';
+
+===============================================================================
+
+--- Query 7 (Category D1) ---
+Natural: List every user review for films directed by Christopher Nolan so marketing can collect quotes tied to the director.
+RA:
+π(movie_id, title, user_name, rating_value, review_text)(σ(name = 'Christopher Nolan')(USER_RATING <* MOVIE <* DIRECTOR))
+SQL:
+SELECT m.movie_id, m.title, ur.user_name, ur.rating_value, ur.review_text
+FROM user_rating AS ur
+JOIN movie AS m ON ur.movie_id = m.movie_id
+JOIN director AS d ON m.director_id = d.director_id
+WHERE d.name = 'Christopher Nolan';
+
+===============================================================================
+
+--- Query 8 (Category N) ---
+Natural: Show every movie together with any awards it has earned, keeping titles without trophies so publicity can spot gaps.
+RA:
+π(movie_id, title, award_id, award_name, category, year_awarded)(MOVIE ⟕ AWARD)
+SQL:
+SELECT m.movie_id, m.title, aw.award_id, aw.award_name, aw.category, aw.year_awarded
+FROM movie AS m
+LEFT JOIN award AS aw ON m.movie_id = aw.movie_id;
+
+===============================================================================
+
+--- Query 9 (Category N) ---
+Natural: List every director together with any movies they have directed, keeping directors with no films so mentoring teams spot inactive members.
+RA:
+π(director_id, name, movie_id, title, year)(DIRECTOR ⟕ MOVIE)
+SQL:
+SELECT d.director_id, d.name, m.movie_id, m.title, m.year
+FROM director AS d
+LEFT JOIN movie AS m ON d.director_id = m.director_id;
+
+===============================================================================
+
+--- Query 10 (Category N) ---
+Natural: Display each movie with user rating information, returning unrated titles too so support knows where feedback is still missing.
+RA:
+π(movie_id, title, rating_id, user_name, rating_value)(MOVIE ⟕ USER_RATING)
+SQL:
+SELECT m.movie_id, m.title, ur.rating_id, ur.user_name, ur.rating_value
+FROM movie AS m
+LEFT JOIN user_rating AS ur ON m.movie_id = ur.movie_id;

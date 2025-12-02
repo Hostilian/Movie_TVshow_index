@@ -1,0 +1,471 @@
+================================================================================
+     PORTAL 30 QUERIES - ADVANCED CATEGORY COVERAGE (V6)
+     xozte001 - Movie Database
+================================================================================
+
+Instruction: Enter each block as three separate portal entries (Natural, RA, SQL)
+so that every category (A, B, C, D1, D2, F1, F2, F3, F4, F5, G1, G2, G3, G4,
+H1, H2, H3, I1, I2, J, K, L, M, N, O, P, CN, D1N) is covered at least once.
+
+================================================================================
+D1 - Category A (Projection)
+================================================================================
+NATURAL:
+Show only the title and year for every movie to build a compact catalog view.
+
+RA:
+MOVIE[title, year]
+
+SQL:
+SELECT title, year FROM movie;
+
+================================================================================
+D2 - Category G1 (Single Column Projection)
+================================================================================
+NATURAL:
+List every movie title in the database to produce an alphabetical film list.
+
+RA:
+MOVIE[title]
+
+SQL:
+SELECT title FROM movie;
+
+================================================================================
+D3 - Category B (Negative query on at least two joined tables)
+================================================================================
+NATURAL:
+Find movie IDs for films that have never received any awards so marketing can
+spot titles needing promotion.
+
+RA:
+MOVIE[movie_id] \ AWARD[movie_id]
+
+SQL:
+SELECT movie_id
+FROM movie
+EXCEPT
+SELECT m.movie_id
+FROM movie m
+JOIN award a ON m.movie_id = a.movie_id;
+
+================================================================================
+D4 - Category C (Select only those related to...)
+================================================================================
+NATURAL:
+Return movies directed by Christopher Nolan to review his complete catalog.
+
+RA:
+σ name='Christopher Nolan' (DIRECTOR) < MOVIE [movie_id, title]
+
+SQL:
+SELECT m.movie_id, m.title
+FROM movie m
+JOIN director d ON m.director_id = d.director_id
+WHERE d.name = 'Christopher Nolan';
+
+================================================================================
+D5 - Category D1 (Universal quantification)
+================================================================================
+NATURAL:
+Find actors who have appeared in every genre represented in the database to
+identify the most versatile performers.
+
+RA:
+MOVIE_ACTOR < MOVIE_GENRE [actor_id, genre_id] ÷ GENRE[genre_id]
+
+SQL:
+SELECT a.actor_id, a.name
+FROM actor a
+WHERE NOT EXISTS (
+    SELECT g.genre_id FROM genre g
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM movie_actor ma
+        JOIN movie_genre mg ON ma.movie_id = mg.movie_id
+        WHERE ma.actor_id = a.actor_id
+          AND mg.genre_id = g.genre_id
+    )
+);
+
+================================================================================
+D6 - Category D2 (Result check of D1 query)
+================================================================================
+NATURAL:
+Show every genre covered by the D5 actors to confirm they truly span all
+existing genres.
+
+RA:
+(MOVIE_ACTOR < MOVIE_GENRE [actor_id, genre_id] ÷ GENRE[genre_id]) < ACTOR [actor_id, name]
+
+SQL:
+SELECT a.name AS actor_name, g.genre_name
+FROM actor a
+JOIN movie_actor ma ON a.actor_id = ma.actor_id
+JOIN movie_genre mg ON ma.movie_id = mg.movie_id
+JOIN genre g ON mg.genre_id = g.genre_id
+WHERE a.actor_id IN (
+    SELECT a2.actor_id
+    FROM actor a2
+    WHERE NOT EXISTS (
+        SELECT g2.genre_id FROM genre g2
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM movie_actor ma2
+            JOIN movie_genre mg2 ON ma2.movie_id = mg2.movie_id
+            WHERE ma2.actor_id = a2.actor_id
+              AND mg2.genre_id = g2.genre_id
+        )
+    )
+)
+ORDER BY a.name, g.genre_name;
+
+================================================================================
+D7 - Category F1 (Join + Selection)
+================================================================================
+NATURAL:
+Show movies with their directors, keeping only films released after 2015 to
+focus on recent productions.
+
+RA:
+σ year>2015 (MOVIE) < DIRECTOR
+
+SQL:
+SELECT *
+FROM movie m
+JOIN director d ON m.director_id = d.director_id
+WHERE m.year > 2015;
+
+================================================================================
+D8 - Category F2 (Join + Projection)
+================================================================================
+NATURAL:
+List movie titles together with director names for a concise filmography view.
+
+RA:
+MOVIE < DIRECTOR [title, name]
+
+SQL:
+SELECT m.title, d.name
+FROM movie m
+JOIN director d ON m.director_id = d.director_id;
+
+================================================================================
+D9 - Category F3 (Join + Selection + Projection)
+================================================================================
+NATURAL:
+Display titles and director names only for movies rated above 8.0 to highlight
+top-quality collaborations.
+
+RA:
+σ imdb_rating>8 (MOVIE) < DIRECTOR [title, name]
+
+SQL:
+SELECT m.title, d.name
+FROM movie m
+JOIN director d ON m.director_id = d.director_id
+WHERE m.imdb_rating > 8.0;
+
+================================================================================
+D10 - Category F4 (Join + Multi-column Projection)
+================================================================================
+NATURAL:
+Show director names alongside their movie titles and IMDb ratings for
+performance analysis.
+
+RA:
+MOVIE < DIRECTOR [name, title, imdb_rating]
+
+SQL:
+SELECT d.name, m.title, m.imdb_rating
+FROM movie m
+JOIN director d ON m.director_id = d.director_id;
+
+================================================================================
+D11 - Category F5 (Join + Different Projection)
+================================================================================
+NATURAL:
+Show each genre with the IDs of movies assigned to it to understand catalog
+distribution.
+
+RA:
+MOVIE_GENRE < GENRE [genre_name, movie_id]
+
+SQL:
+SELECT g.genre_name, mg.movie_id
+FROM movie_genre mg
+JOIN genre g ON mg.genre_id = g.genre_id;
+
+================================================================================
+D12 - Category G2 (Single column different)
+================================================================================
+NATURAL:
+List all IMDb ratings from the movie table for statistical analysis.
+
+RA:
+MOVIE[imdb_rating]
+
+SQL:
+SELECT imdb_rating FROM movie;
+
+================================================================================
+D13 - Category G3 (Two column projection)
+================================================================================
+NATURAL:
+List each movie with its director ID to prepare grouping summaries.
+
+RA:
+MOVIE[movie_id, director_id]
+
+SQL:
+SELECT movie_id, director_id FROM movie;
+
+================================================================================
+D14 - Category G4 (Three column projection)
+================================================================================
+NATURAL:
+Show the ID, title, and release year of every movie for quick reference cards.
+
+RA:
+MOVIE[movie_id, title, year]
+
+SQL:
+SELECT movie_id, title, year FROM movie;
+
+================================================================================
+D15 - Category H1 (Union)
+================================================================================
+NATURAL:
+Combine director and actor names to build a unified list of all creative talent.
+
+RA:
+DIRECTOR[name] ∪ ACTOR[name]
+
+SQL:
+SELECT name FROM director
+UNION
+SELECT name FROM actor;
+
+================================================================================
+D16 - Category H2 (Intersect)
+================================================================================
+NATURAL:
+Find movie IDs that appear both in the movie table and in awards to identify
+recognized films.
+
+RA:
+MOVIE[movie_id] ∩ AWARD[movie_id]
+
+SQL:
+SELECT movie_id FROM movie
+INTERSECT
+SELECT movie_id FROM award;
+
+================================================================================
+D17 - Category H3 (Difference)
+================================================================================
+NATURAL:
+Find directors who have not directed any movie yet to target for new projects.
+
+RA:
+DIRECTOR[director_id] \ MOVIE[director_id]
+
+SQL:
+SELECT director_id FROM director
+EXCEPT
+SELECT director_id FROM movie;
+
+================================================================================
+D18 - Category I1 (Inner Join)
+================================================================================
+NATURAL:
+List all movies that have at least one award to highlight recognized titles.
+
+RA:
+MOVIE < AWARD
+
+SQL:
+SELECT DISTINCT m.*
+FROM movie m
+JOIN award a ON m.movie_id = a.movie_id;
+
+================================================================================
+D19 - Category I2 (Inner Join + Projection)
+================================================================================
+NATURAL:
+Show movie titles together with each award name they received for reporting.
+
+RA:
+MOVIE < AWARD [title, award_name]
+
+SQL:
+SELECT m.title, a.award_name
+FROM movie m
+JOIN award a ON m.movie_id = a.movie_id;
+
+================================================================================
+D20 - Category J (Same query in 3 SQL statements - version 1)
+================================================================================
+NATURAL:
+Find awarded movies using an EXISTS predicate as one of the three required
+query variants.
+
+RA:
+MOVIE < AWARD [movie_id, title]
+
+SQL:
+SELECT m.movie_id, m.title
+FROM movie m
+WHERE EXISTS (
+    SELECT 1 FROM award a WHERE a.movie_id = m.movie_id
+);
+
+================================================================================
+D21 - Category J (Same query in 3 SQL statements - version 2)
+================================================================================
+NATURAL:
+Find awarded movies using an IN predicate as the second variant of the same
+query.
+
+RA:
+MOVIE < AWARD [movie_id, title]
+
+SQL:
+SELECT m.movie_id, m.title
+FROM movie m
+WHERE m.movie_id IN (
+    SELECT a.movie_id FROM award a
+);
+
+================================================================================
+D22 - Category J (Same query in 3 SQL statements - version 3)
+================================================================================
+NATURAL:
+Find awarded movies using a direct JOIN as the third variant of the same query.
+
+RA:
+MOVIE < AWARD [movie_id, title]
+
+SQL:
+SELECT DISTINCT m.movie_id, m.title
+FROM movie m
+JOIN award a ON m.movie_id = a.movie_id;
+
+================================================================================
+D23 - Category K (Full table)
+================================================================================
+NATURAL:
+Show every column and row from the movie table for a full catalog export.
+
+RA:
+MOVIE
+
+SQL:
+SELECT * FROM movie;
+
+================================================================================
+D24 - Category L (Distinct values)
+================================================================================
+NATURAL:
+List all distinct release years present in the movie table to understand
+production history.
+
+RA:
+MOVIE[year]
+
+SQL:
+SELECT DISTINCT year FROM movie;
+
+================================================================================
+D25 - Category M (Query over a view)
+================================================================================
+NATURAL:
+Using the movie_details view, list high-rated movies with director and studio
+information for executive reporting. (Run CREATE VIEW movie_details ... once
+before executing this query.)
+
+RA:
+σ imdb_rating>8 (MOVIE)
+
+SQL:
+SELECT *
+FROM movie_details
+WHERE imdb_rating > 8.0
+ORDER BY imdb_rating DESC;
+
+================================================================================
+D26 - Category N (Left outer join)
+================================================================================
+NATURAL:
+Show all studios with their country information, including studios missing a
+country assignment.
+
+RA:
+STUDIO *> COUNTRY
+
+SQL:
+SELECT *
+FROM studio s
+LEFT JOIN country c ON s.country_id = c.country_id;
+
+================================================================================
+D27 - Category O (Projection with 4 columns)
+================================================================================
+NATURAL:
+Display movie title, release year, IMDb rating, and runtime for comprehensive
+film snapshots.
+
+RA:
+MOVIE[title, year, imdb_rating, runtime]
+
+SQL:
+SELECT title, year, imdb_rating, runtime FROM movie;
+
+================================================================================
+D28 - Category P (Cartesian Product)
+================================================================================
+NATURAL:
+Generate every combination of genres and countries to explore potential market
+segments.
+
+RA:
+GENRE × COUNTRY
+
+SQL:
+SELECT *
+FROM genre
+CROSS JOIN country;
+
+================================================================================
+D29 - Category CN (Left join highlighting NULLs)
+================================================================================
+NATURAL:
+List all movies with their award information, keeping rows for movies that
+have never won so gaps remain visible.
+
+RA:
+MOVIE *> AWARD
+
+SQL:
+SELECT *
+FROM movie m
+LEFT JOIN award a ON m.movie_id = a.movie_id;
+
+================================================================================
+D30 - Category D1N (Left join on D1 relationship)
+================================================================================
+NATURAL:
+List all directors together with their movies, including directors who have no
+films yet, to ensure the roster is complete.
+
+RA:
+DIRECTOR *> MOVIE
+
+SQL:
+SELECT *
+FROM director d
+LEFT JOIN movie m ON d.director_id = m.director_id;
+
+================================================================================
+END OF FILE
+================================================================================

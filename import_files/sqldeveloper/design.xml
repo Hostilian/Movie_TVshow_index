@@ -1,0 +1,75 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<Design target="PostgreSQL 13" version="4.2" name="MovieDatabase">
+   <Object class="Model" name="MovieDatabase" id="model_1">
+      <Property name="lastDesigner">xozte001</Property>
+      <Object class="Entity" name="DIRECTOR" id="entity_1">
+         <Property name="stereotype">primary</Property>
+         <Object class="Attribute" name="director_id" id="attr_1_1"/>
+         <Object class="Attribute" name="name" id="attr_1_2"/>
+         <Object class="Attribute" name="birth_year" id="attr_1_3"/>
+      </Object>
+      <Object class="Entity" name="ACTOR" id="entity_2">
+         <Property name="stereotype">primary</Property>
+         <Object class="Attribute" name="actor_id" id="attr_2_1"/>
+         <Object class="Attribute" name="name" id="attr_2_2"/>
+         <Object class="Attribute" name="birth_year" id="attr_2_3"/>
+      </Object>
+      <Object class="Entity" name="GENRE" id="entity_3">
+         <Property name="stereotype">primary</Property>
+         <Object class="Attribute" name="genre_id" id="attr_3_1"/>
+         <Object class="Attribute" name="genre_name" id="attr_3_2"/>
+      </Object>
+      <Object class="Entity" name="COUNTRY" id="entity_4">
+         <Property name="stereotype">primary</Property>
+         <Object class="Attribute" name="country_id" id="attr_4_1"/>
+         <Object class="Attribute" name="country_name" id="attr_4_2"/>
+         <Object class="Attribute" name="country_code" id="attr_4_3"/>
+      </Object>
+      <Object class="Entity" name="STUDIO" id="entity_5">
+         <Property name="stereotype">primary</Property>
+         <Object class="Attribute" name="studio_id" id="attr_5_1"/>
+         <Object class="Attribute" name="studio_name" id="attr_5_2"/>
+         <Object class="Attribute" name="founded_year" id="attr_5_3"/>
+         <Object class="Attribute" name="country_id" id="attr_5_4"/>
+      </Object>
+      <Object class="Entity" name="MOVIE" id="entity_6">
+         <Property name="stereotype">primary</Property>
+         <Object class="Attribute" name="movie_id" id="attr_6_1"/>
+         <Object class="Attribute" name="imdb_id" id="attr_6_2"/>
+         <Object class="Attribute" name="title" id="attr_6_3"/>
+         <Object class="Attribute" name="year" id="attr_6_4"/>
+         <Object class="Attribute" name="runtime" id="attr_6_5"/>
+         <Object class="Attribute" name="imdb_rating" id="attr_6_6"/>
+         <Object class="Attribute" name="plot" id="attr_6_7"/>
+         <Object class="Attribute" name="director_id" id="attr_6_8"/>
+         <Object class="Attribute" name="studio_id" id="attr_6_9"/>
+         <Object class="Attribute" name="sequel_of" id="attr_6_10"/>
+      </Object>
+      <Object class="Entity" name="USER_RATING" id="entity_7">
+         <Property name="stereotype">primary</Property>
+         <Object class="Attribute" name="rating_id" id="attr_7_1"/>
+         <Object class="Attribute" name="movie_id" id="attr_7_2"/>
+         <Object class="Attribute" name="user_name" id="attr_7_3"/>
+         <Object class="Attribute" name="rating_value" id="attr_7_4"/>
+         <Object class="Attribute" name="review_text" id="attr_7_5"/>
+      </Object>
+      <Object class="Entity" name="AWARD" id="entity_8">
+         <Property name="stereotype">primary</Property>
+         <Object class="Attribute" name="award_id" id="attr_8_1"/>
+         <Object class="Attribute" name="award_name" id="attr_8_2"/>
+         <Object class="Attribute" name="category" id="attr_8_3"/>
+         <Object class="Attribute" name="year_awarded" id="attr_8_4"/>
+         <Object class="Attribute" name="movie_id" id="attr_8_5"/>
+         <Object class="Attribute" name="is_winner" id="attr_8_6"/>
+      </Object>
+      <Object class="Relation" name="MOVIE_ACTOR" id="rel_1">
+         <Property name="stereotype">binding</Property>
+      </Object>
+      <Object class="Relation" name="MOVIE_GENRE" id="rel_2">
+         <Property name="stereotype">binding</Property>
+      </Object>
+      <Object class="Relation" name="MOVIE_COUNTRY" id="rel_3">
+         <Property name="stereotype">binding</Property>
+      </Object>
+   </Object>
+</Design>

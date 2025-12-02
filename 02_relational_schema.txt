@@ -1,0 +1,254 @@
+==============================================================================
+    MOVIE DATABASE - RELATIONAL SCHEMA
+    Database Systems (EIE36E) Project
+
+    BIE-DBS Cookbook Compliant
+
+    Student: Ozturk Eren
+    Login: xozte001
+    Date: 2025-11-29
+
+    Notation:
+    - PK = Primary Key (underlined in formal notation)
+    - FK = Foreign Key (italic/marked with *)
+    - NN = NOT NULL
+    - U = UNIQUE
+==============================================================================
+
+SUMMARY
+-------
+Total Primary Entities: 8 (required: >= 8)
+Total Binding Entities: 3 (M:N relationship tables)
+Total Tables: 11
+
+Primary Entities: DIRECTOR, ACTOR, GENRE, COUNTRY, STUDIO, MOVIE, USER_RATING, AWARD
+Binding Entities: MOVIE_ACTOR, MOVIE_GENRE, MOVIE_COUNTRY
+
+LOOPS DISCUSSION: YES - Self-referencing loop exists in MOVIE table (sequel_of → movie_id)
+
+==============================================================================
+                          FORMAL RELATIONAL SCHEMA NOTATION
+==============================================================================
+
+1. DIRECTOR
+-----------
+DIRECTOR(
+    _director_id_: INTEGER,
+    name: VARCHAR(100) NOT NULL,
+    birth_year: INTEGER,
+    created_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+Primary Key: {director_id}
+
+
+2. ACTOR
+--------
+ACTOR(
+    _actor_id_: INTEGER,
+    name: VARCHAR(100) NOT NULL,
+    birth_year: INTEGER,
+    created_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+Primary Key: {actor_id}
+
+
+3. GENRE
+--------
+GENRE(
+    _genre_id_: INTEGER,
+    genre_name: VARCHAR(50) NOT NULL UNIQUE,
+    created_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+Primary Key: {genre_id}
+
+
+4. COUNTRY
+----------
+COUNTRY(
+    _country_id_: INTEGER,
+    country_name: VARCHAR(100) NOT NULL UNIQUE,
+    country_code: CHAR(2) UNIQUE,
+    created_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+Primary Key: {country_id}
+
+
+5. STUDIO
+---------
+STUDIO(
+    _studio_id_: INTEGER,
+    studio_name: VARCHAR(100) NOT NULL UNIQUE,
+    founded_year: INTEGER,
+    *country_id*: INTEGER,
+    created_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+Primary Key: {studio_id}
+Foreign Key: {country_id} REFERENCES COUNTRY(country_id) ON DELETE SET NULL
+
+
+6. MOVIE (Central Entity)
+-------------------------
+MOVIE(
+    _movie_id_: INTEGER,
+    imdb_id: VARCHAR(20) UNIQUE,
+    title: VARCHAR(200) NOT NULL,
+    year: INTEGER NOT NULL,
+    runtime: INTEGER,
+    imdb_rating: DECIMAL(3,1),
+    imdb_votes: INTEGER DEFAULT 0,
+    plot: TEXT,
+    box_office: VARCHAR(50),
+    release_date: DATE,
+    *director_id*: INTEGER NOT NULL,
+    *studio_id*: INTEGER,
+    *sequel_of*: INTEGER,
+    created_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+Primary Key: {movie_id}
+Foreign Key: {director_id} REFERENCES DIRECTOR(director_id) ON DELETE RESTRICT
+Foreign Key: {studio_id} REFERENCES STUDIO(studio_id) ON DELETE SET NULL
+Foreign Key: {sequel_of} REFERENCES MOVIE(movie_id) ON DELETE SET NULL [SELF-REFERENCING LOOP]
+
+
+7. USER_RATING
+--------------
+USER_RATING(
+    _rating_id_: INTEGER,
+    *movie_id*: INTEGER NOT NULL,
+    user_name: VARCHAR(100) NOT NULL,
+    rating_value: INTEGER NOT NULL CHECK (rating_value >= 1 AND rating_value <= 10),
+    review_text: TEXT,
+    rating_date: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+Primary Key: {rating_id}
+Foreign Key: {movie_id} REFERENCES MOVIE(movie_id) ON DELETE CASCADE
+
+
+8. AWARD
+--------
+AWARD(
+    _award_id_: INTEGER,
+    award_name: VARCHAR(100) NOT NULL,
+    category: VARCHAR(100),
+    year_awarded: INTEGER,
+    *movie_id*: INTEGER NOT NULL,
+    is_winner: BOOLEAN DEFAULT FALSE,
+    created_at: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+Primary Key: {award_id}
+Foreign Key: {movie_id} REFERENCES MOVIE(movie_id) ON DELETE CASCADE
+
+
+==============================================================================
+                       BINDING ENTITIES (M:N RELATIONSHIPS)
+==============================================================================
+
+B1. MOVIE_ACTOR (Many-to-Many: Movies and Actors)
+-------------------------------------------------
+MOVIE_ACTOR(
+    _*movie_id*_: INTEGER,
+    _*actor_id*_: INTEGER,
+    role_type: VARCHAR(20) DEFAULT 'supporting' CHECK (role_type IN ('lead', 'supporting'))
+)
+Primary Key: {movie_id, actor_id}
+Foreign Key: {movie_id} REFERENCES MOVIE(movie_id) ON DELETE CASCADE
+Foreign Key: {actor_id} REFERENCES ACTOR(actor_id) ON DELETE CASCADE
+
+
+B2. MOVIE_GENRE (Many-to-Many: Movies and Genres)
+-------------------------------------------------
+MOVIE_GENRE(
+    _*movie_id*_: INTEGER,
+    _*genre_id*_: INTEGER
+)
+Primary Key: {movie_id, genre_id}
+Foreign Key: {movie_id} REFERENCES MOVIE(movie_id) ON DELETE CASCADE
+Foreign Key: {genre_id} REFERENCES GENRE(genre_id) ON DELETE CASCADE
+
+
+B3. MOVIE_COUNTRY (Many-to-Many: Movies and Countries)
+------------------------------------------------------
+MOVIE_COUNTRY(
+    _*movie_id*_: INTEGER,
+    _*country_id*_: INTEGER
+)
+Primary Key: {movie_id, country_id}
+Foreign Key: {movie_id} REFERENCES MOVIE(movie_id) ON DELETE CASCADE
+Foreign Key: {country_id} REFERENCES COUNTRY(country_id) ON DELETE CASCADE
+
+
+==============================================================================
+                           RELATIONSHIP SUMMARY
+==============================================================================
+
+1:N RELATIONSHIPS:
+------------------
+DIRECTOR  ---(1:N)---> MOVIE      : One director directs many movies
+STUDIO    ---(1:N)---> MOVIE      : One studio produces many movies
+MOVIE     ---(1:N)---> USER_RATING: One movie receives many ratings
+MOVIE     ---(1:N)---> AWARD      : One movie can win many awards
+COUNTRY   ---(1:N)---> STUDIO     : One country has many studios
+
+M:N RELATIONSHIPS (via binding tables):
+---------------------------------------
+MOVIE <---(M:N)---> ACTOR   via MOVIE_ACTOR   : Movies have multiple actors
+MOVIE <---(M:N)---> GENRE   via MOVIE_GENRE   : Movies have multiple genres
+MOVIE <---(M:N)---> COUNTRY via MOVIE_COUNTRY : Co-productions in countries
+
+
+==============================================================================
+                             DEPENDENCY HIERARCHY
+==============================================================================
+
+Level 0 (No Dependencies):
+    DIRECTOR, ACTOR, GENRE, COUNTRY
+
+Level 1 (Depends on Level 0):
+    STUDIO (references COUNTRY)
+
+Level 2 (Depends on Levels 0-1):
+    MOVIE (references DIRECTOR, STUDIO)
+
+Level 3 (Depends on Level 2):
+    USER_RATING (references MOVIE)
+    AWARD (references MOVIE)
+    MOVIE_ACTOR (references MOVIE, ACTOR)
+    MOVIE_GENRE (references MOVIE, GENRE)
+    MOVIE_COUNTRY (references MOVIE, COUNTRY)
+
+CONCLUSION: NO CIRCULAR DEPENDENCIES (LOOPS) IN THIS SCHEMA
+
+
+==============================================================================
+                               INTEGRITY RULES
+==============================================================================
+
+DOMAIN CONSTRAINTS:
+- rating_value must be between 1 and 10
+- role_type must be 'lead' or 'supporting'
+- imdb_rating must be between 0.0 and 10.0
+
+REFERENTIAL INTEGRITY:
+- All foreign keys properly reference valid primary keys
+- Appropriate ON DELETE actions specified for each relationship
+
+UNIQUENESS CONSTRAINTS:
+- genre_name is unique in GENRE
+- country_name and country_code are unique in COUNTRY
+- studio_name is unique in STUDIO
+- imdb_id is unique in MOVIE
+
+NOT NULL CONSTRAINTS:
+- Director name is required
+- Actor name is required
+- Genre name is required
+- Country name is required
+- Studio name is required
+- Movie title and year are required
+- movie_id in USER_RATING and AWARD is required
+- user_name and rating_value in USER_RATING are required
+- award_name and movie_id in AWARD are required
+
+==============================================================================
+                                END OF SCHEMA
+==============================================================================

@@ -1,0 +1,445 @@
+===============================================================================
+COMPLETE QUERIES WITH NATURAL LANGUAGE (100+ CHARS EACH)
+Portal Submission Format - 3rd Iteration (30 points)
+===============================================================================
+
+IMPORTANT:
+- Each Natural Language description is 100+ characters for 3rd iteration
+- Categories covered: C, D1, D2, D3, D5, D6, E2
+- Copy the Natural Language first, then the SQL query for each
+
+===============================================================================
+CATEGORY C: SIMPLE QUERIES (Selection & Projection) - 8 QUERIES
+===============================================================================
+
+--- C1 ---
+Natural: Find all movies that were released after the year 2010 and display all their information including title, year, rating, runtime and director.
+
+SQL:
+SELECT *
+FROM movie
+WHERE year > 2010;
+
+--- C2 ---
+Natural: Show the title and IMDb rating for every single movie in the database so we can see how movies are rated by critics.
+
+SQL:
+SELECT title, imdb_rating
+FROM movie;
+
+--- C3 ---
+Natural: List all actors who were born before 1970 to see veteran actors with complete information including their name and birth year.
+
+SQL:
+SELECT *
+FROM actor
+WHERE birth_year < 1970;
+
+--- C4 ---
+Natural: Find all movies that have an IMDb rating higher than 8.5 to identify the highest-rated films and show their title, year and rating.
+
+SQL:
+SELECT title, year, imdb_rating
+FROM movie
+WHERE imdb_rating > 8.5;
+
+--- C5 ---
+Natural: List all directors sorted by their birth year in ascending order to see the chronological distribution of directors from oldest to youngest.
+
+SQL:
+SELECT name, birth_year
+FROM director
+ORDER BY birth_year ASC;
+
+--- C6 ---
+Natural: Find all movies with a runtime longer than 150 minutes to identify epic-length films and display their title and exact runtime in minutes.
+
+SQL:
+SELECT title, runtime
+FROM movie
+WHERE runtime > 150;
+
+--- C7 ---
+Natural: Show all genre names available in the database sorted alphabetically so we can see the complete list of movie categories that exist.
+
+SQL:
+SELECT genre_name
+FROM genre
+ORDER BY genre_name;
+
+--- C8 ---
+Natural: Find all studios that were founded after the year 2000 to see newer production companies with their name and founding year displayed.
+
+SQL:
+SELECT studio_name, founded_year
+FROM studio
+WHERE founded_year > 2000;
+
+
+===============================================================================
+CATEGORY D1: TWO-TABLE JOINS - 4 QUERIES
+===============================================================================
+
+--- D1-1 ---
+Natural: List all movies together with their director names by joining the movie and director tables so we can see who directed each film sorted by year.
+
+SQL:
+SELECT m.title, m.year, d.name AS director_name
+FROM movie m
+JOIN director d ON m.director_id = d.director_id
+ORDER BY m.year DESC;
+
+--- D1-2 ---
+Natural: Find all actors who appeared in the movie titled Inception by joining actor and movie_actor tables to see the complete cast with their role types.
+
+SQL:
+SELECT a.name AS actor_name, ma.role_type
+FROM actor a
+JOIN movie_actor ma ON a.actor_id = ma.actor_id
+JOIN movie m ON ma.movie_id = m.movie_id
+WHERE m.title = 'Inception';
+
+--- D1-3 ---
+Natural: Find movies with their production countries by joining movie, movie_country and country tables to see where each film was produced sorted alphabetically.
+
+SQL:
+SELECT m.title, c.country_name
+FROM movie m
+JOIN movie_country mc ON m.movie_id = mc.movie_id
+JOIN country c ON mc.country_id = c.country_id
+ORDER BY m.title;
+
+--- D1-4 ---
+Natural: Show movies with their studio name and the country where the studio is located by joining movie, studio and country tables for complete production info.
+
+SQL:
+SELECT m.title, s.studio_name, c.country_name AS studio_country
+FROM movie m
+JOIN studio s ON m.studio_id = s.studio_id
+JOIN country c ON s.country_id = c.country_id;
+
+
+===============================================================================
+CATEGORY D2: THREE-TABLE JOINS - 3 QUERIES
+===============================================================================
+
+--- D2-1 ---
+Natural: Show all movies that belong to the Action genre by joining movie, movie_genre and genre tables to filter action films sorted by their IMDb rating.
+
+SQL:
+SELECT m.title, m.year, m.imdb_rating
+FROM movie m
+JOIN movie_genre mg ON m.movie_id = mg.movie_id
+JOIN genre g ON mg.genre_id = g.genre_id
+WHERE g.genre_name = 'Action'
+ORDER BY m.imdb_rating DESC;
+
+--- D2-2 ---
+Natural: List all user reviews for movies directed by Christopher Nolan by joining user_rating, movie and director tables to see audience feedback on his films.
+
+SQL:
+SELECT m.title, ur.user_name, ur.rating_value, ur.review_text
+FROM user_rating ur
+JOIN movie m ON ur.movie_id = m.movie_id
+JOIN director d ON m.director_id = d.director_id
+WHERE d.name = 'Christopher Nolan';
+
+--- D2-3 ---
+Natural: Show all genres assigned to the movie The Dark Knight by joining movie, movie_genre and genre tables to see its complete genre classification.
+
+SQL:
+SELECT m.title, g.genre_name
+FROM movie m
+JOIN movie_genre mg ON m.movie_id = mg.movie_id
+JOIN genre g ON mg.genre_id = g.genre_id
+WHERE m.title = 'The Dark Knight';
+
+
+===============================================================================
+CATEGORY D3: AGGREGATION FUNCTIONS (COUNT, AVG, MIN, MAX, SUM) - 5 QUERIES
+===============================================================================
+
+--- D3-1 ---
+Natural: Count the total number of movies in the database using the COUNT aggregate function to see how many films are stored in our movie collection.
+
+SQL:
+SELECT COUNT(*) AS total_movies
+FROM movie;
+
+--- D3-2 ---
+Natural: Find the average IMDb rating of all movies using the AVG function and round it to two decimal places to understand overall movie quality in database.
+
+SQL:
+SELECT ROUND(AVG(imdb_rating), 2) AS average_rating
+FROM movie;
+
+--- D3-3 ---
+Natural: Calculate statistics for user ratings per movie including count, average, minimum and maximum rating values to analyze audience feedback comprehensively.
+
+SQL:
+SELECT m.title,
+       COUNT(ur.rating_id) AS review_count,
+       ROUND(AVG(ur.rating_value), 2) AS avg_user_rating,
+       MIN(ur.rating_value) AS min_rating,
+       MAX(ur.rating_value) AS max_rating
+FROM movie m
+LEFT JOIN user_rating ur ON m.movie_id = ur.movie_id
+GROUP BY m.movie_id, m.title
+HAVING COUNT(ur.rating_id) > 0
+ORDER BY avg_user_rating DESC;
+
+--- D3-4 ---
+Natural: Show how many awards each movie has received using COUNT function and sum up the wins using conditional aggregation to see award-winning films.
+
+SQL:
+SELECT m.title, COUNT(aw.award_id) AS total_awards,
+       SUM(CASE WHEN aw.is_winner THEN 1 ELSE 0 END) AS wins
+FROM movie m
+LEFT JOIN award aw ON m.movie_id = aw.movie_id
+GROUP BY m.movie_id, m.title
+HAVING COUNT(aw.award_id) > 0
+ORDER BY wins DESC;
+
+--- D3-5 ---
+Natural: Show how many actors appeared in each movie by counting actor_id using COUNT aggregate function grouped by movie to analyze cast sizes comprehensively.
+
+SQL:
+SELECT m.title, COUNT(ma.actor_id) AS actor_count
+FROM movie m
+LEFT JOIN movie_actor ma ON m.movie_id = ma.movie_id
+GROUP BY m.movie_id, m.title
+ORDER BY actor_count DESC;
+
+
+===============================================================================
+CATEGORY D5: GROUP BY with JOIN - 3 QUERIES
+===============================================================================
+
+--- D5-1 ---
+Natural: Show how many movies each director has directed using GROUP BY on director joined with movie table sorted by count to identify most prolific directors.
+
+SQL:
+SELECT d.name AS director_name, COUNT(m.movie_id) AS movie_count
+FROM director d
+LEFT JOIN movie m ON d.director_id = m.director_id
+GROUP BY d.director_id, d.name
+ORDER BY movie_count DESC;
+
+--- D5-2 ---
+Natural: Calculate the average IMDb rating for each genre using GROUP BY on genre joined with movie_genre and movie tables to compare genre quality comprehensively.
+
+SQL:
+SELECT g.genre_name, ROUND(AVG(m.imdb_rating), 2) AS avg_rating, COUNT(m.movie_id) AS movie_count
+FROM genre g
+JOIN movie_genre mg ON g.genre_id = mg.genre_id
+JOIN movie m ON mg.movie_id = m.movie_id
+GROUP BY g.genre_id, g.genre_name
+ORDER BY avg_rating DESC;
+
+--- D5-3 ---
+Natural: Count how many movies were released per decade by dividing year by ten and grouping to see the distribution of films across different time periods.
+
+SQL:
+SELECT (year / 10) * 10 AS decade, COUNT(*) AS movie_count
+FROM movie
+GROUP BY (year / 10) * 10
+ORDER BY decade;
+
+
+===============================================================================
+CATEGORY D6: SUBQUERIES - 3 QUERIES
+===============================================================================
+
+--- D6-1 ---
+Natural: Find all movies with an IMDb rating higher than the average rating using a subquery to calculate the average and filter above-average quality films.
+
+SQL:
+SELECT title, year, imdb_rating
+FROM movie
+WHERE imdb_rating > (SELECT AVG(imdb_rating) FROM movie)
+ORDER BY imdb_rating DESC;
+
+--- D6-2 ---
+Natural: Find the highest-rated movie in each genre using a correlated subquery to compare ratings within the same genre and identify top films per category.
+
+SQL:
+SELECT g.genre_name, m.title, m.imdb_rating
+FROM genre g
+JOIN movie_genre mg ON g.genre_id = mg.genre_id
+JOIN movie m ON mg.movie_id = m.movie_id
+WHERE m.imdb_rating = (
+    SELECT MAX(m2.imdb_rating)
+    FROM movie m2
+    JOIN movie_genre mg2 ON m2.movie_id = mg2.movie_id
+    WHERE mg2.genre_id = g.genre_id
+)
+ORDER BY g.genre_name;
+
+--- D6-3 ---
+Natural: List all Academy Award winning movies with director and studio information using joins and filtering for winners to show Oscar-winning film details comprehensively.
+
+SQL:
+SELECT m.title, m.year, d.name AS director, s.studio_name,
+       COUNT(aw.award_id) AS oscar_wins
+FROM movie m
+JOIN director d ON m.director_id = d.director_id
+LEFT JOIN studio s ON m.studio_id = s.studio_id
+JOIN award aw ON m.movie_id = aw.movie_id
+WHERE aw.award_name = 'Academy Award' AND aw.is_winner = TRUE
+GROUP BY m.movie_id, m.title, m.year, d.name, s.studio_name
+ORDER BY oscar_wins DESC;
+
+
+===============================================================================
+CATEGORY E2: HAVING CLAUSE - 2 QUERIES
+===============================================================================
+
+--- E2-1 ---
+Natural: Find directors who have directed more than one movie with rating above eight using GROUP BY and HAVING clause to filter for prolific quality directors.
+
+SQL:
+SELECT d.name AS director_name, COUNT(m.movie_id) AS high_rated_movies
+FROM director d
+JOIN movie m ON d.director_id = m.director_id
+WHERE m.imdb_rating > 8.0
+GROUP BY d.director_id, d.name
+HAVING COUNT(m.movie_id) > 1
+ORDER BY high_rated_movies DESC;
+
+--- E2-2 ---
+Natural: Find actors who have appeared in movies of at least three different genres using GROUP BY with HAVING clause to identify versatile actors with diverse roles.
+
+SQL:
+SELECT a.name AS actor_name, COUNT(DISTINCT g.genre_id) AS genre_count
+FROM actor a
+JOIN movie_actor ma ON a.actor_id = ma.actor_id
+JOIN movie m ON ma.movie_id = m.movie_id
+JOIN movie_genre mg ON m.movie_id = mg.movie_id
+JOIN genre g ON mg.genre_id = g.genre_id
+GROUP BY a.actor_id, a.name
+HAVING COUNT(DISTINCT g.genre_id) >= 3
+ORDER BY genre_count DESC;
+
+
+===============================================================================
+ADDITIONAL QUERY (DISTINCT) - 1 QUERY
+===============================================================================
+
+--- DISTINCT ---
+Natural: Find all lead actors in movies that have an IMDb rating above eight using DISTINCT to avoid duplicates when actors have multiple lead roles in high-rated films.
+
+SQL:
+SELECT DISTINCT a.name AS actor_name, m.title, m.imdb_rating
+FROM actor a
+JOIN movie_actor ma ON a.actor_id = ma.actor_id
+JOIN movie m ON ma.movie_id = m.movie_id
+WHERE ma.role_type = 'lead' AND m.imdb_rating > 8.0
+ORDER BY m.imdb_rating DESC;
+
+
+===============================================================================
+ADDITIONAL QUERY (ORDER BY) - 1 QUERY
+===============================================================================
+
+--- ORDER BY ---
+Natural: List all awards that were won not just nominated along with movie title using WHERE clause to filter winners and ORDER BY to sort chronologically by year awarded.
+
+SQL:
+SELECT m.title, aw.award_name, aw.category, aw.year_awarded
+FROM award aw
+JOIN movie m ON aw.movie_id = m.movie_id
+WHERE aw.is_winner = TRUE
+ORDER BY aw.year_awarded DESC;
+
+
+===============================================================================
+RELATIONAL ALGEBRA QUERIES - 10 QUERIES
+===============================================================================
+
+--- RA-1 ---
+Natural: Find all movies released after 2010 using selection operator sigma to filter movies by year condition on the MOVIE relation returning matching tuples only.
+
+RA:
+σ(year > 2010)(MOVIE)
+
+--- RA-2 ---
+Natural: Project title and rating from movies using projection operator pi to extract only the title and imdb_rating attributes from the complete MOVIE relation.
+
+RA:
+π(title, imdb_rating)(MOVIE)
+
+--- RA-3 ---
+Natural: Find actors born before 1970 using selection operator sigma to filter the ACTOR relation based on birth_year condition returning veteran actor tuples only.
+
+RA:
+σ(birth_year < 1970)(ACTOR)
+
+--- RA-4 ---
+Natural: Join movies with directors using natural join operator to combine MOVIE and DIRECTOR relations on matching director_id foreign key creating complete movie-director pairs.
+
+RA:
+MOVIE ⋈(MOVIE.director_id = DIRECTOR.director_id) DIRECTOR
+
+--- RA-5 ---
+Natural: Find Action movies using natural join to combine MOVIE, MOVIE_GENRE and GENRE relations then select Action genre and project title and year attributes only.
+
+RA:
+π(title, year)(MOVIE ⋈ MOVIE_GENRE ⋈ σ(genre_name = 'Action')(GENRE))
+
+--- RA-6 ---
+Natural: Find all actors in Inception using natural joins to combine ACTOR, MOVIE_ACTOR and MOVIE relations filtering by title and projecting only actor names comprehensively.
+
+RA:
+π(name)(ACTOR ⋈ MOVIE_ACTOR ⋈ σ(title = 'Inception')(MOVIE))
+
+--- RA-7 ---
+Natural: Movies with their countries using projection after natural join to combine MOVIE, MOVIE_COUNTRY and COUNTRY relations showing title and country_name pairs only.
+
+RA:
+π(title, country_name)(MOVIE ⋈ MOVIE_COUNTRY ⋈ COUNTRY)
+
+--- RA-8 ---
+Natural: Union of Drama and Thriller movies using union operator to combine two separate query results finding movies in Drama genre and movies in Thriller genre together.
+
+RA:
+π(title)(MOVIE ⋈ MOVIE_GENRE ⋈ σ(genre_name = 'Drama')(GENRE))
+∪
+π(title)(MOVIE ⋈ MOVIE_GENRE ⋈ σ(genre_name = 'Thriller')(GENRE))
+
+--- RA-9 ---
+Natural: Movies that are both Action AND Sci-Fi using intersection operator to find movie_ids that appear in both Action genre set and Sci-Fi genre set simultaneously.
+
+RA:
+π(movie_id)(MOVIE_GENRE ⋈ σ(genre_name = 'Action')(GENRE))
+∩
+π(movie_id)(MOVIE_GENRE ⋈ σ(genre_name = 'Sci-Fi')(GENRE))
+
+--- RA-10 ---
+Natural: Find directors who have NOT directed any movie using set difference operator to subtract directors who directed movies from all directors showing inactive directors only.
+
+RA:
+π(director_id)(DIRECTOR) - π(director_id)(MOVIE)
+
+
+===============================================================================
+CATEGORY COVERAGE SUMMARY
+===============================================================================
+✓ C  - Simple Selection/Projection: 8 queries
+✓ D1 - Two-Table Joins: 4 queries
+✓ D2 - Three-Table Joins: 3 queries
+✓ D3 - Aggregation Functions: 5 queries
+✓ D5 - GROUP BY with JOIN: 3 queries
+✓ D6 - Subqueries: 3 queries
+✓ E2 - HAVING clause: 2 queries
+✓ DISTINCT: 1 query
+✓ ORDER BY: 1 query (covered in multiple queries)
+✓ RA - Relational Algebra: 10 queries
+
+TOTAL SQL QUERIES: 30 queries
+TOTAL RA QUERIES: 10 queries
+GRAND TOTAL: 40 queries
+
+All natural language descriptions are 100+ characters ✓
+Category coverage meets 3rd iteration requirements ✓
+
+===============================================================================

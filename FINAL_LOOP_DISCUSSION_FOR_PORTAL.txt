@@ -1,0 +1,36 @@
+================================================================================
+            LOOP DISCUSSION - COPY THIS TO PORTAL
+================================================================================
+
+YES - there IS a circular dependency (loop) in the Movie Database schema.
+
+THE LOOP:
+The MOVIE table contains a self-referencing foreign key called "sequel_of" 
+that points back to movie_id within the same table. This creates a circular 
+dependency where MOVIE references itself:
+
+    MOVIE.sequel_of → MOVIE.movie_id
+
+This relationship models movie sequel chains. For example, "The Dark Knight 
+Rises" can reference "The Dark Knight" which can reference "Batman Begins", 
+forming a franchise chain within the same entity.
+
+WHY THIS LOOP EXISTS:
+Movie franchises naturally form sequel relationships. The sequel_of column 
+enables queries like finding all sequels to a movie or tracing complete 
+franchise histories. This is a legitimate real-world modeling requirement 
+for a movie database.
+
+TECHNICAL IMPLICATIONS:
+1. Recursive CTEs (WITH RECURSIVE) are needed to traverse sequel chains
+2. Original movies must be inserted before their sequels
+3. ON DELETE SET NULL prevents orphan references when originals are deleted
+4. Application logic must prevent circular chains (Movie A → B → A)
+
+BENEFITS:
+Enables franchise analysis, sequel chain traversal, and maintains normalized 
+relationships between related movies without requiring a separate table.
+
+================================================================================
+Word Count: ~200 words
+================================================================================

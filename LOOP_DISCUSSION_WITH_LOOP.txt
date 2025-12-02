@@ -1,0 +1,96 @@
+LOOP DISCUSSION - Movie Database Schema
+
+This database model contains ONE LOOP (circular dependency) through a self-referencing relationship in the MOVIE table.
+
+========================================================================
+IDENTIFIED LOOP: MOVIE → MOVIE (Self-Reference)
+========================================================================
+
+The MOVIE table contains a "sequel_of" column that references movie_id in the same table:
+
+    MOVIE.sequel_of → MOVIE.movie_id
+
+This creates a recursive relationship where:
+- A movie can reference another movie as its predecessor (prequel)
+- The referenced movie can itself reference another movie
+- This forms a chain: Movie C → Movie B → Movie A
+
+EXAMPLE IN DATABASE:
+- "The Dark Knight" is marked as sequel of "Inception"
+- "Dune" is marked as sequel of "The Lord of the Rings"
+
+========================================================================
+WHY THIS LOOP EXISTS
+========================================================================
+
+This loop is INTENTIONAL and serves a practical purpose:
+1. Movie franchises often have sequels, prequels, and spin-offs
+2. Users need to navigate between related movies in a series
+3. Real-world examples: Star Wars saga, Marvel Cinematic Universe, Harry Potter series
+
+========================================================================
+LOOP ANALYSIS
+========================================================================
+
+Type: Self-referencing foreign key (recursive relationship)
+Cardinality: Optional 1:N (one movie can have many sequels, each sequel has at most one predecessor)
+Depth: Potentially unlimited (trilogies, sagas can have many entries)
+
+Dependency Graph:
+    MOVIE ←──────┐
+      │          │
+      └── sequel_of (FK to movie_id)
+
+========================================================================
+HANDLING THE LOOP
+========================================================================
+
+POTENTIAL ISSUES:
+1. Infinite recursion when querying movie chains
+2. Cascade delete could cause unexpected deletions
+3. Insert order matters for referential integrity
+
+SOLUTIONS IMPLEMENTED:
+1. sequel_of allows NULL - breaks mandatory cycle
+2. ON DELETE SET NULL prevents cascade issues
+3. Queries use recursive CTEs with depth limits:
+
+   WITH RECURSIVE movie_chain AS (
+       SELECT movie_id, title, sequel_of, 1 as depth
+       FROM movie WHERE sequel_of IS NULL
+       UNION ALL
+       SELECT m.movie_id, m.title, m.sequel_of, mc.depth + 1
+       FROM movie m
+       JOIN movie_chain mc ON m.sequel_of = mc.movie_id
+       WHERE mc.depth < 10  -- Depth limit prevents infinite recursion
+   )
+   SELECT * FROM movie_chain;
+
+========================================================================
+OTHER RELATIONSHIPS (NO LOOPS)
+========================================================================
+
+The remaining relationships form a Directed Acyclic Graph (DAG):
+
+Level 0 (Independent): DIRECTOR, ACTOR, GENRE, COUNTRY
+Level 1: STUDIO → COUNTRY
+Level 2: MOVIE → DIRECTOR, STUDIO
+Level 3: USER_RATING, AWARD → MOVIE
+Binding: MOVIE_ACTOR, MOVIE_GENRE, MOVIE_COUNTRY
+
+These relationships have no circular dependencies.
+
+========================================================================
+CONCLUSION
+========================================================================
+
+The database contains exactly ONE controlled loop:
+- MOVIE.sequel_of → MOVIE.movie_id (self-reference for sequels)
+
+This loop is:
+✓ Intentional (represents real-world movie relationships)
+✓ Optional (NULL allowed, preventing mandatory cycles)
+✓ Controlled (queries use depth limits)
+✓ Safe (ON DELETE SET NULL prevents cascade issues)
+
+All other relationships are acyclic, ensuring clean query paths and predictable behavior for the majority of database operations.

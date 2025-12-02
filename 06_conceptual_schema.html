@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Database - Conceptual Schema (ER Diagram)</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            margin: 0 0 10px 0;
+        }
+        .header .meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .section h2 {
+            color: #333;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        .mermaid {
+            text-align: center;
+            background: #fafafa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #667eea;
+            color: white;
+        }
+        tr:hover {
+            background: #f5f5f5;
+        }
+        .entity-primary { color: #2ecc71; font-weight: bold; }
+        .entity-binding { color: #e74c3c; font-weight: bold; }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-box .number {
+            font-size: 36px;
+            font-weight: bold;
+        }
+        .stat-box .label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        .loops-box {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .loops-box h3 {
+            color: #155724;
+            margin-top: 0;
+        }
+        .dependency-flow {
+            font-family: monospace;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎬 Movie Database - Conceptual Schema</h1>
+        <div class="meta">
+            <div><strong>Student:</strong> Ozturk Eren</div>
+            <div><strong>Login:</strong> xozte001</div>
+            <div><strong>Database:</strong> xozte001</div>
+            <div><strong>Server:</strong> db.kii.pef.czu.cz</div>
+            <div><strong>Date:</strong> 2025-11-29</div>
+            <div><strong>Course:</strong> EIE36E - Database Systems</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>📊 Entity-Relationship Diagram</h2>
+        <div class="mermaid">
+erDiagram
+    DIRECTOR {
+        SERIAL director_id PK
+        VARCHAR name
+        INTEGER birth_year
+        TIMESTAMP created_at
+    }
+
+    ACTOR {
+        SERIAL actor_id PK
+        VARCHAR name
+        INTEGER birth_year
+        TIMESTAMP created_at
+    }
+
+    GENRE {
+        SERIAL genre_id PK
+        VARCHAR genre_name UK
+        TIMESTAMP created_at
+    }
+
+    COUNTRY {
+        SERIAL country_id PK
+        VARCHAR country_name UK
+        CHAR country_code UK
+        TIMESTAMP created_at
+    }
+
+    STUDIO {
+        SERIAL studio_id PK
+        VARCHAR studio_name UK
+        INTEGER founded_year
+        INTEGER country_id FK
+        TIMESTAMP created_at
+    }
+
+    MOVIE {
+        SERIAL movie_id PK
+        VARCHAR imdb_id UK
+        VARCHAR title
+        INTEGER year
+        INTEGER runtime
+        DECIMAL imdb_rating
+        INTEGER imdb_votes
+        TEXT plot
+        VARCHAR box_office
+        DATE release_date
+        INTEGER director_id FK
+        INTEGER studio_id FK
+        INTEGER sequel_of FK
+        TIMESTAMP created_at
+    }
+
+    USER_RATING {
+        SERIAL rating_id PK
+        INTEGER movie_id FK
+        VARCHAR user_name
+        INTEGER rating_value
+        TEXT review_text
+        TIMESTAMP rating_date
+    }
+
+    AWARD {
+        SERIAL award_id PK
+        VARCHAR award_name
+        VARCHAR category
+        INTEGER year_awarded
+        INTEGER movie_id FK
+        BOOLEAN is_winner
+        TIMESTAMP created_at
+    }
+
+    MOVIE_ACTOR {
+        INTEGER movie_id PK_FK
+        INTEGER actor_id PK_FK
+        VARCHAR role_type
+    }
+
+    MOVIE_GENRE {
+        INTEGER movie_id PK_FK
+        INTEGER genre_id PK_FK
+    }
+
+    MOVIE_COUNTRY {
+        INTEGER movie_id PK_FK
+        INTEGER country_id PK_FK
+    }
+
+    DIRECTOR ||--o{ MOVIE : "directs"
+    STUDIO ||--o{ MOVIE : "produces"
+    COUNTRY ||--o{ STUDIO : "headquartered_in"
+
+    MOVIE ||--o{ USER_RATING : "receives"
+    MOVIE ||--o{ AWARD : "wins"
+
+    MOVIE ||--o{ MOVIE_ACTOR : "has"
+    ACTOR ||--o{ MOVIE_ACTOR : "appears_in"
+
+    MOVIE ||--o{ MOVIE_GENRE : "has"
+    GENRE ||--o{ MOVIE_GENRE : "categorizes"
+
+    MOVIE ||--o{ MOVIE_COUNTRY : "produced_in"
+    COUNTRY ||--o{ MOVIE_COUNTRY : "produces"
+    
+    MOVIE ||--o| MOVIE : "sequel_of"
+        </div>
+
+        <div class="stats">
+            <div class="stat-box">
+                <div class="number">8</div>
+                <div class="label">Primary Entities</div>
+            </div>
+            <div class="stat-box">
+                <div class="number">3</div>
+                <div class="label">Binding Entities</div>
+            </div>
+            <div class="stat-box">
+                <div class="number">11</div>
+                <div class="label">Total Tables</div>
+            </div>
+            <div class="stat-box">
+                <div class="number">9</div>
+                <div class="label">Relationships</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>📋 Entity Summary</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Entity Type</th>
+                    <th>Entity Name</th>
+                    <th>Description</th>
+                    <th>Key Attributes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="entity-primary">Primary</td>
+                    <td>DIRECTOR</td>
+                    <td>Film directors with name and birth year</td>
+                    <td>director_id (PK), name, birth_year</td>
+                </tr>
+                <tr>
+                    <td class="entity-primary">Primary</td>
+                    <td>ACTOR</td>
+                    <td>Film actors with name and birth year</td>
+                    <td>actor_id (PK), name, birth_year</td>
+                </tr>
+                <tr>
+                    <td class="entity-primary">Primary</td>
+                    <td>GENRE</td>
+                    <td>Film genre categories (Action, Comedy, etc.)</td>
+                    <td>genre_id (PK), genre_name (UK)</td>
+                </tr>
+                <tr>
+                    <td class="entity-primary">Primary</td>
+                    <td>COUNTRY</td>
+                    <td>Countries for production origins</td>
+                    <td>country_id (PK), country_name (UK), country_code (UK)</td>
+                </tr>
+                <tr>
+                    <td class="entity-primary">Primary</td>
+                    <td>STUDIO</td>
+                    <td>Production studios/companies</td>
+                    <td>studio_id (PK), studio_name (UK), country_id (FK)</td>
+                </tr>
+                <tr>
+                    <td class="entity-primary">Primary</td>
+                    <td>MOVIE</td>
+                    <td>Central entity - core movie information</td>
+                    <td>movie_id (PK), imdb_id (UK), title, director_id (FK), studio_id (FK)</td>
+                </tr>
+                <tr>
+                    <td class="entity-primary">Primary</td>
+                    <td>USER_RATING</td>
+                    <td>User-submitted ratings and reviews</td>
+                    <td>rating_id (PK), movie_id (FK), rating_value</td>
+                </tr>
+                <tr>
+                    <td class="entity-primary">Primary</td>
+                    <td>AWARD</td>
+                    <td>Awards and nominations received</td>
+                    <td>award_id (PK), movie_id (FK), award_name, is_winner</td>
+                </tr>
+                <tr>
+                    <td class="entity-binding">Binding</td>
+                    <td>MOVIE_ACTOR</td>
+                    <td>M:N relationship movies-actors</td>
+                    <td>movie_id (PK, FK), actor_id (PK, FK), role_type</td>
+                </tr>
+                <tr>
+                    <td class="entity-binding">Binding</td>
+                    <td>MOVIE_GENRE</td>
+                    <td>M:N relationship movies-genres</td>
+                    <td>movie_id (PK, FK), genre_id (PK, FK)</td>
+                </tr>
+                <tr>
+                    <td class="entity-binding">Binding</td>
+                    <td>MOVIE_COUNTRY</td>
+                    <td>M:N relationship movies-countries</td>
+                    <td>movie_id (PK, FK), country_id (PK, FK)</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>🔗 Relationship Summary</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Relationship</th>
+                    <th>Type</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>directs</td><td>1:N</td><td>DIRECTOR</td><td>MOVIE</td><td>One director directs many movies</td></tr>
+                <tr><td>produces</td><td>1:N</td><td>STUDIO</td><td>MOVIE</td><td>One studio produces many movies</td></tr>
+                <tr><td>headquartered_in</td><td>N:1</td><td>STUDIO</td><td>COUNTRY</td><td>Studios located in countries</td></tr>
+                <tr><td>receives_rating</td><td>1:N</td><td>MOVIE</td><td>USER_RATING</td><td>Movies receive user ratings</td></tr>
+                <tr><td>wins_award</td><td>1:N</td><td>MOVIE</td><td>AWARD</td><td>Movies receive awards</td></tr>
+                <tr><td>acts_in</td><td>M:N</td><td>ACTOR</td><td>MOVIE</td><td>Actors appear in movies (via MOVIE_ACTOR)</td></tr>
+                <tr><td>has_genre</td><td>M:N</td><td>MOVIE</td><td>GENRE</td><td>Movies belong to genres (via MOVIE_GENRE)</td></tr>
+                <tr><td>produced_in</td><td>M:N</td><td>MOVIE</td><td>COUNTRY</td><td>International co-productions (via MOVIE_COUNTRY)</td></tr>
+                <tr><td><strong>sequel_of</strong></td><td><strong>1:N</strong></td><td><strong>MOVIE</strong></td><td><strong>MOVIE</strong></td><td><strong>Self-reference: sequel points to original (LOOP)</strong></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>🔄 Loops Discussion</h2>
+        <div class="loops-box" style="background: #fff3cd; border-color: #ffc107;">
+            <h3>⚠️ Statement: YES - Circular Dependency EXISTS</h3>
+            <p>There <strong>IS a circular dependency (loop)</strong> in this database model through the self-referencing <strong>sequel_of</strong> relationship.</p>
+
+            <h4>The Loop - Self-Referencing MOVIE Entity:</h4>
+            <div class="dependency-flow">
+                MOVIE.sequel_of → MOVIE.movie_id<br>
+                A movie can reference another movie as its predecessor.<br>
+                Example: "The Dark Knight Rises" → "The Dark Knight" → "Batman Begins"
+            </div>
+
+            <h4>Why This Loop Exists:</h4>
+            <p>Movie franchises naturally form sequel chains. The <code>sequel_of</code> relationship models this real-world requirement, allowing queries like "find all sequels to Inception" or "trace the entire franchise history."</p>
+
+            <h4>Technical Implications:</h4>
+            <ul>
+                <li><strong>Recursive Queries:</strong> Requires WITH RECURSIVE CTEs to traverse sequel chains</li>
+                <li><strong>Insertion Order:</strong> Must insert original movies before sequels</li>
+                <li><strong>CASCADE Behavior:</strong> ON DELETE SET NULL prevents orphan sequel references</li>
+                <li><strong>Cycle Prevention:</strong> Application logic must prevent circular sequel chains (A→B→A)</li>
+            </ul>
+
+            <h4>Benefits of This Loop:</h4>
+            <p>Enables franchise analysis, sequel chain traversal, and maintains relationships between related movies in a normalized structure.</p>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            er: {
+                diagramPadding: 20,
+                layoutDirection: 'TB',
+                minEntityWidth: 100,
+                minEntityHeight: 75,
+                entityPadding: 15,
+                stroke: '#333',
+                fill: '#f9f9f9',
+                fontSize: 12
+            }
+        });
+    </script>
+</body>
+</html>

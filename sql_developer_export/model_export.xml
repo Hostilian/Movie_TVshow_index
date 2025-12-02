@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+============================================================
+    SQL DEVELOPER DATA MODELER EXPORT
+    Movie Database Model
+
+    Student: Ozturk Eren
+    Login: xkonj108
+    Date: 2025-11-29
+
+    Note: This is a simplified export format.
+    For full SQL Developer export, use Data Modeler GUI.
+============================================================
+-->
+<DataModelerExport version="4.2">
+    <ModelInfo>
+        <Name>Movie Database</Name>
+        <Description>Movie and TV Database Management System for EIE36E course</Description>
+        <Author>Ozturk Eren (xozte001)</Author>
+        <Created>2025-11-29</Created>
+        <DatabaseType>PostgreSQL</DatabaseType>
+        <Schema>public</Schema>
+    </ModelInfo>
+
+    <Entities>
+        <!-- PRIMARY ENTITIES (8) -->
+        <Entity id="E1" name="DIRECTOR" type="primary">
+            <Columns>
+                <Column name="director_id" type="SERIAL" pk="true" nullable="false"/>
+                <Column name="name" type="VARCHAR(100)" nullable="false"/>
+                <Column name="birth_year" type="INTEGER" nullable="true"/>
+                <Column name="created_at" type="TIMESTAMP" default="CURRENT_TIMESTAMP"/>
+            </Columns>
+            <Constraints>
+                <PrimaryKey name="pk_director" columns="director_id"/>
+                <Check name="chk_director_birth_year" expression="birth_year IS NULL OR (birth_year >= 1850 AND birth_year <= 2010)"/>
+            </Constraints>
+        </Entity>
+
+        <Entity id="E2" name="ACTOR" type="primary">
+            <Columns>
+                <Column name="actor_id" type="SERIAL" pk="true" nullable="false"/>
+                <Column name="name" type="VARCHAR(100)" nullable="false"/>
+                <Column name="birth_year" type="INTEGER" nullable="true"/>
+                <Column name="created_at" type="TIMESTAMP" default="CURRENT_TIMESTAMP"/>
+            </Columns>
+            <Constraints>
+                <PrimaryKey name="pk_actor" columns="actor_id"/>
+                <Check name="chk_actor_birth_year" expression="birth_year IS NULL OR (birth_year >= 1850 AND birth_year <= 2010)"/>
+            </Constraints>
+        </Entity>
+
+        <Entity id="E3" name="GENRE" type="primary">
+            <Columns>
+                <Column name="genre_id" type="SERIAL" pk="true" nullable="false"/>
+                <Column name="genre_name" type="VARCHAR(50)" nullable="false" unique="true"/>
+                <Column name="created_at" type="TIMESTAMP" default="CURRENT_TIMESTAMP"/>
+            </Columns>
+            <Constraints>
+                <PrimaryKey name="pk_genre" columns="genre_id"/>
+                <Unique name="uq_genre_name" columns="genre_name"/>
+            </Constraints>
+        </Entity>
+
+        <Entity id="E4" name="COUNTRY" type="primary">
+            <Columns>
+                <Column name="country_id" type="SERIAL" pk="true" nullable="false"/>
+                <Column name="country_name" type="VARCHAR(100)" nullable="false" unique="true"/>
+                <Column name="country_code" type="CHAR(2)" nullable="true" unique="true"/>
+                <Column name="created_at" type="TIMESTAMP" default="CURRENT_TIMESTAMP"/>
+            </Columns>
+            <Constraints>
+                <PrimaryKey name="pk_country" columns="country_id"/>
+                <Unique name="uq_country_name" columns="country_name"/>
+                <Unique name="uq_country_code" columns="country_code"/>
+            </Constraints>
+        </Entity>
+
+        <Entity id="E5" name="STUDIO" type="primary">
+            <Columns>
+                <Column name="studio_id" type="SERIAL" pk="true" nullable="false"/>
+                <Column name="studio_name" type="VARCHAR(100)" nullable="false" unique="true"/>
+                <Column name="founded_year" type="INTEGER" nullable="true"/>
+                <Column name="country_id" type="INTEGER" nullable="true" fk="true"/>
+                <Column name="created_at" type="TIMESTAMP" default="CURRENT_TIMESTAMP"/>
+            </Columns>
+            <Constraints>
+                <PrimaryKey name="pk_studio" columns="studio_id"/>
+                <Unique name="uq_studio_name" columns="studio_name"/>
+                <ForeignKey name="fk_studio_country" columns="country_id" references="COUNTRY(country_id)" onDelete="SET NULL"/>
+            </Constraints>
+        </Entity>
+
+        <Entity id="E6" name="MOVIE" type="primary" central="true">
+            <Columns>
+                <Column name="movie_id" type="SERIAL" pk="true" nullable="false"/>
+                <Column name="imdb_id" type="VARCHAR(20)" nullable="true" unique="true"/>
+                <Column name="title" type="VARCHAR(200)" nullable="false"/>
+                <Column name="year" type="INTEGER" nullable="false"/>
+                <Column name="runtime" type="INTEGER" nullable="true"/>
+                <Column name="imdb_rating" type="DECIMAL(3,1)" nullable="true"/>
+                <Column name="imdb_votes" type="INTEGER" default="0"/>
+                <Column name="plot" type="TEXT" nullable="true"/>
+                <Column name="box_office" type="VARCHAR(50)" nullable="true"/>
+                <Column name="release_date" type="DATE" nullable="true"/>
+                <Column name="director_id" type="INTEGER" nullable="false" fk="true"/>
+                <Column name="studio_id" type="INTEGER" nullable="true" fk="true"/>
+                <Column name="created_at" type="TIMESTAMP" default="CURRENT_TIMESTAMP"/>
+            </Columns>
+            <Constraints>
+                <PrimaryKey name="pk_movie" columns="movie_id"/>
+                <Unique name="uq_imdb_id" columns="imdb_id"/>
+                <ForeignKey name="fk_movie_director" columns="director_id" references="DIRECTOR(director_id)" onDelete="RESTRICT"/>
+                <ForeignKey name="fk_movie_studio" columns="studio_id" references="STUDIO(studio_id)" onDelete="SET NULL"/>
+                <Check name="chk_movie_year" expression="year >= 1888 AND year <= 2030"/>
+                <Check name="chk_movie_runtime" expression="runtime IS NULL OR runtime > 0"/>
+                <Check name="chk_movie_imdb_rating" expression="imdb_rating IS NULL OR (imdb_rating >= 0 AND imdb_rating <= 10)"/>
+            </Constraints>
+        </Entity>
+
+        <Entity id="E7" name="USER_RATING" type="primary">
+            <Columns>
+                <Column name="rating_id" type="SERIAL" pk="true" nullable="false"/>
+                <Column name="movie_id" type="INTEGER" nullable="false" fk="true"/>
+                <Column name="user_name" type="VARCHAR(100)" nullable="false"/>
+                <Column name="rating_value" type="INTEGER" nullable="false"/>
+                <Column name="review_text" type="TEXT" nullable="true"/>
+                <Column name="rating_date" type="TIMESTAMP" default="CURRENT_TIMESTAMP"/>
+            </Columns>
+            <Constraints>
+                <PrimaryKey name="pk_user_rating" columns="rating_id"/>
+                <ForeignKey name="fk_rating_movie" columns="movie_id" references="MOVIE(movie_id)" onDelete="CASCADE"/>
+                <Check name="chk_rating_value" expression="rating_value >= 1 AND rating_value <= 10"/>
+            </Constraints>
+        </Entity>
+
+        <Entity id="E8" name="AWARD" type="primary">
+            <Columns>
+                <Column name="award_id" type="SERIAL" pk="true" nullable="false"/>
+                <Column name="award_name" type="VARCHAR(100)" nullable="false"/>
+                <Column name="category" type="VARCHAR(100)" nullable="true"/>
+                <Column name="year_awarded" type="INTEGER" nullable="true"/>
+                <Column name="movie_id" type="INTEGER" nullable="false" fk="true"/>
+                <Column name="is_winner" type="BOOLEAN" default="FALSE"/>
+                <Column name="created_at" type="TIMESTAMP" default="CURRENT_TIMESTAMP"/>
+            </Columns>
+            <Constraints>
+                <PrimaryKey name="pk_award" columns="award_id"/>
+                <ForeignKey name="fk_award_movie" columns="movie_id" references="MOVIE(movie_id)" onDelete="CASCADE"/>
+            </Constraints>
+        </Entity>
+
+        <!-- BINDING ENTITIES (3) -->
+        <Entity id="B1" name="MOVIE_ACTOR" type="binding">
+            <Columns>
+                <Column name="movie_id" type="INTEGER" pk="true" nullable="false" fk="true"/>
+                <Column name="actor_id" type="INTEGER" pk="true" nullable="false" fk="true"/>
+                <Column name="role_type" type="VARCHAR(20)" default="supporting"/>
+            </Columns>
+            <Constraints>
+                <PrimaryKey name="pk_movie_actor" columns="movie_id, actor_id"/>
+                <ForeignKey name="fk_movie_actor_movie" columns="movie_id" references="MOVIE(movie_id)" onDelete="CASCADE"/>
+                <ForeignKey name="fk_movie_actor_actor" columns="actor_id" references="ACTOR(actor_id)" onDelete="CASCADE"/>
+                <Check name="chk_role_type" expression="role_type IN ('lead', 'supporting')"/>
+            </Constraints>
+        </Entity>
+
+        <Entity id="B2" name="MOVIE_GENRE" type="binding">
+            <Columns>
+                <Column name="movie_id" type="INTEGER" pk="true" nullable="false" fk="true"/>
+                <Column name="genre_id" type="INTEGER" pk="true" nullable="false" fk="true"/>
+            </Columns>
+            <Constraints>
+                <PrimaryKey name="pk_movie_genre" columns="movie_id, genre_id"/>
+                <ForeignKey name="fk_movie_genre_movie" columns="movie_id" references="MOVIE(movie_id)" onDelete="CASCADE"/>
+                <ForeignKey name="fk_movie_genre_genre" columns="genre_id" references="GENRE(genre_id)" onDelete="CASCADE"/>
+            </Constraints>
+        </Entity>
+
+        <Entity id="B3" name="MOVIE_COUNTRY" type="binding">
+            <Columns>
+                <Column name="movie_id" type="INTEGER" pk="true" nullable="false" fk="true"/>
+                <Column name="country_id" type="INTEGER" pk="true" nullable="false" fk="true"/>
+            </Columns>
+            <Constraints>
+                <PrimaryKey name="pk_movie_country" columns="movie_id, country_id"/>
+                <ForeignKey name="fk_movie_country_movie" columns="movie_id" references="MOVIE(movie_id)" onDelete="CASCADE"/>
+                <ForeignKey name="fk_movie_country_country" columns="country_id" references="COUNTRY(country_id)" onDelete="CASCADE"/>
+            </Constraints>
+        </Entity>
+    </Entities>
+
+    <Relationships>
+        <Relationship id="R1" name="directs" type="1:N" from="DIRECTOR" to="MOVIE" via="director_id"/>
+        <Relationship id="R2" name="produces" type="1:N" from="STUDIO" to="MOVIE" via="studio_id"/>
+        <Relationship id="R3" name="headquartered_in" type="N:1" from="STUDIO" to="COUNTRY" via="country_id"/>
+        <Relationship id="R4" name="receives_rating" type="1:N" from="MOVIE" to="USER_RATING" via="movie_id"/>
+        <Relationship id="R5" name="wins_award" type="1:N" from="MOVIE" to="AWARD" via="movie_id"/>
+        <Relationship id="R6" name="acts_in" type="M:N" from="ACTOR" to="MOVIE" via="MOVIE_ACTOR"/>
+        <Relationship id="R7" name="has_genre" type="M:N" from="MOVIE" to="GENRE" via="MOVIE_GENRE"/>
+        <Relationship id="R8" name="produced_in" type="M:N" from="MOVIE" to="COUNTRY" via="MOVIE_COUNTRY"/>
+    </Relationships>
+
+    <Statistics>
+        <TotalPrimaryEntities>8</TotalPrimaryEntities>
+        <TotalBindingEntities>3</TotalBindingEntities>
+        <TotalTables>11</TotalTables>
+        <TotalRelationships>8</TotalRelationships>
+        <CircularDependencies>NONE</CircularDependencies>
+    </Statistics>
+</DataModelerExport>

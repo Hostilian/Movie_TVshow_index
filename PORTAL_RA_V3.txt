@@ -1,0 +1,57 @@
+================================================================================
+PORTAL RA EXPRESSIONS - COPY-PASTE READY (V3)
+================================================================================
+
+D1:  MOVIE[title, year]
+D2:  MOVIE[title]
+D3:  MOVIE[movie_id] \ AWARD[movie_id]
+D4:  σ name='Christopher Nolan' (DIRECTOR) < MOVIE [movie_id, title]
+D5:  MOVIE_ACTOR < MOVIE_GENRE [actor_id, genre_id] ÷ GENRE[genre_id]
+D6:  (MOVIE_ACTOR < MOVIE_GENRE [actor_id, genre_id] ÷ GENRE[genre_id]) < ACTOR [actor_id, name]
+D7:  σ year>2015 (MOVIE) < DIRECTOR
+D8:  MOVIE < DIRECTOR [title, name]
+D9:  σ imdb_rating>8 (MOVIE) < DIRECTOR [title, name]
+D10: MOVIE < DIRECTOR [name, title, imdb_rating]
+D11: MOVIE_GENRE < GENRE [genre_name, movie_id]
+D12: MOVIE[imdb_rating]
+D13: MOVIE[movie_id, director_id]
+D14: MOVIE[movie_id, title, year]
+D15: DIRECTOR[name] ∪ ACTOR[name]
+D16: MOVIE[movie_id] ∩ AWARD[movie_id]
+D17: DIRECTOR[director_id] \ MOVIE[director_id]
+D18: MOVIE < AWARD
+D19: MOVIE < AWARD [title, award_name]
+D20: MOVIE < AWARD [movie_id, title]
+D21: MOVIE < AWARD [movie_id, title]
+D22: MOVIE < AWARD [movie_id, title]
+D23: MOVIE
+D24: MOVIE[year]
+D25: σ imdb_rating>8 (MOVIE)
+D26: STUDIO *> COUNTRY
+D27: MOVIE[title, year, imdb_rating, runtime]
+D28: GENRE × COUNTRY
+D29: MOVIE *> AWARD
+D30: DIRECTOR *> MOVIE
+
+================================================================================
+SYNTAX RULES USED:
+================================================================================
+1. Selection: σ condition (TABLE)   -- sigma before table in parens
+2. Join + Projection: TABLE < TABLE [col1, col2]  -- NO parens around join!
+3. Left outer join: TABLE *> TABLE
+4. Set difference: TABLE[col] \ TABLE[col]
+5. Division: TABLE < TABLE [cols] ÷ TABLE[col]
+
+================================================================================
+IF SIGMA (σ) DOESN'T WORK, TRY THESE ALTERNATIVES:
+================================================================================
+D4:  (DIRECTOR < MOVIE) (name = 'Christopher Nolan') [movie_id, title]
+D7:  (MOVIE < DIRECTOR) (year > 2015)
+D9:  (MOVIE < DIRECTOR) (imdb_rating > 8) [title, name]
+D25: MOVIE (imdb_rating > 8)
+
+================================================================================
+IF DIVISION (÷) DOESN'T WORK FOR D5/D6:
+================================================================================
+D5:  ACTOR[actor_id] \ ((ACTOR × GENRE)[actor_id, genre_id] \ (MOVIE_ACTOR < MOVIE_GENRE)[actor_id, genre_id])[actor_id]
+
