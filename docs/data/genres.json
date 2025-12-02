@@ -1,0 +1,14 @@
+[
+  {"genre_id": 1, "name": "Action"},
+  {"genre_id": 2, "name": "Drama"},
+  {"genre_id": 3, "name": "Thriller"},
+  {"genre_id": 4, "name": "Sci-Fi"},
+  {"genre_id": 5, "name": "Crime"},
+  {"genre_id": 6, "name": "Romance"},
+  {"genre_id": 7, "name": "Horror"},
+  {"genre_id": 8, "name": "Comedy"},
+  {"genre_id": 9, "name": "War"},
+  {"genre_id": 10, "name": "Biography"},
+  {"genre_id": 11, "name": "Mystery"},
+  {"genre_id": 12, "name": "Adventure"}
+]

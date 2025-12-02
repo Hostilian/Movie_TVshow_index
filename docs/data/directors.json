@@ -1,0 +1,17 @@
+[
+  {"director_id": 1, "name": "Christopher Nolan", "birth_year": 1970},
+  {"director_id": 2, "name": "Frank Darabont", "birth_year": 1959},
+  {"director_id": 3, "name": "Quentin Tarantino", "birth_year": 1963},
+  {"director_id": 4, "name": "Robert Zemeckis", "birth_year": 1952},
+  {"director_id": 5, "name": "The Wachowskis", "birth_year": 1965},
+  {"director_id": 6, "name": "David Fincher", "birth_year": 1962},
+  {"director_id": 7, "name": "Martin Scorsese", "birth_year": 1942},
+  {"director_id": 8, "name": "Francis Ford Coppola", "birth_year": 1939},
+  {"director_id": 9, "name": "Steven Spielberg", "birth_year": 1946},
+  {"director_id": 10, "name": "Jonathan Demme", "birth_year": 1944},
+  {"director_id": 11, "name": "Ridley Scott", "birth_year": 1937},
+  {"director_id": 12, "name": "Denis Villeneuve", "birth_year": 1967},
+  {"director_id": 13, "name": "Alfonso Cuaron", "birth_year": 1961},
+  {"director_id": 14, "name": "James Cameron", "birth_year": 1954},
+  {"director_id": 15, "name": "Peter Jackson", "birth_year": 1961}
+]

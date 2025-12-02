@@ -24,13 +24,13 @@
             --card-bg: rgba(30, 30, 30, 0.95);
             --glass: rgba(255, 255, 255, 0.05);
             /* Index theme colors */
-            --idx-bg: #1a1a2e;
-            --idx-surface: #16213e;
-            --idx-border: #0f3460;
-            --idx-accent: #e94560;
-            --idx-green: #00ff88;
-            --idx-text: #eaeaea;
-            --idx-muted: #888;
+            --idx-bg: #0f1115;
+            --idx-surface: #111a23;
+            --idx-border: #1b2532;
+            --idx-accent: #4ecdf6;
+            --idx-highlight: #d0ff45;
+            --idx-text: #f1f5f9;
+            --idx-muted: #8d97a7;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -45,7 +45,8 @@
 
         body.index-mode {
             background: var(--idx-bg);
-            font-family: 'Ubuntu Mono', 'Courier New', monospace;
+            color: var(--idx-text);
+            font-family: 'Ubuntu Mono', 'Consolas', 'Courier New', monospace;
         }
 
         ::-webkit-scrollbar { width: 8px; }
