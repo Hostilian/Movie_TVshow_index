@@ -1,0 +1,47 @@
+[
+  {
+    "id": "series-breaking-bad",
+    "title": "Breaking Bad",
+    "release_year": 2008,
+    "seasons": 5,
+    "steward": "Vince Gilligan",
+    "studio": "AMC",
+    "categories": ["Crime", "Drama"]
+  },
+  {
+    "id": "series-the-expanse",
+    "title": "The Expanse",
+    "release_year": 2015,
+    "seasons": 6,
+    "steward": "Mark Fergus & Hawk Ostby",
+    "studio": "Alcon Entertainment",
+    "categories": ["Science Fiction", "Adventure"]
+  },
+  {
+    "id": "series-fargo",
+    "title": "Fargo",
+    "release_year": 2014,
+    "seasons": 5,
+    "steward": "Noah Hawley",
+    "studio": "FX Productions",
+    "categories": ["Crime", "Anthology"]
+  },
+  {
+    "id": "series-chernobyl",
+    "title": "Chernobyl",
+    "release_year": 2019,
+    "seasons": 1,
+    "steward": "Craig Mazin",
+    "studio": "HBO",
+    "categories": ["Historical", "Drama"]
+  },
+  {
+    "id": "series-dark",
+    "title": "Dark",
+    "release_year": 2017,
+    "seasons": 3,
+    "steward": "Baran bo Odar & Jantje Friese",
+    "studio": "W&B Television",
+    "categories": ["Science Fiction", "Mystery"]
+  }
+]

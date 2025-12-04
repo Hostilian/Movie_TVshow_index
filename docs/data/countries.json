@@ -1,0 +1,12 @@
+[
+  {"country_id": 1, "name": "USA", "iso_code": "US"},
+  {"country_id": 2, "name": "United Kingdom", "iso_code": "GB"},
+  {"country_id": 3, "name": "France", "iso_code": "FR"},
+  {"country_id": 4, "name": "Germany", "iso_code": "DE"},
+  {"country_id": 5, "name": "Italy", "iso_code": "IT"},
+  {"country_id": 6, "name": "Canada", "iso_code": "CA"},
+  {"country_id": 7, "name": "Australia", "iso_code": "AU"},
+  {"country_id": 8, "name": "Japan", "iso_code": "JP"},
+  {"country_id": 9, "name": "South Korea", "iso_code": "KR"},
+  {"country_id": 10, "name": "Spain", "iso_code": "ES"}
+]

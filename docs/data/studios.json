@@ -1,0 +1,12 @@
+[
+  {"studio_id": 1, "name": "Warner Bros.", "founded_year": 1923},
+  {"studio_id": 2, "name": "Columbia Pictures", "founded_year": 1924},
+  {"studio_id": 3, "name": "Miramax Films", "founded_year": 1979},
+  {"studio_id": 4, "name": "Paramount Pictures", "founded_year": 1912},
+  {"studio_id": 5, "name": "20th Century Fox", "founded_year": 1935},
+  {"studio_id": 6, "name": "Universal Pictures", "founded_year": 1912},
+  {"studio_id": 7, "name": "DreamWorks", "founded_year": 1994},
+  {"studio_id": 8, "name": "Orion Pictures", "founded_year": 1978},
+  {"studio_id": 9, "name": "New Line Cinema", "founded_year": 1967},
+  {"studio_id": 10, "name": "Lionsgate", "founded_year": 1997}
+]

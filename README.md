@@ -25,7 +25,10 @@ This project implements a **Cinema Database System** designed to manage movie me
 - **Production details** (countries, studios)
 - **User reception** (ratings, awards)
 
-**Data Source:** [OMDb API](https://www.omdbapi.com/) (API Key: 11888daa)
+**Data Sources:**
+- Authoritative PostgreSQL schema hosted at `db.kii.pef.czu.cz`
+- Automated exports (JSON) powering GitHub Pages preview
+- Optional FastAPI service for live querying (see [Integration](#-data-integration))
 
 ---
 
@@ -60,11 +63,18 @@ Movie_TVshow_index/
 ├── 05_all_queries_NEW.sql    # All 30 queries (RA + SQL)
 ├── 06_conceptual_schema.md   # Conceptual schema docs
 ├── conceptual_schema.json    # JSON schema for portal
-├── docs/                     # GitHub Pages website
-│   ├── index.html           # Main site (dual-view: Netflix + Index)
+├── docs/                     # GitHub Pages website (Pages root)
+│   ├── index.html           # Main site (immersive view + analyst index)
+│   ├── adapter.js           # Data adapter (static JSON + optional API)
 │   ├── .nojekyll            # Prevent Jekyll processing
-│   └── data/                # Static JSON data
-│       └── database.json    # Complete database export
+│   └── data/                # Static JSON snapshots
+│       ├── movies.json      # Core movies dataset
+│       ├── actors.json      # Actor dimension
+│       ├── directors.json   # Director dimension
+│       ├── genres.json      # Genre dimension
+│       ├── countries.json   # Production countries
+│       ├── studios.json     # Studios lookup
+│       └── database.json    # Consolidated export (all tables)
 ├── .github/workflows/
 │   └── jekyll-gh-pages.yml  # GitHub Pages CI/CD
 └── README.md                # This file
@@ -81,12 +91,17 @@ Movie_TVshow_index/
 - **Search:** Real-time search across all movies
 - **Responsive:** Works on desktop, tablet, and mobile
 
-### 📁 Index View (Pirate Bay-style)
+### 📁 Index View (Archivist mode)
 - **File Listing:** All movies displayed as files with metadata
 - **Columns:** Title, Year, Size, Runtime, Rating, Director
 - **Sortable:** Click headers to sort by any column
 - **Search:** Filter the file listing in real-time
-- **Database-connected:** Pulls data directly from database.json
+- **Data-aware:** Backed by `database.json` or live API responses
+
+### 📊 Dashboard Metrics
+- **Auto metrics:** Totals for movies, actors, directors, genres and storage volume
+- **Taxonomy cards:** Breakdown of catalogue by category, HDR/UHD mix
+- **Filter memory:** Keeps active filter across live searches
 
 ---
 
@@ -111,9 +126,8 @@ SELECT COUNT(*) FROM movie;  -- Should return 15
 ### 2. Local Preview
 
 ```bash
-# Start local server
-cd docs
-python -m http.server 8080
+# Start local web server from repo root
+python -m http.server 8080 --directory docs
 
 # Visit http://localhost:8080
 ```
@@ -126,8 +140,49 @@ git commit -m "Deploy cinema database site"
 git push origin main
 
 # Enable Pages: Settings → Pages → Source: GitHub Actions
-# Deployment configured via .github/workflows/jekyll-gh-pages.yml
+# Automated publish via .github/workflows/jekyll-gh-pages.yml
+
 ```
+
+---
+
+## 🔌 Data Integration
+
+### Static JSON (default)
+- Export scripts (`export_data.py`) refresh the JSON snapshots inside `docs/data/`
+- GitHub Pages serves these files without needing a backend
+- The adapter caches fetches client-side for snappy reloads
+
+### Live API (optional)
+1. Deploy the FastAPI service under `api/` (e.g., Render, Railway, Fly.io)
+2. Capture the public base URL (for example: `https://cinema-api.onrender.com`)
+3. Edit `docs/adapter.js` and set `API_URL` to that endpoint
+4. Rebuild / redeploy Pages — the site will now call `/movies`, `/actors`, `/genres`, etc.
+
+When `API_URL` is non-null the static JSON files are ignored; if the API is unreachable the console will log the failure and the UI surfaces a friendly error.
+
+### Database ➝ API ➝ Pages flow
+```
+PostgreSQL (db.kii.pef.czu.cz)
+  │  nightly export / webhook trigger
+  ▼
+FastAPI service (optional live data)
+  │  REST JSON (movies, actors, ...)
+  └──▶ docs/adapter.js fetches client-side
+
+GitHub Pages (docs/) ──► Static JSON fallback when API is null/offline
+```
+
+---
+
+## ✅ Deployment Pipeline
+
+- CI/CD via GitHub Actions (`jekyll-gh-pages.yml`)
+- Builds `docs/` into `_site` using the prebuilt Jekyll action (no Ruby setup required)
+- Publishes artefact to the `github-pages` environment (auto HTTPS, custom domain ready)
+- Workflow supports manual reruns through **Actions → Deploy Jekyll... → Run workflow**
+
+To monitor deployments, open the workflow run and expand **Deploy to GitHub Pages** for the live URL.
 
 ---
 

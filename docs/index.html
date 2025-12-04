@@ -1,1298 +1,903 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MovieDB | Index</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700&family=Ubuntu+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Indexed Catalogue · Movies & Series</title>
+    <meta name="description" content="Compact index of curated movie and television catalogue entries with searchable classifications.">
     <style>
         :root {
-            --primary: #e50914;
-            --primary-dark: #b20710;
-            --secondary: #564d4d;
-            --dark: #141414;
-            --darker: #0a0a0a;
-            --light: #f5f5f5;
-            --gold: #ffd700;
-            --green: #5cb85c;
-            --blue: #3498db;
-            --purple: #9b59b6;
-            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --card-bg: rgba(30, 30, 30, 0.95);
-            --glass: rgba(255, 255, 255, 0.05);
-            /* Index theme colors */
-            --idx-bg: #0f1115;
-            --idx-surface: #111a23;
-            --idx-border: #1b2532;
-            --idx-accent: #4ecdf6;
-            --idx-highlight: #d0ff45;
-            --idx-text: #f1f5f9;
-            --idx-muted: #8d97a7;
+            --bg: #06080d;
+            --fg: #f4f6fb;
+            --fg-muted: #9ca7bb;
+            --surface: #0e131d;
+            --surface-alt: #121927;
+            --border: #1f2b3d;
+            --accent: #4ecdf6;
+            --accent-soft: rgba(78, 205, 246, 0.12);
+            --accent-strong: #d0ff45;
+            --danger: #ff6b6b;
+            --font-base: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+            --font-mono: "Cascadia Code", "Fira Code", "SFMono-Regular", monospace;
+            --radius: 10px;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--darker);
-            color: var(--light);
-            line-height: 1.6;
-            overflow-x: hidden;
+            margin: 0;
+            font-family: var(--font-base);
+            background: var(--bg);
+            color: var(--fg);
+            line-height: 1.55;
         }
 
-        body.index-mode {
-            background: var(--idx-bg);
-            color: var(--idx-text);
-            font-family: 'Ubuntu Mono', 'Consolas', 'Courier New', monospace;
+        a {
+            color: inherit;
         }
 
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--dark); }
-        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
-
-        /* ==================== MAIN SITE HEADER ==================== */
         header {
-            position: fixed;
+            position: sticky;
             top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, transparent 100%);
-            padding: 1rem 2rem;
-            transition: all 0.3s ease;
+            z-index: 20;
+            backdrop-filter: blur(14px);
+            background: rgba(6, 8, 13, 0.92);
+            border-bottom: 1px solid var(--border);
         }
 
-        header.scrolled {
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 2px 20px rgba(0,0,0,0.5);
-        }
-
-        nav {
-            max-width: 1400px;
+        .masthead {
+            max-width: 1100px;
             margin: 0 auto;
+            padding: 1rem 1.5rem;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-        }
-
-        .nav-links a {
-            color: var(--light);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s;
-            font-size: 0.95rem;
-            cursor: pointer;
-        }
-
-        .nav-links a:hover, .nav-links a.active { color: var(--primary); }
-
-        .nav-links .index-link {
-            background: var(--idx-accent);
-            padding: 0.4rem 1rem;
-            border-radius: 4px;
-            color: white !important;
-            font-weight: 600;
-        }
-
-        .nav-links .index-link:hover {
-            background: #ff6b6b;
-        }
-
-        .search-box {
-            display: flex;
-            align-items: center;
-            background: var(--glass);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 25px;
-            padding: 0.5rem 1rem;
-            transition: all 0.3s;
-        }
-
-        .search-box:focus-within {
-            border-color: var(--primary);
-            box-shadow: 0 0 20px rgba(229, 9, 20, 0.2);
-        }
-
-        .search-box input {
-            background: transparent;
-            border: none;
-            color: var(--light);
-            outline: none;
-            width: 200px;
-            font-size: 0.9rem;
-        }
-
-        .search-box input::placeholder { color: rgba(255,255,255,0.5); }
-        .search-box i { color: rgba(255,255,255,0.5); margin-right: 0.5rem; }
-
-        /* ==================== MAIN SITE VIEW ==================== */
-        #mainSite { display: block; }
-        #indexView { display: none; }
-
-        body.index-mode #mainSite { display: none; }
-        body.index-mode #indexView { display: block; }
-        body.index-mode header { background: var(--idx-surface); border-bottom: 1px solid var(--idx-border); }
-        body.index-mode .logo { color: var(--idx-accent); font-family: 'Ubuntu Mono', monospace; }
-
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, var(--darker) 100%),
-                        url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            text-align: center;
-            padding: 2rem;
-            position: relative;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 200px;
-            background: linear-gradient(to top, var(--darker), transparent);
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 1;
-            max-width: 900px;
-        }
-
-        .hero h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, #fff 0%, #e50914 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero p {
-            font-size: 1.3rem;
-            color: rgba(255,255,255,0.8);
-            margin-bottom: 2rem;
-        }
-
-        .hero-stats {
-            display: flex;
-            justify-content: center;
-            gap: 3rem;
-            margin-top: 3rem;
-        }
-
-        .stat { text-align: center; }
-        .stat-number { font-size: 3rem; font-weight: 800; color: var(--primary); }
-        .stat-label { font-size: 0.9rem; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 2px; }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 1rem 2rem;
-            background: var(--primary);
-            color: white;
-            text-decoration: none;
-            border-radius: 30px;
-            font-weight: 600;
-            transition: all 0.3s;
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-
-        .btn:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(229, 9, 20, 0.4);
-        }
-
-        .btn-outline { background: transparent; border: 2px solid var(--primary); }
-        .btn-outline:hover { background: var(--primary); }
-
-        section { padding: 5rem 2rem; max-width: 1400px; margin: 0 auto; }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
-
-        .section-title {
-            font-size: 2rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .section-title i { color: var(--primary); }
-
-        .filter-tabs {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 2rem;
             flex-wrap: wrap;
-        }
-
-        .filter-tab {
-            padding: 0.75rem 1.5rem;
-            background: var(--glass);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 25px;
-            color: var(--light);
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 500;
-        }
-
-        .filter-tab:hover, .filter-tab.active {
-            background: var(--primary);
-            border-color: var(--primary);
-        }
-
-        .movie-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .movie-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer;
-            position: relative;
-        }
-
-        .movie-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-        }
-
-        .movie-poster {
-            position: relative;
-            aspect-ratio: 2/3;
-            overflow: hidden;
-        }
-
-        .movie-poster img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.4s;
-        }
-
-        .movie-card:hover .movie-poster img { transform: scale(1.1); }
-
-        .movie-rating {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.8);
-            padding: 0.4rem 0.7rem;
-            border-radius: 20px;
-            display: flex;
             align-items: center;
-            gap: 0.3rem;
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        .movie-rating i { color: var(--gold); }
-
-        .movie-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.95), transparent);
-            padding: 2rem 1rem 1rem;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.3s;
-        }
-
-        .movie-card:hover .movie-overlay { opacity: 1; transform: translateY(0); }
-
-        .movie-info { padding: 1rem; }
-        .movie-title { font-weight: 600; font-size: 1rem; margin-bottom: 0.3rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .movie-meta { display: flex; justify-content: space-between; font-size: 0.85rem; color: rgba(255,255,255,0.5); }
-
-        .movie-genres { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem; }
-        .genre-tag { background: var(--glass); padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.7rem; color: rgba(255,255,255,0.7); }
-
-        /* People scroll */
-        .people-scroll {
-            display: flex;
-            gap: 1.5rem;
-            overflow-x: auto;
-            padding-bottom: 1rem;
-            scroll-snap-type: x mandatory;
-        }
-
-        .person-card {
-            flex: 0 0 180px;
-            scroll-snap-align: start;
-            text-align: center;
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 1.5rem 1rem;
-            transition: all 0.3s;
-        }
-
-        .person-card:hover { transform: translateY(-5px); background: rgba(229, 9, 20, 0.1); }
-
-        .person-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: var(--gradient);
-            margin: 0 auto 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: white;
-        }
-
-        .person-name { font-weight: 600; margin-bottom: 0.3rem; }
-        .person-role { font-size: 0.85rem; color: rgba(255,255,255,0.5); }
-
-        /* Schema section */
-        .schema-section {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 2rem;
-            margin-top: 2rem;
-        }
-
-        .schema-title { font-size: 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; }
-        .schema-title i { color: var(--primary); }
-
-        .table-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
-
-        .table-item {
-            background: var(--glass);
-            border-radius: 10px;
-            padding: 1rem;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.3s;
-        }
-
-        .table-item:hover { border-color: var(--primary); }
-        .table-name { font-weight: 600; color: var(--primary); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
-        .table-desc { font-size: 0.85rem; color: rgba(255,255,255,0.6); }
-
-        /* Footer */
-        footer {
-            background: var(--dark);
-            padding: 4rem 2rem 2rem;
-            margin-top: 4rem;
-            border-top: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .footer-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 3rem;
-        }
-
-        .footer-section h3 { font-size: 1.2rem; margin-bottom: 1rem; color: var(--primary); }
-        .footer-section p, .footer-section a { color: rgba(255,255,255,0.6); font-size: 0.9rem; line-height: 1.8; }
-        .footer-section a { display: block; text-decoration: none; transition: color 0.3s; }
-        .footer-section a:hover { color: var(--primary); }
-
-        .footer-bottom {
-            max-width: 1400px;
-            margin: 3rem auto 0;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            text-align: center;
-            color: rgba(255,255,255,0.4);
-            font-size: 0.85rem;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.9);
-            z-index: 2000;
-            padding: 2rem;
-            overflow-y: auto;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.active { display: flex; }
-
-        .modal-content {
-            background: var(--dark);
-            border-radius: 20px;
-            max-width: 900px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(0,0,0,0.5);
-            border: none;
-            color: white;
-            font-size: 1.2rem;
-            cursor: pointer;
-            z-index: 10;
-            transition: all 0.3s;
-        }
-
-        .modal-close:hover { background: var(--primary); }
-
-        .modal-header { position: relative; height: 300px; }
-        .modal-header img { width: 100%; height: 100%; object-fit: cover; }
-        .modal-header::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 150px; background: linear-gradient(to top, var(--dark), transparent); }
-
-        .modal-body { padding: 2rem; margin-top: -80px; position: relative; }
-        .modal-title { font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; }
-        .modal-meta { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; color: rgba(255,255,255,0.7); }
-        .modal-meta span { display: flex; align-items: center; gap: 0.5rem; }
-        .modal-meta i { color: var(--primary); }
-        .modal-plot { font-size: 1.1rem; line-height: 1.8; color: rgba(255,255,255,0.8); margin-bottom: 2rem; }
-        .modal-section { margin-bottom: 1.5rem; }
-        .modal-section h3 { font-size: 1.1rem; margin-bottom: 0.75rem; color: var(--primary); }
-        .modal-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-        .modal-tag { background: var(--glass); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem; }
-
-        /* ==================== INDEX VIEW - MINIMAL DATA SHEET ==================== */
-        body.index-mode header { display: none; }
-        body.index-mode .back-to-main { display: flex; }
-
-        .index-shell {
-            min-height: 100vh;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 6rem 2rem 4rem;
-            display: flex;
-            flex-direction: column;
-            gap: 3rem;
-        }
-
-        .index-top {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .index-prefix {
-            font-size: 0.75rem;
-            letter-spacing: 0.28em;
-            text-transform: uppercase;
-            color: var(--idx-muted);
-        }
-
-        .index-top h1 {
-            font-size: clamp(2rem, 3vw, 2.9rem);
-            font-weight: 700;
-            color: var(--idx-text);
-        }
-
-        .index-description {
-            max-width: 720px;
-            color: rgba(241, 245, 249, 0.72);
-            line-height: 1.6;
-        }
-
-        .index-metrics {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            justify-content: space-between;
             gap: 1rem;
         }
 
-        .index-metric {
-            background: var(--idx-surface);
-            border: 1px solid var(--idx-border);
-            border-radius: 10px;
-            padding: 1.25rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.6rem;
-        }
-
-        .index-metric-label {
-            font-size: 0.75rem;
-            letter-spacing: 0.12em;
+        .brand {
+            font-weight: 700;
+            letter-spacing: 0.08em;
             text-transform: uppercase;
-            color: var(--idx-muted);
+            font-size: 1rem;
         }
 
-        .index-metric-value {
-            font-size: 1.85rem;
-            font-weight: 600;
-            color: var(--idx-highlight);
-        }
-
-        .index-controls {
-            display: grid;
-            gap: 2rem;
-        }
-
-        .index-search-block,
-        .index-filter-block {
+        .masthead-nav {
             display: flex;
-            flex-direction: column;
+            flex-wrap: wrap;
             gap: 0.75rem;
         }
 
-        .index-search-block label,
-        .index-filter-label {
-            font-size: 0.75rem;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            color: var(--idx-muted);
-        }
-
-        .index-search-field {
-            width: 100%;
-            padding: 0.85rem 1rem;
-            border-radius: 8px;
-            border: 1px solid var(--idx-border);
-            background: var(--idx-bg);
-            color: var(--idx-text);
-            font-family: inherit;
-            font-size: 0.95rem;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .index-search-field:focus {
-            outline: none;
-            border-color: var(--idx-accent);
-            box-shadow: 0 0 0 3px rgba(78, 205, 246, 0.15);
-        }
-
-        .index-filter-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.6rem;
-        }
-
-        .index-filter-button {
-            padding: 0.55rem 1.1rem;
+        .masthead-nav a {
+            text-decoration: none;
+            padding: 0.45rem 0.9rem;
             border-radius: 999px;
-            border: 1px solid var(--idx-border);
-            background: transparent;
-            color: var(--idx-text);
-            font-family: inherit;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+            border: 1px solid transparent;
+            font-size: 0.9rem;
+            color: var(--fg-muted);
+            transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
         }
 
-        .index-filter-button:hover {
-            border-color: var(--idx-accent);
-            color: var(--idx-accent);
+        .masthead-nav a:hover,
+        .masthead-nav a:focus {
+            color: var(--accent);
+            border-color: var(--accent);
+            outline: none;
         }
 
-        .index-filter-button.active {
-            background: var(--idx-accent);
-            border-color: var(--idx-accent);
-            color: #04121c;
+        .masthead-nav .is-active {
+            color: var(--bg);
+            background: var(--accent);
+            border-color: var(--accent);
         }
 
-        .index-taxonomy {
+        main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem 4rem;
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
+            gap: 3rem;
         }
 
-        .index-taxonomy h2 {
-            font-size: 1rem;
+        .intro {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .intro h1 {
+            font-size: clamp(1.8rem, 2.6vw, 2.4rem);
+            margin: 0;
+            letter-spacing: 0.04em;
+        }
+
+        .intro p {
+            max-width: 640px;
+            color: var(--fg-muted);
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .metric-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem 1.25rem;
+            display: grid;
+            gap: 0.35rem;
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.09em;
+            color: var(--fg-muted);
+        }
+
+        .metric-value {
+            font-size: 1.65rem;
+            font-family: var(--font-mono);
+        }
+
+        .controls {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            display: grid;
+            gap: 1rem;
+        }
+
+        .controls h2 {
+            margin: 0;
+            font-size: 1.1rem;
+            letter-spacing: 0.05em;
+        }
+
+        .control-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .control-row label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: var(--fg-muted);
+            letter-spacing: 0.08em;
+        }
+
+        .search-box {
+            flex: 1 1 220px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.6rem 0.85rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: var(--surface-alt);
+            color: var(--fg);
+            font-size: 0.95rem;
+        }
+
+        .search-box input::placeholder {
+            color: var(--fg-muted);
+        }
+
+        .pill-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .pill-btn {
+            border: 1px solid var(--border);
+            background: var(--surface-alt);
+            color: var(--fg-muted);
+            padding: 0.45rem 0.9rem;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+        }
+
+        .pill-btn[aria-pressed="true"] {
+            color: var(--bg);
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .pill-btn:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .table-wrap {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        caption {
+            caption-side: top;
+            text-align: left;
+            padding: 1rem 1.25rem 0.5rem;
+            font-size: 0.95rem;
+            color: var(--fg-muted);
+        }
+
+        thead {
+            background: var(--surface-alt);
+            font-size: 0.8rem;
             letter-spacing: 0.12em;
             text-transform: uppercase;
-            color: var(--idx-muted);
+            color: var(--fg-muted);
         }
 
-        .index-taxonomy-grid {
+        th,
+        td {
+            padding: 0.75rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+        }
+
+        tbody tr:hover {
+            background: var(--accent-soft);
+        }
+
+        .type-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 72px;
+            border-radius: 999px;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            background: var(--surface-alt);
+            border: 1px solid var(--border);
+        }
+
+        .type-movie {
+            color: var(--accent);
+        }
+
+        .type-series {
+            color: var(--accent-strong);
+        }
+
+        .index-section {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .index-section h2 {
+            margin: 0;
+            font-size: 1.1rem;
+            letter-spacing: 0.05em;
+        }
+
+        .alphabet-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .alphabet-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 0.75rem 0.9rem;
+            display: grid;
+            gap: 0.35rem;
+        }
+
+        .alphabet-card strong {
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            color: var(--accent);
+        }
+
+        .alphabet-card span {
+            font-size: 0.75rem;
+            color: var(--fg-muted);
+        }
+
+        .taxonomy-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 1rem;
         }
 
-        .index-taxonomy-card {
-            background: var(--idx-surface);
-            border: 1px solid var(--idx-border);
-            border-radius: 10px;
-            padding: 1.25rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.9rem;
+        .taxonomy-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem 1.25rem;
+            display: grid;
+            gap: 0.4rem;
         }
 
-        .index-taxonomy-card h3 {
+        .taxonomy-card h3 {
+            margin: 0;
             font-size: 0.95rem;
-            letter-spacing: 0.08em;
             text-transform: uppercase;
-            color: var(--idx-text);
+            letter-spacing: 0.08em;
+            color: var(--fg-muted);
         }
 
-        .index-taxonomy-metric {
-            font-size: 1.6rem;
-            font-weight: 600;
-            color: var(--idx-highlight);
-        }
-
-        .index-taxonomy-list {
+        .taxonomy-card ul {
             list-style: none;
             margin: 0;
             padding: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 0.35rem;
-            color: var(--idx-muted);
-            font-size: 0.88rem;
+            display: grid;
+            gap: 0.3rem;
         }
 
-        .index-table-section {
+        .taxonomy-card li {
             display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .index-table-section header {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            align-items: baseline;
             justify-content: space-between;
-        }
-
-        .index-table-section h2 {
-            font-size: 0.95rem;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--idx-muted);
-        }
-
-        .index-table-meta {
-            font-size: 0.8rem;
-            color: var(--idx-muted);
-        }
-
-        .index-table-wrapper {
-            border: 1px solid var(--idx-border);
-            border-radius: 10px;
-            background: var(--idx-surface);
-            overflow-x: auto;
-        }
-
-        .index-table {
-            width: 100%;
-            min-width: 760px;
-            border-collapse: collapse;
-        }
-
-        .index-table thead {
-            background: rgba(255, 255, 255, 0.02);
-        }
-
-        .index-table th {
-            padding: 0.9rem 1rem;
-            font-size: 0.72rem;
-            letter-spacing: 0.16em;
-            text-transform: uppercase;
-            text-align: left;
-            color: var(--idx-muted);
-            border-bottom: 1px solid var(--idx-border);
-            position: sticky;
-            top: 0;
-            background: inherit;
-        }
-
-        .index-table td {
-            padding: 0.9rem 1rem;
-            border-bottom: 1px solid var(--idx-border);
-            font-size: 0.9rem;
-            color: var(--idx-text);
-        }
-
-        .index-table tbody tr:hover {
-            background: rgba(255, 255, 255, 0.04);
-        }
-
-        .index-table td.type-col {
-            white-space: nowrap;
-            color: var(--idx-muted);
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        .index-table td.title-col {
-            font-weight: 600;
-        }
-
-        .index-table td.flags-col {
-            font-size: 0.8rem;
-            color: var(--idx-muted);
-            white-space: nowrap;
-        }
-
-        .index-table td.flags-col span {
-            margin-right: 1rem;
-        }
-
-        .index-empty {
-            text-align: center;
-            padding: 2.5rem 1rem;
-            color: var(--idx-muted);
+            gap: 0.75rem;
             font-size: 0.9rem;
         }
 
-        .index-footnote {
+        .taxonomy-card li span {
+            color: var(--fg-muted);
             font-size: 0.75rem;
-            line-height: 1.6;
-            color: var(--idx-muted);
         }
 
-        .back-to-main {
-            position: fixed;
-            top: 1.5rem;
-            left: 1.5rem;
-            padding: 0.75rem 1.3rem;
-            background: transparent;
-            border: 1px solid var(--idx-border);
-            border-radius: 999px;
-            color: var(--idx-text);
-            cursor: pointer;
-            font-weight: 500;
-            display: none;
-            align-items: center;
-            gap: 0.6rem;
-            transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
-            z-index: 1000;
+        .empty-state {
+            padding: 1rem 1.25rem;
+            color: var(--danger);
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
         }
 
-        .back-to-main:hover {
-            border-color: var(--idx-accent);
-            color: var(--idx-accent);
-            background: rgba(78, 205, 246, 0.1);
+        footer {
+            padding: 2rem 1.5rem 3rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--fg-muted);
         }
 
-        @media (max-width: 768px) {
-            .index-shell { padding: 5rem 1.5rem 3rem; }
-            .index-table { min-width: 640px; }
-            .back-to-main { top: auto; bottom: 1.5rem; left: 50%; transform: translateX(-50%); }
+        @media (max-width: 700px) {
+            th,
+            td {
+                padding-inline: 0.85rem;
+            }
         }
-
-        .fade-in { opacity: 0; transform: translateY(20px); animation: fadeIn 0.6s ease forwards; }
-        @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
-    <header id="header">
-        <nav>
-            <a class="logo" onclick="showMainSite()"><i class="fas fa-film"></i> MovieDB</a>
-            <ul class="nav-links">
-                <li><a href="#movies" onclick="showMainSite()">Movies</a></li>
-                <li><a href="#directors" onclick="showMainSite()">Directors</a></li>
-                <li><a href="#actors" onclick="showMainSite()">Actors</a></li>
-                <li><a href="#schema" onclick="showMainSite()">Database</a></li>
-                <li><a href="#about" onclick="showMainSite()">About</a></li>
-                <li><a class="index-link" onclick="showIndexView()"><i class="fas fa-list"></i> Index</a></li>
-            </ul>
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Search...">
-            </div>
-        </nav>
+    <header>
+        <div class="masthead">
+            <div class="brand">Indexed Catalogue</div>
+            <nav class="masthead-nav" aria-label="Primary">
+                <a class="is-active" href="#complete-index">Index</a>
+                <a href="#dimensions">Dimensions</a>
+                <a href="#taxonomy">Taxonomy</a>
+            </nav>
+        </div>
     </header>
 
-    <!-- ==================== MAIN SITE VIEW ==================== -->
-    <div id="mainSite">
-        <section class="hero">
-            <div class="hero-content">
-                <h1>Movie Database</h1>
-                <p>A comprehensive database system showcasing movies, directors, actors, and more. Built with PostgreSQL for the EIE36E Database Systems course.</p>
-                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-                    <a href="#movies" class="btn"><i class="fas fa-play"></i> Explore Movies</a>
-                    <button class="btn btn-outline" onclick="showIndexView()"><i class="fas fa-list"></i> Browse Index</button>
+    <main>
+        <section class="intro" aria-labelledby="introduction">
+            <h1 id="introduction">Movies & Television Index</h1>
+            <p>
+                A minimal catalogue focused on indexable metadata: every entry lists its steward, producing studio,
+                release year, and running length. Use the controls to slice the catalogue, or browse the alphabetical
+                keys and taxonomy extracts for quick orientation.
+            </p>
+        </section>
+
+        <section class="metrics" aria-label="Aggregate figures">
+            <article class="metric-card">
+                <span class="metric-label">Catalogued Titles</span>
+                <span class="metric-value" data-metric="total">—</span>
+                <span class="metric-label">Movies & Series tracked</span>
+            </article>
+            <article class="metric-card">
+                <span class="metric-label">Movies</span>
+                <span class="metric-value" data-metric="movies">—</span>
+                <span class="metric-label">Feature-length records</span>
+            </article>
+            <article class="metric-card">
+                <span class="metric-label">Series</span>
+                <span class="metric-value" data-metric="series">—</span>
+                <span class="metric-label">Serialized television entries</span>
+            </article>
+            <article class="metric-card">
+                <span class="metric-label">Distinct Stewards</span>
+                <span class="metric-value" data-metric="creators">—</span>
+                <span class="metric-label">Directors or showrunners</span>
+            </article>
+        </section>
+
+        <section class="controls" aria-labelledby="controls-heading">
+            <div class="index-section">
+                <div class="control-row">
+                    <h2 id="controls-heading">Filter Catalogue</h2>
                 </div>
-                <div class="hero-stats">
-                    <div class="stat"><div class="stat-number" id="movieCount">2000+</div><div class="stat-label">Movies</div></div>
-                    <div class="stat"><div class="stat-number" id="directorCount">500+</div><div class="stat-label">Directors</div></div>
-                    <div class="stat"><div class="stat-number">2TB</div><div class="stat-label">Content</div></div>
-                </div>
-            </div>
-        </section>
-
-        <section id="movies">
-            <div class="section-header">
-                <h2 class="section-title"><i class="fas fa-film"></i> Movies Collection</h2>
-            </div>
-            <div class="filter-tabs" id="genreFilters">
-                <button class="filter-tab active" data-genre="all">All</button>
-                <button class="filter-tab" data-genre="Action">Action</button>
-                <button class="filter-tab" data-genre="Drama">Drama</button>
-                <button class="filter-tab" data-genre="Sci-Fi">Sci-Fi</button>
-                <button class="filter-tab" data-genre="Thriller">Thriller</button>
-                <button class="filter-tab" data-genre="Comedy">Comedy</button>
-            </div>
-            <div class="movie-grid" id="movieGrid"></div>
-        </section>
-
-        <section id="directors">
-            <div class="section-header"><h2 class="section-title"><i class="fas fa-video"></i> Featured Directors</h2></div>
-            <div class="people-scroll" id="directorsScroll"></div>
-        </section>
-
-        <section id="actors">
-            <div class="section-header"><h2 class="section-title"><i class="fas fa-user-tie"></i> Featured Actors</h2></div>
-            <div class="people-scroll" id="actorsScroll"></div>
-        </section>
-
-        <section id="schema">
-            <div class="section-header"><h2 class="section-title"><i class="fas fa-database"></i> Database Schema</h2></div>
-            <div class="schema-section">
-                <h3 class="schema-title"><i class="fas fa-table"></i> 11 Tables · PostgreSQL</h3>
-                <div class="table-list">
-                    <div class="table-item"><div class="table-name"><i class="fas fa-key"></i> DIRECTOR</div><div class="table-desc">Stores director information</div></div>
-                    <div class="table-item"><div class="table-name"><i class="fas fa-key"></i> ACTOR</div><div class="table-desc">Stores actor information</div></div>
-                    <div class="table-item"><div class="table-name"><i class="fas fa-key"></i> GENRE</div><div class="table-desc">Film genre categories</div></div>
-                    <div class="table-item"><div class="table-name"><i class="fas fa-key"></i> COUNTRY</div><div class="table-desc">Countries with ISO codes</div></div>
-                    <div class="table-item"><div class="table-name"><i class="fas fa-key"></i> STUDIO</div><div class="table-desc">Production studios</div></div>
-                    <div class="table-item"><div class="table-name"><i class="fas fa-star"></i> MOVIE</div><div class="table-desc">Central entity</div></div>
-                    <div class="table-item"><div class="table-name"><i class="fas fa-key"></i> USER_RATING</div><div class="table-desc">User reviews</div></div>
-                    <div class="table-item"><div class="table-name"><i class="fas fa-trophy"></i> AWARD</div><div class="table-desc">Movie awards</div></div>
-                </div>
-            </div>
-        </section>
-
-        <section id="about">
-            <div class="section-header"><h2 class="section-title"><i class="fas fa-info-circle"></i> About</h2></div>
-            <div class="schema-section">
-                <p style="color: rgba(255,255,255,0.7);">EIE36E Database Systems Project · Czech University of Life Sciences Prague</p>
-            </div>
-        </section>
-
-        <footer>
-            <div class="footer-content">
-                <div class="footer-section"><h3><i class="fas fa-film"></i> MovieDB</h3><p>Comprehensive movie database with 2TB+ of indexed content.</p></div>
-                <div class="footer-section"><h3>Quick Links</h3><a href="#movies">Movies</a><a href="#" onclick="showIndexView()">Index</a><a href="#schema">Database</a></div>
-                <div class="footer-section"><h3>Resources</h3><a href="https://github.com/Hostilian/Movie_TVshow_index" target="_blank">GitHub</a></div>
-            </div>
-            <div class="footer-bottom"><p>© 2025 MovieDB Index | EIE36E Database Systems</p></div>
-        </footer>
-    </div>
-
-    <!-- ==================== INDEX VIEW - DATA SHEET ==================== -->
-    <div id="indexView">
-        <div class="index-shell">
-            <section class="index-top">
-                <span class="index-prefix">Movie &amp; TV Catalogue Index</span>
-                <h1>Structured Index Ledger</h1>
-                <p class="index-description">A performance-oriented lookup that concentrates solely on indexed metadata for films and serialised television. Every entry is lightweight, searchable, and categorised for rapid retrieval.</p>
-                <div class="index-metrics">
-                    <div class="index-metric"><span class="index-metric-label">Catalogue Entries</span><span class="index-metric-value" id="indexMetricEntries">0</span></div>
-                    <div class="index-metric"><span class="index-metric-label">Movies Indexed</span><span class="index-metric-value" id="indexMetricMovies">0</span></div>
-                    <div class="index-metric"><span class="index-metric-label">Series Indexed</span><span class="index-metric-value" id="indexMetricTv">0</span></div>
-                    <div class="index-metric"><span class="index-metric-label">Distinct Categories</span><span class="index-metric-value" id="indexMetricCategories">0</span></div>
-                    <div class="index-metric"><span class="index-metric-label">Estimated Volume</span><span class="index-metric-value" id="indexMetricVolume">0 GB</span></div>
-                </div>
-            </section>
-
-            <section class="index-controls">
-                <div class="index-search-block">
-                    <label for="indexSearchInput">Search catalogue</label>
-                    <input type="search" id="indexSearchInput" class="index-search-field" placeholder="Filter by title, category, codec, or year">
-                </div>
-                <div class="index-filter-block">
-                    <span class="index-filter-label">Collection focus</span>
-                    <div class="index-filter-buttons" id="indexCategoryButtons">
-                        <button class="index-filter-button active" data-cat="all">All Entries</button>
-                        <button class="index-filter-button" data-cat="movie">Movies</button>
-                        <button class="index-filter-button" data-cat="series">Series</button>
-                        <button class="index-filter-button" data-cat="4k">4K</button>
-                        <button class="index-filter-button" data-cat="hdr">HDR</button>
-                        <button class="index-filter-button" data-cat="recent">Recent 30</button>
+                <div class="control-row">
+                    <label for="search">Search</label>
+                    <div class="search-box">
+                        <input id="search" name="search" type="search" placeholder="Title, steward, or studio" autocomplete="off">
                     </div>
                 </div>
-            </section>
-
-            <section class="index-taxonomy">
-                <h2>Type Breakdown</h2>
-                <div class="index-taxonomy-grid" id="indexTaxonomyGrid"></div>
-            </section>
-
-            <section class="index-table-section">
-                <header>
-                    <h2>Catalogue Listing</h2>
-                    <div class="index-table-meta" id="indexTableMeta">Sorted by latest availability</div>
-                </header>
-                <div class="index-table-wrapper">
-                    <table class="index-table">
-                        <thead>
-                            <tr>
-                                <th scope="col">Type</th>
-                                <th scope="col">Title</</th>
-                                <th scope="col">Year</th>
-                                <th scope="col">Collection</th>
-                                <th scope="col">Quality</th>
-                                <th scope="col">Size</th>
-                                <th scope="col">Updated</th>
-                                <th scope="col">Seeds</th>
-                            </tr>
-                        </thead>
-                        <tbody id="indexTableBody">
-                            <tr><td colspan="8" class="index-empty">Loading index…</td></tr>
-                        </tbody>
-                    </table>
+                <div class="control-row" role="group" aria-label="Filter by type">
+                    <label>Type</label>
+                    <div class="pill-group" id="typeFilters">
+                        <button type="button" class="pill-btn" data-filter="all" aria-pressed="true">All</button>
+                        <button type="button" class="pill-btn" data-filter="Movie" aria-pressed="false">Movies</button>
+                        <button type="button" class="pill-btn" data-filter="Series" aria-pressed="false">Series</button>
+                    </div>
                 </div>
-            </section>
-
-            <p class="index-footnote">This view is intentionally minimal: it tracks only the index data for films and serialised television sources to keep the experience precise and fast.</p>
-        </div>
-    </div>
-
-    <button class="back-to-main" onclick="showMainSite()"><i class="fas fa-arrow-left"></i> Back to Main</button>
-
-    <!-- Modal -->
-    <div class="modal" id="movieModal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
-            <div class="modal-header"><img id="modalPoster" src="" alt="Poster"></div>
-            <div class="modal-body">
-                <h2 class="modal-title" id="modalTitle"></h2>
-                <div class="modal-meta" id="modalMeta"></div>
-                <p class="modal-plot" id="modalPlot"></p>
-                <div class="modal-section"><h3>Genres</h3><div class="modal-tags" id="modalGenres"></div></div>
-                <div class="modal-section"><h3>Director</h3><div class="modal-tags" id="modalDirector"></div></div>
-                <div class="modal-section"><h3>Cast</h3><div class="modal-tags" id="modalCast"></div></div>
             </div>
-        </div>
-    </div>
+        </section>
+
+        <section class="table-wrap" id="complete-index">
+            <table>
+                <caption id="table-caption">Index entries (loading…)</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Title</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Year</th>
+                        <th scope="col">Duration</th>
+                        <th scope="col">Steward</th>
+                        <th scope="col">Studio</th>
+                    </tr>
+                </thead>
+                <tbody id="index-body" aria-live="polite">
+                    <tr>
+                        <td colspan="6" class="empty-state">Loading catalogue…</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="index-section" id="dimensions" aria-labelledby="alphabetical-heading">
+            <h2 id="alphabetical-heading">Alphabetical Keys</h2>
+            <p class="intro-note" style="color: var(--fg-muted); max-width: 640px;">
+                Each card lists the first titles within a letter band and the count currently in view. Use it to jump to
+                clusters or confirm coverage.
+            </p>
+            <div class="alphabet-grid" id="alphabet-grid">
+                <div class="alphabet-card">
+                    <strong>—</strong>
+                    <span>Waiting for catalogue.</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="index-section" id="taxonomy" aria-labelledby="taxonomy-heading">
+            <h2 id="taxonomy-heading">Taxonomy Extracts</h2>
+            <div class="taxonomy-grid">
+                <article class="taxonomy-card" aria-live="polite">
+                    <h3>Dominant Categories</h3>
+                    <ul data-taxonomy="categories">
+                        <li><span>Loading…</span></li>
+                    </ul>
+                </article>
+                <article class="taxonomy-card">
+                    <h3>Prolific Stewards</h3>
+                    <ul data-taxonomy="creators">
+                        <li><span>Loading…</span></li>
+                    </ul>
+                </article>
+                <article class="taxonomy-card">
+                    <h3>Studios in Catalogue</h3>
+                    <ul data-taxonomy="studios">
+                        <li><span>Loading…</span></li>
+                    </ul>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        This index is static and intentionally image-free to emphasise metadata, structure, and performance-first delivery.
+    </footer>
 
     <script>
-        let db = null;
-        let indexData = [];
-        let currentIndexFilter = 'all';
+        (function () {
+            const state = {
+                dataset: [],
+                filtered: [],
+                type: "all",
+                query: ""
+            };
 
-        // Generate index data from database + sample additional content
-        function generateIndexData() {
-            let data = [];
-            
-            // Add movies from database
-            if (db && db.movies) {
-                db.movies.forEach(movie => {
-                    const genre = db.genres.find(g => movie.genres.includes(g.genre_id))?.genre_name || 'Drama';
-                    data.push({
-                        type: 'movie',
-                        name: movie.title,
-                        year: movie.year,
-                        quality: '4K',
-                        hdr: true,
-                        codec: 'x265',
-                        size: `${(movie.runtime * 0.3 + Math.random() * 20).toFixed(1)} GB`,
-                        date: movie.release_date || '2024-01-01',
-                        seeds: Math.floor(movie.imdb_votes / 1000) || Math.floor(Math.random() * 3000),
-                        category: genre,
-                        imdb: movie.imdb_rating,
-                        movie_id: movie.movie_id
-                    });
-                });
-            }
-            
-            // Add sample TV shows and anime for variety
-            const additionalContent = [
-                { type: 'tv', name: 'Breaking Bad', year: 2008, quality: '1080p', hdr: false, codec: 'x264', size: '78.3 GB', date: '2024-11-20', seeds: 892, category: 'Drama', extra: 'Complete Series' },
-                { type: 'anime', name: 'Attack on Titan', year: 2013, quality: '1080p', hdr: false, codec: 'x265', size: '95.2 GB', date: '2024-11-15', seeds: 2341, category: 'Anime', extra: 'Complete' },
-                { type: 'tv', name: 'Game of Thrones', year: 2011, quality: '4K', hdr: true, codec: 'x265', size: '420.5 GB', date: '2024-11-10', seeds: 4521, category: 'Fantasy', extra: 'Complete Series' },
-                { type: 'anime', name: 'Demon Slayer', year: 2019, quality: '4K', hdr: true, codec: 'x265', size: '125.8 GB', date: '2024-11-05', seeds: 3892, category: 'Anime', extra: 'S1-S4' },
-                { type: 'tv', name: 'The Office (US)', year: 2005, quality: '1080p', hdr: false, codec: 'x264', size: '145.2 GB', date: '2024-10-28', seeds: 2134, category: 'Comedy', extra: 'Complete Series' },
-                { type: 'anime', name: 'Death Note', year: 2006, quality: '1080p', hdr: false, codec: 'x265', size: '18.4 GB', date: '2024-10-20', seeds: 1789, category: 'Anime' },
-                { type: 'tv', name: 'Stranger Things', year: 2016, quality: '4K', hdr: true, codec: 'x265', size: '285.6 GB', date: '2024-10-15', seeds: 3456, category: 'Sci-Fi', extra: 'S1-S4' },
-                { type: 'anime', name: 'One Piece', year: 1999, quality: '1080p', hdr: false, codec: 'x265', size: '850.2 GB', date: '2024-10-08', seeds: 4521, category: 'Anime', extra: 'Ep 1-1100' },
-                { type: 'tv', name: 'The Mandalorian', year: 2019, quality: '4K', hdr: true, codec: 'x265', size: '180.4 GB', date: '2024-09-28', seeds: 3215, category: 'Sci-Fi', extra: 'S1-S3' },
-                { type: 'anime', name: 'Naruto Shippuden', year: 2007, quality: '1080p', hdr: false, codec: 'x265', size: '450.8 GB', date: '2024-09-15', seeds: 2876, category: 'Anime', extra: 'Complete' },
-                { type: 'tv', name: 'The Last of Us', year: 2023, quality: '4K', hdr: true, codec: 'x265', size: '85.2 GB', date: '2024-09-10', seeds: 4123, category: 'Drama', extra: 'S1' },
-                { type: 'movie', name: 'The Matrix', year: 1999, quality: '4K', hdr: true, codec: 'x265', size: '41.7 GB', date: '2024-11-18', seeds: 1567, category: 'Sci-Fi' },
-                { type: 'movie', name: 'The Shawshank Redemption', year: 1994, quality: '4K', hdr: true, codec: 'x265', size: '42.3 GB', date: '2024-11-08', seeds: 1876, category: 'Drama' },
-                { type: 'movie', name: 'The Godfather', year: 1972, quality: '4K', hdr: true, codec: 'x265', size: '55.2 GB', date: '2024-10-22', seeds: 2345, category: 'Crime' },
-                { type: 'movie', name: 'Avengers: Endgame', year: 2019, quality: '4K', hdr: true, codec: 'x265', size: '72.1 GB', date: '2024-10-18', seeds: 5678, category: 'Action' },
-                { type: 'movie', name: 'Joker', year: 2019, quality: '4K', hdr: true, codec: 'x265', size: '44.5 GB', date: '2024-10-10', seeds: 2987, category: 'Drama' },
-                { type: 'movie', name: 'Interstellar', year: 2014, quality: '4K', hdr: true, codec: 'x265', size: '68.4 GB', date: '2024-11-25', seeds: 3421, category: 'Sci-Fi' },
+            const selectors = {
+                metrics: {
+                    total: document.querySelector('[data-metric="total"]'),
+                    movies: document.querySelector('[data-metric="movies"]'),
+                    series: document.querySelector('[data-metric="series"]'),
+                    creators: document.querySelector('[data-metric="creators"]')
+                },
+                tableBody: document.getElementById('index-body'),
+                tableCaption: document.getElementById('table-caption'),
+                alphabetGrid: document.getElementById('alphabet-grid'),
+                taxonomy: {
+                    categories: document.querySelector('[data-taxonomy="categories"]'),
+                    creators: document.querySelector('[data-taxonomy="creators"]'),
+                    studios: document.querySelector('[data-taxonomy="studios"]')
+                },
+                searchInput: document.getElementById('search'),
+                typeFilters: document.getElementById('typeFilters')
+            };
+
+            const movieGenres = {
+                "Inception": ["Science Fiction", "Thriller"],
+                "The Shawshank Redemption": ["Drama"],
+                "Pulp Fiction": ["Crime", "Drama"],
+                "The Dark Knight": ["Action", "Crime"],
+                "Forrest Gump": ["Drama", "Romance"],
+                "Interstellar": ["Science Fiction", "Adventure"],
+                "The Matrix": ["Science Fiction", "Action"],
+                "Fight Club": ["Drama", "Thriller"],
+                "Goodfellas": ["Crime", "Drama"],
+                "The Godfather": ["Crime", "Drama"],
+                "Schindler's List": ["Drama", "Historical"],
+                "Saving Private Ryan": ["War", "Drama"],
+                "The Silence of the Lambs": ["Thriller", "Crime"],
+                "Se7en": ["Thriller", "Crime"],
+                "Gladiator": ["Action", "Historical"]
+            };
+
+            const curatedSeries = [
+                {
+                    id: "series-breaking-bad",
+                    title: "Breaking Bad",
+                    release_year: 2008,
+                    seasons: 5,
+                    steward: "Vince Gilligan",
+                    studio: "AMC",
+                    categories: ["Crime", "Drama"]
+                },
+                {
+                    id: "series-the-expanse",
+                    title: "The Expanse",
+                    release_year: 2015,
+                    seasons: 6,
+                    steward: "Mark Fergus & Hawk Ostby",
+                    studio: "Alcon Entertainment",
+                    categories: ["Science Fiction", "Adventure"]
+                },
+                {
+                    id: "series-fargo",
+                    title: "Fargo",
+                    release_year: 2014,
+                    seasons: 5,
+                    steward: "Noah Hawley",
+                    studio: "FX Productions",
+                    categories: ["Crime", "Anthology"]
+                },
+                {
+                    id: "series-chernobyl",
+                    title: "Chernobyl",
+                    release_year: 2019,
+                    seasons: 1,
+                    steward: "Craig Mazin",
+                    studio: "HBO",
+                    categories: ["Historical", "Drama"]
+                },
+                {
+                    id: "series-dark",
+                    title: "Dark",
+                    release_year: 2017,
+                    seasons: 3,
+                    steward: "Baran bo Odar & Jantje Friese",
+                    studio: "W&B Television",
+                    categories: ["Science Fiction", "Mystery"]
+                }
             ];
-            
-            data = [...data, ...additionalContent];
-            
-            // Sort by date (newest first)
-            data.sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            return data;
-        }
 
-        async function loadDatabase() {
-            try {
-                const response = await fetch('data/database.json');
-                db = await response.json();
-                indexData = generateIndexData();
-                initializeApp();
-                updateStats();
-            } catch (error) {
-                console.error('Error loading database:', error);
-                indexData = generateIndexData();
-                initializeApp();
-            }
-        }
-
-        function updateStats() {
-            if (db) {
-                document.getElementById('movieCount').textContent = db.movies.length + '+';
-                document.getElementById('directorCount').textContent = db.directors.length;
-                document.getElementById('indexTotalFiles').textContent = indexData.length.toLocaleString();
-            }
-        }
-
-        function initializeApp() {
-            if (db) {
-                renderMovies('all');
-                renderDirectors();
-                renderActors();
-            }
-            renderIndexTable();
-            setupEventListeners();
-        }
-
-        function renderMovies(genreFilter) {
-            const grid = document.getElementById('movieGrid');
-            if (!db || !db.movies) {
-                grid.innerHTML = '<p style="color: rgba(255,255,255,0.5); grid-column: 1/-1; text-align: center;">Loading movies...</p>';
-                return;
-            }
-            grid.innerHTML = '';
-            let movies = db.movies;
-            if (genreFilter !== 'all') {
-                const genreId = db.genres.find(g => g.genre_name === genreFilter)?.genre_id;
-                movies = movies.filter(m => m.genres.includes(genreId));
-            }
-            movies.forEach((movie, index) => {
-                const movieGenres = movie.genres.map(gid => db.genres.find(g => g.genre_id === gid)?.genre_name).filter(Boolean);
-                const card = document.createElement('div');
-                card.className = 'movie-card fade-in';
-                card.style.animationDelay = `${index * 0.1}s`;
-                card.onclick = () => openMovieModal(movie.movie_id);
-                card.innerHTML = `
-                    <div class="movie-poster">
-                        <img src="${movie.poster}" alt="${movie.title}" loading="lazy">
-                        <div class="movie-rating"><i class="fas fa-star"></i> ${movie.imdb_rating}</div>
-                    </div>
-                    <div class="movie-info">
-                        <h3 class="movie-title">${movie.title}</h3>
-                        <div class="movie-meta"><span>${movie.year}</span><span>${movie.runtime} min</span></div>
-                        <div class="movie-genres">${movieGenres.slice(0, 2).map(g => `<span class="genre-tag">${g}</span>`).join('')}</div>
-                    </div>`;
-                grid.appendChild(card);
-            });
-        }
-
-        function renderDirectors() {
-            const scroll = document.getElementById('directorsScroll');
-            if (!db || !db.directors) return;
-            scroll.innerHTML = '';
-            db.directors.forEach(director => {
-                const initials = director.name.split(' ').map(n => n[0]).join('');
-                const card = document.createElement('div');
-                card.className = 'person-card';
-                card.innerHTML = `<div class="person-avatar">${initials}</div><div class="person-name">${director.name}</div><div class="person-role">Director</div>`;
-                scroll.appendChild(card);
-            });
-        }
-
-        function renderActors() {
-            const scroll = document.getElementById('actorsScroll');
-            if (!db || !db.actors) return;
-            scroll.innerHTML = '';
-            db.actors.slice(0, 15).forEach(actor => {
-                const initials = actor.name.split(' ').map(n => n[0]).join('');
-                const card = document.createElement('div');
-                card.className = 'person-card';
-                card.innerHTML = `<div class="person-avatar">${initials}</div><div class="person-name">${actor.name}</div><div class="person-role">Actor</div>`;
-                scroll.appendChild(card);
-            });
-        }
-
-        function renderIndexTable(filter = 'all', searchQuery = '') {
-            const tbody = document.getElementById('indexTableBody');
-            let data = [...indexData];
-
-            if (filter !== 'all') {
-                if (filter === '4k') data = data.filter(d => d.quality === '4K');
-                else if (filter === 'hdr') data = data.filter(d => d.hdr);
-                else if (filter === 'recent') data = data.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 10);
-                else data = data.filter(d => d.type === filter);
-            }
-
-            if (searchQuery) {
-                data = data.filter(d => d.name.toLowerCase().includes(searchQuery.toLowerCase()));
-            }
-
-            tbody.innerHTML = data.map(item => `
-                <div class="index-row">
-                    <div class="index-row-type">
-                        <i class="fas ${item.type === 'movie' ? 'fa-film type-movie' : item.type === 'tv' ? 'fa-tv type-tv' : 'fa-dragon type-anime'}"></i>
-                    </div>
-                    <div class="index-row-name">
-                        <span class="index-row-title">${item.name} (${item.year})${item.extra ? ' - ' + item.extra : ''}</span>
-                        <div class="index-row-tags">
-                            <span class="index-tag quality">${item.quality}</span>
-                            ${item.hdr ? '<span class="index-tag hdr">HDR</span>' : ''}
-                            <span class="index-tag x265">${item.codec}</span>
-                        </div>
-                    </div>
-                    <div class="index-row-category">${item.category}</div>
-                    <div class="index-row-size">${item.size}</div>
-                    <div class="index-row-date">${item.date}</div>
-                    <div class="index-row-seeds">${item.seeds}</div>
-                    <div class="index-row-actions">
-                        <button class="index-action-btn magnet" title="Magnet"><i class="fas fa-magnet"></i></button>
-                        <button class="index-action-btn info" title="Info"><i class="fas fa-info"></i></button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function searchIndex() {
-            const query = document.getElementById('indexSearchInput').value;
-            renderIndexTable('all', query);
-        }
-
-        function showIndexView() {
-            document.body.classList.add('index-mode');
-            window.scrollTo(0, 0);
-        }
-
-        function showMainSite() {
-            document.body.classList.remove('index-mode');
-            window.scrollTo(0, 0);
-        }
-
-        function openMovieModal(movieId) {
-            if (!db) return;
-            const movie = db.movies.find(m => m.movie_id === movieId);
-            if (!movie) return;
-            const director = db.directors.find(d => d.director_id === movie.director_id);
-            const genres = movie.genres.map(gid => db.genres.find(g => g.genre_id === gid)?.genre_name).filter(Boolean);
-            const actors = movie.actors.map(aid => db.actors.find(a => a.actor_id === aid)?.name).filter(Boolean);
-
-            document.getElementById('modalPoster').src = movie.poster;
-            document.getElementById('modalTitle').textContent = movie.title;
-            document.getElementById('modalPlot').textContent = movie.plot;
-            document.getElementById('modalMeta').innerHTML = `
-                <span><i class="fas fa-calendar"></i> ${movie.year}</span>
-                <span><i class="fas fa-clock"></i> ${movie.runtime} min</span>
-                <span><i class="fas fa-star"></i> ${movie.imdb_rating}/10</span>`;
-            document.getElementById('modalGenres').innerHTML = genres.map(g => `<span class="modal-tag">${g}</span>`).join('');
-            document.getElementById('modalDirector').innerHTML = `<span class="modal-tag">${director?.name || 'Unknown'}</span>`;
-            document.getElementById('modalCast').innerHTML = actors.map(a => `<span class="modal-tag">${a}</span>`).join('');
-
-            document.getElementById('movieModal').classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeModal() {
-            document.getElementById('movieModal').classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        function setupEventListeners() {
-            window.addEventListener('scroll', () => {
-                document.getElementById('header').classList.toggle('scrolled', window.scrollY > 50);
-            });
-
-            document.querySelectorAll('.filter-tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    renderMovies(tab.dataset.genre);
+            function normaliseMovies(movies) {
+                return movies.map((movie) => {
+                    const categories = movieGenres[movie.title] || ["Unclassified"];
+                    return {
+                        id: `movie-${movie.movie_id}`,
+                        title: movie.title,
+                        type: "Movie",
+                        releaseYear: movie.release_year,
+                        durationLabel: `${movie.duration_minutes} min`,
+                        durationValue: movie.duration_minutes,
+                        steward: movie.director_name,
+                        studio: movie.studio_name,
+                        categories
+                    };
                 });
-            });
+            }
 
-            document.querySelectorAll('.index-nav-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.index-nav-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    renderIndexTable(btn.dataset.cat);
+            function normaliseSeries(seriesList) {
+                return seriesList.map((series) => ({
+                    id: series.id,
+                    title: series.title,
+                    type: "Series",
+                    releaseYear: series.release_year,
+                    durationLabel: `${series.seasons} season${series.seasons > 1 ? "s" : ""}`,
+                    durationValue: series.seasons,
+                    steward: series.steward,
+                    studio: series.studio,
+                    categories: series.categories
+                }));
+            }
+
+            function updateMetrics(dataset) {
+                const total = dataset.length;
+                const movies = dataset.filter((item) => item.type === "Movie").length;
+                const series = dataset.filter((item) => item.type === "Series").length;
+                const creators = new Set(dataset.map((item) => item.steward)).size;
+
+                selectors.metrics.total.textContent = total;
+                selectors.metrics.movies.textContent = movies;
+                selectors.metrics.series.textContent = series;
+                selectors.metrics.creators.textContent = creators;
+            }
+
+            function applyFilters() {
+                const query = state.query.trim().toLowerCase();
+                const type = state.type;
+
+                state.filtered = state.dataset.filter((item) => {
+                    if (type !== "all" && item.type !== type) {
+                        return false;
+                    }
+
+                    if (!query) {
+                        return true;
+                    }
+
+                    const haystack = `${item.title} ${item.steward} ${item.studio}`.toLowerCase();
+                    return haystack.includes(query);
                 });
-            });
 
-            document.getElementById('searchInput').addEventListener('input', (e) => {
-                const query = e.target.value.toLowerCase();
-                if (document.body.classList.contains('index-mode')) {
-                    renderIndexTable('all', query);
+                renderTable(state.filtered);
+                renderAlphabet(state.filtered);
+                renderTaxonomy(state.dataset);
+            }
+
+            function renderTable(rows) {
+                selectors.tableBody.innerHTML = "";
+
+                if (rows.length === 0) {
+                    const emptyRow = document.createElement("tr");
+                    const cell = document.createElement("td");
+                    cell.colSpan = 6;
+                    cell.className = "empty-state";
+                    cell.textContent = "No entries match the current filters.";
+                    emptyRow.appendChild(cell);
+                    selectors.tableBody.appendChild(emptyRow);
                 } else {
-                    document.querySelectorAll('.movie-card').forEach(card => {
-                        const title = card.querySelector('.movie-title').textContent.toLowerCase();
-                        card.style.display = title.includes(query) ? 'block' : 'none';
+                    rows.sort((a, b) => a.title.localeCompare(b.title, "en", { sensitivity: "base" }));
+                    const fragment = document.createDocumentFragment();
+
+                    rows.forEach((item) => {
+                        const row = document.createElement("tr");
+
+                        const titleCell = document.createElement("td");
+                        titleCell.textContent = item.title;
+                        row.appendChild(titleCell);
+
+                        const typeCell = document.createElement("td");
+                        const pill = document.createElement("span");
+                        pill.className = `type-pill ${item.type === "Movie" ? "type-movie" : "type-series"}`;
+                        pill.textContent = item.type;
+                        typeCell.appendChild(pill);
+                        row.appendChild(typeCell);
+
+                        const yearCell = document.createElement("td");
+                        yearCell.textContent = item.releaseYear || "—";
+                        row.appendChild(yearCell);
+
+                        const durationCell = document.createElement("td");
+                        durationCell.textContent = item.durationLabel;
+                        row.appendChild(durationCell);
+
+                        const stewardCell = document.createElement("td");
+                        stewardCell.textContent = item.steward;
+                        row.appendChild(stewardCell);
+
+                        const studioCell = document.createElement("td");
+                        studioCell.textContent = item.studio;
+                        row.appendChild(studioCell);
+
+                        fragment.appendChild(row);
                     });
+
+                    selectors.tableBody.appendChild(fragment);
+                }
+
+                selectors.tableCaption.textContent = `Index entries (${rows.length.toString()} currently visible)`;
+            }
+
+            function renderAlphabet(rows) {
+                selectors.alphabetGrid.innerHTML = "";
+
+                if (rows.length === 0) {
+                    const card = document.createElement("div");
+                    card.className = "alphabet-card";
+                    card.innerHTML = "<strong>Ø</strong><span>Empty result set.</span>";
+                    selectors.alphabetGrid.appendChild(card);
+                    return;
+                }
+
+                const buckets = new Map();
+
+                rows.forEach((item) => {
+                    const initial = /^[A-Z]/i.test(item.title) ? item.title[0].toUpperCase() : "#";
+                    if (!buckets.has(initial)) {
+                        buckets.set(initial, []);
+                    }
+                    buckets.get(initial).push(item.title);
+                });
+
+                const sortedKeys = Array.from(buckets.keys()).sort((a, b) => a.localeCompare(b));
+                const fragment = document.createDocumentFragment();
+
+                sortedKeys.forEach((letter) => {
+                    const titles = buckets.get(letter);
+                    titles.sort((a, b) => a.localeCompare(b, "en", { sensitivity: "base" }));
+                    const preview = titles.slice(0, 4).join(", ");
+
+                    const card = document.createElement("div");
+                    card.className = "alphabet-card";
+
+                    const letterEl = document.createElement("strong");
+                    letterEl.textContent = letter;
+                    card.appendChild(letterEl);
+
+                    const countEl = document.createElement("span");
+                    countEl.textContent = `${titles.length} entr${titles.length === 1 ? "y" : "ies"}`;
+                    card.appendChild(countEl);
+
+                    const previewEl = document.createElement("span");
+                    previewEl.textContent = preview;
+                    card.appendChild(previewEl);
+
+                    fragment.appendChild(card);
+                });
+
+                selectors.alphabetGrid.appendChild(fragment);
+            }
+
+            function renderTaxonomy(dataset) {
+                populateList(selectors.taxonomy.categories, aggregateCategories(dataset));
+                populateList(selectors.taxonomy.creators, aggregateCount(dataset, "steward"));
+                populateList(selectors.taxonomy.studios, aggregateCount(dataset, "studio"));
+            }
+
+            function aggregateCategories(dataset) {
+                const tally = new Map();
+                dataset.forEach((item) => {
+                    item.categories.forEach((category) => {
+                        const key = category || "Unclassified";
+                        tally.set(key, (tally.get(key) || 0) + 1);
+                    });
+                });
+
+                return Array.from(tally.entries())
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 6);
+            }
+
+            function aggregateCount(dataset, key) {
+                const tally = new Map();
+                dataset.forEach((item) => {
+                    const value = item[key] || "Unknown";
+                    tally.set(value, (tally.get(value) || 0) + 1);
+                });
+
+                return Array.from(tally.entries())
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 6);
+            }
+
+            function populateList(listElement, entries) {
+                listElement.innerHTML = "";
+
+                if (!entries.length) {
+                    const placeholder = document.createElement("li");
+                    placeholder.textContent = "No data";
+                    listElement.appendChild(placeholder);
+                    return;
+                }
+
+                const fragment = document.createDocumentFragment();
+                entries.forEach(([label, count]) => {
+                    const item = document.createElement("li");
+                    const name = document.createElement("span");
+                    name.textContent = label;
+                    const amount = document.createElement("span");
+                    amount.textContent = count.toString();
+                    item.appendChild(name);
+                    item.appendChild(amount);
+                    fragment.appendChild(item);
+                });
+
+                listElement.appendChild(fragment);
+            }
+
+            function loadDataset() {
+                return fetch("data/movies.json")
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error(`Failed to load data: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then((movies) => {
+                        const normalisedMovies = normaliseMovies(movies);
+                        const normalisedSeries = normaliseSeries(curatedSeries);
+                        state.dataset = [...normalisedMovies, ...normalisedSeries];
+                        updateMetrics(state.dataset);
+                        applyFilters();
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        selectors.tableBody.innerHTML = "";
+                        const errorRow = document.createElement("tr");
+                        const cell = document.createElement("td");
+                        cell.colSpan = 6;
+                        cell.className = "empty-state";
+                        cell.textContent = "Catalogue data failed to load.";
+                        errorRow.appendChild(cell);
+                        selectors.tableBody.appendChild(errorRow);
+                        selectors.tableCaption.textContent = "Index entries (unavailable)";
+                    });
+            }
+
+            selectors.searchInput.addEventListener('input', (event) => {
+                state.query = event.target.value;
+                applyFilters();
+            });
+
+            selectors.typeFilters.addEventListener('click', (event) => {
+                if (event.target instanceof HTMLButtonElement) {
+                    const filter = event.target.dataset.filter;
+                    if (!filter) {
+                        return;
+                    }
+
+                    state.type = filter === "all" ? "all" : filter;
+
+                    Array.from(selectors.typeFilters.children).forEach((child) => {
+                        if (child instanceof HTMLButtonElement) {
+                            child.setAttribute('aria-pressed', child === event.target ? 'true' : 'false');
+                        }
+                    });
+
+                    applyFilters();
                 }
             });
 
-            document.getElementById('indexSearchInput').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') searchIndex();
-            });
-
-            document.getElementById('movieModal').addEventListener('click', (e) => {
-                if (e.target.id === 'movieModal') closeModal();
-            });
-
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') closeModal();
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', loadDatabase);
+            loadDataset();
+        })();
     </script>
 </body>
 </html>
