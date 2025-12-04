@@ -569,53 +569,7 @@
                 "Gladiator": ["Action", "Historical"]
             };
 
-            const curatedSeries = [
-                {
-                    id: "series-breaking-bad",
-                    title: "Breaking Bad",
-                    release_year: 2008,
-                    seasons: 5,
-                    steward: "Vince Gilligan",
-                    studio: "AMC",
-                    categories: ["Crime", "Drama"]
-                },
-                {
-                    id: "series-the-expanse",
-                    title: "The Expanse",
-                    release_year: 2015,
-                    seasons: 6,
-                    steward: "Mark Fergus & Hawk Ostby",
-                    studio: "Alcon Entertainment",
-                    categories: ["Science Fiction", "Adventure"]
-                },
-                {
-                    id: "series-fargo",
-                    title: "Fargo",
-                    release_year: 2014,
-                    seasons: 5,
-                    steward: "Noah Hawley",
-                    studio: "FX Productions",
-                    categories: ["Crime", "Anthology"]
-                },
-                {
-                    id: "series-chernobyl",
-                    title: "Chernobyl",
-                    release_year: 2019,
-                    seasons: 1,
-                    steward: "Craig Mazin",
-                    studio: "HBO",
-                    categories: ["Historical", "Drama"]
-                },
-                {
-                    id: "series-dark",
-                    title: "Dark",
-                    release_year: 2017,
-                    seasons: 3,
-                    steward: "Baran bo Odar & Jantje Friese",
-                    studio: "W&B Television",
-                    categories: ["Science Fiction", "Mystery"]
-                }
-            ];
+            const curatedSeries = []; // Now fetched from data/series.json
 
             function normaliseMovies(movies) {
                 return movies.map((movie) => {
@@ -844,32 +798,35 @@
             }
 
             function loadDataset() {
-                return fetch("data/movies.json")
-                    .then((response) => {
-                        if (!response.ok) {
-                            throw new Error(`Failed to load data: ${response.status}`);
-                        }
-                        return response.json();
+                Promise.all([
+                    fetch("data/movies.json").then(res => {
+                        if (!res.ok) throw new Error(`Failed to load movies: ${res.status}`);
+                        return res.json();
+                    }),
+                    fetch("data/series.json").then(res => {
+                        if (!res.ok) throw new Error(`Failed to load series: ${res.status}`);
+                        return res.json();
                     })
-                    .then((movies) => {
-                        const normalisedMovies = normaliseMovies(movies);
-                        const normalisedSeries = normaliseSeries(curatedSeries);
-                        state.dataset = [...normalisedMovies, ...normalisedSeries];
-                        updateMetrics(state.dataset);
-                        applyFilters();
-                    })
-                    .catch((error) => {
-                        console.error(error);
-                        selectors.tableBody.innerHTML = "";
-                        const errorRow = document.createElement("tr");
-                        const cell = document.createElement("td");
-                        cell.colSpan = 6;
-                        cell.className = "empty-state";
-                        cell.textContent = "Catalogue data failed to load.";
-                        errorRow.appendChild(cell);
-                        selectors.tableBody.appendChild(errorRow);
-                        selectors.tableCaption.textContent = "Index entries (unavailable)";
-                    });
+                ])
+                .then(([movies, series]) => {
+                    const normalisedMovies = normaliseMovies(movies);
+                    const normalisedSeries = normaliseSeries(series);
+                    state.dataset = [...normalisedMovies, ...normalisedSeries];
+                    updateMetrics(state.dataset);
+                    applyFilters();
+                })
+                .catch((error) => {
+                    console.error(error);
+                    selectors.tableBody.innerHTML = "";
+                    const errorRow = document.createElement("tr");
+                    const cell = document.createElement("td");
+                    cell.colSpan = 6;
+                    cell.className = "empty-state";
+                    cell.textContent = "Catalogue data failed to load.";
+                    errorRow.appendChild(cell);
+                    selectors.tableBody.appendChild(errorRow);
+                    selectors.tableCaption.textContent = "Index entries (unavailable)";
+                });
             }
 
             selectors.searchInput.addEventListener('input', (event) => {
