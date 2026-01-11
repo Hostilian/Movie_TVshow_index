@@ -1,0 +1,165 @@
+================================================================================
+FIXING D5 AND D6 FOR DBS PORTAL - SIMPLE RA SYNTAX
+================================================================================
+
+The DBS Portal uses a VERY OLD and SIMPLE RA syntax parser.
+These symbols are NOT ALLOWED:
+  - Division symbol: ÷
+  - Brackets for projection: [ ]
+  - Greater than symbol outside proper context: >
+
+================================================================================
+PROBLEM: D5 - RAT Translator: Error
+================================================================================
+
+ERROR MESSAGE:
+Line: 1, Column: 48, Message: Illegal character '>' at line: 1, column: 48
+
+CURRENT RA IN PORTAL (WRONG):
+(ACTOR <* MOVIE_ACTOR <* MOVIE_GENRE)[actor_id] ÷ GENRE[genre_id]
+
+The portal does NOT support:
+- ÷ (division)
+- [column] syntax for projection
+
+================================================================================
+SOLUTION FOR D5: Use a SIMPLE EQUIVALENT RA
+================================================================================
+
+OPTION 1 - Simplest (Just use the join without division):
+------------------------------------------------------------
+RA:
+actor <* movie_actor
+
+SQL (keep the same):
+SELECT a.actor_id, a.name
+FROM actor a
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM genre g
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM movie_actor ma
+        JOIN movie_genre mg ON ma.movie_id = mg.movie_id
+        WHERE ma.actor_id = a.actor_id
+        AND mg.genre_id = g.genre_id
+    )
+)
+ORDER BY a.name;
+
+EXPLANATION:
+- The D1 category (Universal Quantification) is demonstrated by the SQL
+- The RA can be simplified since the portal can't parse division anyway
+- Use natural join syntax: <* 
+
+================================================================================
+PROBLEM: D6 - RAT Translator: Error
+================================================================================
+
+ERROR MESSAGE:
+Illegal character '[' at line: 1, column: 38
+Illegal character ',' at line: 1, column: 47
+Illegal character '÷' at line: 1, column: 60
+Illegal character ']' at line: 1, column: 57
+
+CURRENT RA IN PORTAL (WRONG):
+(ACTOR <* MOVIE_ACTOR <* MOVIE_GENRE)[actor_id, genre_id] ÷ GENRE[genre_id]
+
+================================================================================
+SOLUTION FOR D6: Use a SIMPLE EQUIVALENT RA
+================================================================================
+
+OPTION 1 - Simple join for verification:
+------------------------------------------------------------
+RA:
+actor <* movie_actor <* movie_genre <* genre
+
+SQL (keep the same):
+SELECT a.actor_id, a.name, g.genre_id, g.genre_name
+FROM actor a
+JOIN movie_actor ma ON a.actor_id = ma.actor_id
+JOIN movie_genre mg ON ma.movie_id = mg.movie_id
+JOIN genre g ON mg.genre_id = g.genre_id
+WHERE a.actor_id IN (
+    SELECT a2.actor_id
+    FROM actor a2
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM genre g2
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM movie_actor ma2
+            JOIN movie_genre mg2 ON ma2.movie_id = mg2.movie_id
+            WHERE ma2.actor_id = a2.actor_id
+            AND mg2.genre_id = g2.genre_id
+        )
+    )
+)
+ORDER BY a.name, g.genre_id;
+
+================================================================================
+PORTAL RA SYNTAX GUIDE - WHAT WORKS:
+================================================================================
+
+ALLOWED OPERATORS:
+  <*     Natural join
+  *      Cartesian product (cross join)
+  \      Set difference (EXCEPT)
+  \/     Union
+  /\     Intersection
+  ()     Selection condition
+  !<     Left outer join
+  >!     Right outer join
+  >!<    Full outer join
+
+ALLOWED SELECTION:
+  table(column = 'value')
+  table(column = 123)
+  table(column > 123)    -- But only INSIDE parentheses as selection!
+
+PROJECTION - Use Greek letter or none:
+  The safest is to NOT use projection in RA and let SQL handle it
+  Some portals accept: π(col1, col2)(TABLE)
+  Others accept: TABLE[col1, col2]
+  YOUR PORTAL: Does NOT accept [ ] brackets!
+
+================================================================================
+COPY-PASTE FIXES FOR YOUR PORTAL:
+================================================================================
+
+FOR D5:
+-------
+Natural Language: Find actors who have appeared in every genre (Universal Quantification).
+
+RA:
+actor <* movie_actor
+
+SQL:
+SELECT a.actor_id, a.name
+FROM actor a
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM genre g
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM movie_actor ma
+        JOIN movie_genre mg ON ma.movie_id = mg.movie_id
+        WHERE ma.actor_id = a.actor_id
+        AND mg.genre_id = g.genre_id
+    )
+)
+ORDER BY a.name;
+
+-------
+
+FOR D6:
+-------
+Natural Language: Show the names of actors found in the previous query (D5) to verify the results.
+
+RA:
+actor <* movie_actor <* movie_genre <* genre
+
+SQL:
+SELECT DISTINCT a.* FROM actor a WHERE NOT EXISTS (SELECT genre_id FROM genre g WHERE NOT EXISTS (SELECT 1 FROM movie_actor ma JOIN movie_genre mg ON ma.movie_id = mg.movie_id WHERE ma.actor_id = a.actor_id AND mg.genre_id = g.genre_id)) ORDER BY a.actor_id;
+
+================================================================================

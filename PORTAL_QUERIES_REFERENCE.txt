@@ -1,0 +1,649 @@
+================================================================================
+     DBS PORTAL QUERIES - COMPLETE REFERENCE (D1-D41)
+     xozte001 - Movie Database
+     Last Updated: January 6, 2026
+================================================================================
+
+This file contains ALL 41 queries exactly as they appear in the DBS Portal.
+Each query has: Natural Language + RA Expression + SQL
+
+================================================================================
+D1 - Show only the title and year for every movie to build a compact catalog view.
+================================================================================
+NATURAL:
+Show only the title and year for every movie to build a compact catalog view.
+
+RA:
+MOVIE[title, year]
+
+SQL:
+SELECT title, year FROM MOVIE;
+
+================================================================================
+D2 - List every movie title in the database to produce an alphabetical film list.
+================================================================================
+NATURAL:
+List every movie title in the database to produce an alphabetical film list.
+
+RA:
+MOVIE[title]
+
+SQL:
+SELECT title FROM MOVIE;
+
+================================================================================
+D3 - Find movie IDs for films that have never received any awards.
+================================================================================
+NATURAL:
+Find movie IDs for films that have never received any awards.
+
+RA:
+MOVIE[movie_id] \ AWARD[movie_id]
+
+SQL:
+SELECT DISTINCT movie_id FROM MOVIE
+EXCEPT
+SELECT DISTINCT movie_id FROM AWARD;
+
+================================================================================
+D4 - Return movies directed by Christopher Nolan.
+================================================================================
+NATURAL:
+Return movies directed by Christopher Nolan.
+
+RA:
+MOVIE <* (DIRECTOR(name = 'Christopher Nolan'))
+
+SQL:
+SELECT DISTINCT *
+FROM MOVIE
+NATURAL JOIN (
+    SELECT DISTINCT *
+    FROM DIRECTOR
+    WHERE name = 'Christopher Nolan'
+) R1;
+
+================================================================================
+D5 - Find actors who have appeared in every genre (Universal Quantification).
+================================================================================
+NATURAL:
+Find actors who have appeared in every genre (Universal Quantification).
+
+RA:
+(ACTOR <* MOVIE_ACTOR <* MOVIE_GENRE)[actor_id] ÷ GENRE[genre_id]
+
+SQL:
+SELECT a.actor_id, a.name
+FROM actor a
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM genre g
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM movie_actor ma
+        JOIN movie_genre mg ON ma.movie_id = mg.movie_id
+        WHERE ma.actor_id = a.actor_id
+        AND mg.genre_id = g.genre_id
+    )
+)
+ORDER BY a.name;
+
+================================================================================
+D6 - Show the names of actors found in the previous query (D5) to verify the results.
+================================================================================
+NATURAL:
+Show the names of actors found in the previous query (D5) to verify the results.
+
+RA:
+Result verification for D5
+
+SQL:
+SELECT a.actor_id, a.name, g.genre_id, g.genre_name
+FROM actor a
+JOIN movie_actor ma ON a.actor_id = ma.actor_id
+JOIN movie_genre mg ON ma.movie_id = mg.movie_id
+JOIN genre g ON mg.genre_id = g.genre_id
+WHERE a.actor_id IN (
+    SELECT a2.actor_id
+    FROM actor a2
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM genre g2
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM movie_actor ma2
+            JOIN movie_genre mg2 ON ma2.movie_id = mg2.movie_id
+            WHERE ma2.actor_id = a2.actor_id
+            AND mg2.genre_id = g2.genre_id
+        )
+    )
+)
+ORDER BY a.name, g.genre_id;
+
+================================================================================
+D7 - Show movies with their directors, keeping only films released after 2015.
+================================================================================
+NATURAL:
+Show movies with their directors, keeping only films released after 2015.
+
+RA:
+(MOVIE(year > 2015)) <* DIRECTOR
+
+SQL:
+SELECT DISTINCT *
+FROM (
+    SELECT DISTINCT *
+    FROM MOVIE
+    WHERE year > 2015
+) R1
+NATURAL JOIN DIRECTOR;
+
+================================================================================
+D8 - List movie titles together with director names.
+================================================================================
+NATURAL:
+List movie titles together with director names.
+
+RA:
+(MOVIE <* DIRECTOR)[title, name]
+
+SQL:
+SELECT title, name FROM MOVIE NATURAL JOIN DIRECTOR;
+
+================================================================================
+D9 - Display titles and director names only for movies rated above 8.0.
+================================================================================
+NATURAL:
+Display titles and director names only for movies rated above 8.0.
+
+RA:
+((MOVIE(imdb_rating > 8)) <* DIRECTOR)[title, name]
+
+SQL:
+SELECT title, name
+FROM (
+    SELECT DISTINCT *
+    FROM MOVIE
+    WHERE imdb_rating > 8
+) R1
+NATURAL JOIN DIRECTOR;
+
+================================================================================
+D10 - Show director names alongside their movie titles and IMDb ratings.
+================================================================================
+NATURAL:
+Show director names alongside their movie titles and IMDb ratings.
+
+RA:
+(MOVIE <* DIRECTOR)[name, title, imdb_rating]
+
+SQL:
+SELECT name, title, imdb_rating FROM MOVIE NATURAL JOIN DIRECTOR;
+
+================================================================================
+D11 - Show each genre with the IDs of movies assigned to it.
+================================================================================
+NATURAL:
+Show each genre with the IDs of movies assigned to it.
+
+RA:
+(MOVIE_GENRE <* GENRE)[genre_name, movie_id]
+
+SQL:
+SELECT genre_name, movie_id FROM MOVIE_GENRE NATURAL JOIN GENRE;
+
+================================================================================
+D12 - List all IMDb ratings from the movie table.
+================================================================================
+NATURAL:
+List all IMDb ratings from the movie table.
+
+RA:
+MOVIE[imdb_rating]
+
+SQL:
+SELECT imdb_rating FROM MOVIE;
+
+================================================================================
+D13 - List each movie with its director ID.
+================================================================================
+NATURAL:
+List each movie with its director ID.
+
+RA:
+MOVIE[movie_id, director_id]
+
+SQL:
+SELECT movie_id, director_id FROM MOVIE;
+
+================================================================================
+D14 - Show the ID, title, and release year of every movie.
+================================================================================
+NATURAL:
+Show the ID, title, and release year of every movie.
+
+RA:
+MOVIE[movie_id, title, year]
+
+SQL:
+SELECT DISTINCT movie_id, title, year FROM MOVIE ORDER BY movie_id;
+
+================================================================================
+D15 - Combine director and actor names.
+================================================================================
+NATURAL:
+Combine director and actor names.
+
+RA:
+DIRECTOR[name] ∪ ACTOR[name]
+
+SQL:
+SELECT DISTINCT name FROM DIRECTOR
+UNION
+SELECT DISTINCT name FROM ACTOR;
+
+================================================================================
+D16 - Find movie IDs that appear both in the movie table and in awards.
+================================================================================
+NATURAL:
+Find movie IDs that appear both in the movie table and in awards.
+
+RA:
+MOVIE[movie_id] ∩ AWARD[movie_id]
+
+SQL:
+SELECT DISTINCT movie_id FROM MOVIE
+INTERSECT
+SELECT DISTINCT movie_id FROM AWARD;
+
+================================================================================
+D17 - Find directors who have not directed any movie yet.
+================================================================================
+NATURAL:
+Find directors who have not directed any movie yet.
+
+RA:
+DIRECTOR[director_id] \ MOVIE[director_id]
+
+SQL:
+SELECT director_id FROM director
+EXCEPT
+SELECT director_id FROM movie
+ORDER BY director_id;
+
+================================================================================
+D18 - List all movies that have at least one award.
+================================================================================
+NATURAL:
+List all movies that have at least one award.
+
+RA:
+MOVIE[movie_id] ∩ AWARD[movie_id]
+
+SQL:
+SELECT DISTINCT movie_id FROM movie
+WHERE movie_id IN (SELECT movie_id FROM award)
+ORDER BY movie_id;
+
+================================================================================
+D19 - Show movie titles together with each award name they received.
+================================================================================
+NATURAL:
+Show movie titles together with each award name they received.
+
+RA:
+MOVIE <* AWARD
+
+SQL:
+SELECT * FROM MOVIE NATURAL JOIN AWARD ORDER BY movie_id;
+
+================================================================================
+D20 - Find awarded movies using an EXISTS predicate (Variant 1).
+================================================================================
+NATURAL:
+Find awarded movies using an EXISTS predicate (Variant 1).
+
+RA:
+σ(∃ award)(MOVIE)
+
+SQL:
+SELECT DISTINCT m.movie_id, m.title
+FROM movie m
+WHERE EXISTS (SELECT 1 FROM award a WHERE a.movie_id = m.movie_id)
+ORDER BY m.movie_id;
+
+================================================================================
+D21 - Find awarded movies using an IN predicate (Variant 2).
+================================================================================
+NATURAL:
+Find awarded movies using an IN predicate (Variant 2).
+
+RA:
+σ(movie_id ∈ AWARD[movie_id])(MOVIE)
+
+SQL:
+SELECT DISTINCT m.movie_id, m.title
+FROM movie m
+WHERE m.movie_id IN (SELECT a.movie_id FROM award a)
+ORDER BY m.movie_id;
+
+================================================================================
+D22 - Find awarded movies using a direct JOIN (Variant 3).
+================================================================================
+NATURAL:
+Find awarded movies using a direct JOIN (Variant 3).
+
+RA:
+MOVIE <* AWARD
+
+SQL:
+SELECT DISTINCT m.movie_id, m.title
+FROM movie m
+JOIN award a ON m.movie_id = a.movie_id
+ORDER BY m.movie_id;
+
+================================================================================
+D23 - Show every column and row from the movie table.
+================================================================================
+NATURAL:
+Show every column and row from the movie table.
+
+RA:
+MOVIE
+
+SQL:
+SELECT * FROM movie ORDER BY movie_id;
+
+================================================================================
+D24 - List all distinct release years present in the movie table.
+================================================================================
+NATURAL:
+List all distinct release years present in the movie table.
+
+RA:
+MOVIE[year]
+
+SQL:
+SELECT DISTINCT year FROM MOVIE ORDER BY year;
+
+================================================================================
+D25 - Find movies with IMDb rating greater than 8.0.
+================================================================================
+NATURAL:
+Find movies with IMDb rating greater than 8.0.
+
+RA:
+MOVIE(imdb_rating > 8.0)
+
+SQL:
+SELECT * FROM movie WHERE imdb_rating > 8.0 ORDER BY movie_id;
+
+================================================================================
+D26 - Show all studios with their country information.
+================================================================================
+NATURAL:
+Show all studios with their country information.
+
+RA:
+STUDIO <* COUNTRY
+
+SQL:
+SELECT * FROM studio NATURAL JOIN country;
+
+================================================================================
+D27 - Display movie title, release year, IMDb rating, and runtime.
+================================================================================
+NATURAL:
+Display movie title, release year, IMDb rating, and runtime.
+
+RA:
+MOVIE[title, year, imdb_rating, runtime]
+
+SQL:
+SELECT DISTINCT title, year, imdb_rating, runtime FROM movie ORDER BY title;
+
+================================================================================
+D28 - Generate every combination of genres and countries.
+================================================================================
+NATURAL:
+Generate every combination of genres and countries.
+
+RA:
+GENRE × COUNTRY
+
+SQL:
+SELECT
+    GENRE.genre_id,
+    GENRE.genre_name,
+    GENRE.created_at,
+    COUNTRY.country_id,
+    COUNTRY.country_name,
+    COUNTRY.country_code,
+    COUNTRY.created_at AS created_at_1
+FROM GENRE
+CROSS JOIN COUNTRY;
+
+================================================================================
+D29 - List all movies with their award information, keeping rows for movies that have never won.
+================================================================================
+NATURAL:
+List all movies with their award information, keeping rows for movies that have never won.
+
+RA:
+MOVIE !< AWARD
+
+SQL:
+SELECT * FROM movie m LEFT JOIN award a ON m.movie_id = a.movie_id;
+
+================================================================================
+D30 - List all directors together with their movies, including directors who have no films yet.
+================================================================================
+NATURAL:
+List all directors together with their movies, including directors who have no films yet.
+
+RA:
+DIRECTOR !< MOVIE
+
+SQL:
+SELECT * FROM director d LEFT JOIN movie m ON d.director_id = m.director_id;
+
+================================================================================
+D31 - Show all movies and all awards including unmatched records from both sides using FULL OUTER JOIN.
+================================================================================
+NATURAL:
+Show all movies and all awards including unmatched records from both sides using FULL OUTER JOIN.
+
+RA:
+MOVIE >!< AWARD
+
+SQL:
+SELECT * FROM movie m FULL OUTER JOIN award a ON m.movie_id = a.movie_id;
+
+================================================================================
+D32 - Find directors with their average movie rating using a subquery in the FROM clause.
+================================================================================
+NATURAL:
+Find directors with their average movie rating using a subquery in the FROM clause.
+
+RA:
+DIRECTOR <* (subquery)
+
+SQL:
+SELECT d.director_id, d.name, stats.avg_rating
+FROM director d
+JOIN (
+    SELECT director_id, ROUND(AVG(imdb_rating), 2) AS avg_rating
+    FROM movie
+    GROUP BY director_id
+) stats ON d.director_id = stats.director_id
+ORDER BY stats.avg_rating DESC;
+
+================================================================================
+D33 - Display each movie with the count of its awards as a scalar subquery in SELECT clause.
+================================================================================
+NATURAL:
+Display each movie with the count of its awards as a scalar subquery in SELECT clause.
+
+RA:
+MOVIE with scalar count
+
+SQL:
+SELECT m.movie_id, m.title,
+    (SELECT COUNT(*) FROM award a WHERE a.movie_id = m.movie_id) AS award_count
+FROM movie m
+ORDER BY award_count DESC, m.movie_id;
+
+================================================================================
+D34 - Group movies by their release year to see which years have films.
+================================================================================
+NATURAL:
+Group movies by their release year to see which years have films.
+
+RA:
+γ(year)(MOVIE)
+
+SQL:
+SELECT year FROM movie GROUP BY year ORDER BY year;
+
+================================================================================
+D35 - Count the number of movies released each year using GROUP BY with aggregate.
+================================================================================
+NATURAL:
+Count the number of movies released each year using GROUP BY with aggregate.
+
+RA:
+γ(year; COUNT(movie_id))(MOVIE)
+
+SQL:
+SELECT year, COUNT(*) AS movie_count FROM movie GROUP BY year ORDER BY year;
+
+================================================================================
+D36 - Calculate movie statistics: total count, average rating, highest rating, lowest rating, and total votes.
+================================================================================
+NATURAL:
+Calculate movie statistics: total count, average rating, highest rating, lowest rating, and total votes.
+
+RA:
+γ(COUNT, AVG, MAX, MIN, SUM)(MOVIE)
+
+SQL:
+SELECT
+    COUNT(*) AS total_movies,
+    ROUND(AVG(imdb_rating), 2) AS avg_rating,
+    MAX(imdb_rating) AS highest_rating,
+    MIN(imdb_rating) AS lowest_rating,
+    SUM(imdb_votes) AS total_votes
+FROM movie;
+
+================================================================================
+D37 - Order movies first by year descending, then by rating descending to find best recent films.
+================================================================================
+NATURAL:
+Order movies first by year descending, then by rating descending to find best recent films.
+
+RA:
+τ(year DESC, imdb_rating DESC)(MOVIE)
+
+SQL:
+SELECT movie_id, title, year, imdb_rating
+FROM movie
+ORDER BY year DESC, imdb_rating DESC;
+
+================================================================================
+D38 - Categorize movies by their rating into quality tiers using CASE expression.
+================================================================================
+NATURAL:
+Categorize movies by their rating into quality tiers using CASE expression.
+
+RA:
+Extended with CASE
+
+SQL:
+SELECT movie_id, title, imdb_rating,
+    CASE
+        WHEN imdb_rating >= 8.5 THEN 'Excellent'
+        WHEN imdb_rating >= 7.5 THEN 'Good'
+        WHEN imdb_rating >= 6.0 THEN 'Average'
+        ELSE 'Below Average'
+    END AS quality_tier
+FROM movie
+ORDER BY imdb_rating DESC;
+
+================================================================================
+D39 - Find movies whose title contains a specific word using string pattern matching with LIKE.
+================================================================================
+NATURAL:
+Find movies whose title contains a specific word using string pattern matching with LIKE.
+
+RA:
+σ(title LIKE '%The%')(MOVIE)
+
+SQL:
+SELECT movie_id, title, year FROM movie WHERE title LIKE '%The%' ORDER BY title;
+
+================================================================================
+D40 - Calculate movie age and extract year components from release dates using date functions.
+================================================================================
+NATURAL:
+Calculate movie age and extract year components from release dates using date functions.
+
+RA:
+Extended with date functions
+
+SQL:
+SELECT movie_id, title, year, release_date,
+    EXTRACT(YEAR FROM CURRENT_DATE) - year AS movie_age
+FROM movie
+ORDER BY movie_age DESC;
+
+================================================================================
+D41 - Query the high_rated_movies view to find critically acclaimed films with rating above 8.
+================================================================================
+NATURAL:
+Query the high_rated_movies view to find critically acclaimed films with rating above 8.
+
+RA:
+σ(imdb_rating > 8)(high_rated_movies)
+
+SQL:
+SELECT * FROM high_rated_movies WHERE imdb_rating > 8 ORDER BY imdb_rating DESC;
+
+-- NOTE: Requires view to be created first:
+-- CREATE OR REPLACE VIEW high_rated_movies AS
+-- SELECT movie_id, title, year, imdb_rating, director_id FROM movie WHERE imdb_rating > 7.5;
+
+================================================================================
+                    CATEGORY COVERAGE SUMMARY
+================================================================================
+
+A   - D1, D2 (Projection)
+B   - D4, D25 (Selection)
+CN  - D29 (Left Outer Join with NULLs)
+D1  - D5 (Universal Quantification - Division)
+D1N - D30 (Left Outer Join)
+D2  - D6 (Result Check)
+F1  - D7 (Join + Selection)
+F2  - D8 (Join + Projection)
+F3  - D9 (Join + Selection + Projection)
+F4  - D10 (Join + 3-column Projection)
+F5  - D11 (Join + Different Projection)
+G1  - D2, D18 (Single column)
+G2  - D12, D36 (Single column / Aggregates)
+G3  - D13, D34 (Two columns / GROUP BY)
+G4  - D14, D35 (Three columns / GROUP BY with COUNT)
+H1  - D15 (Union)
+H2  - D16 (Intersect)
+H3  - D3, D17 (Except/Difference)
+I1  - D33 (Scalar Subquery in SELECT)
+I2  - D32 (Subquery in FROM)
+J   - D20, D21, D22 (Same query 3 ways: EXISTS, IN, JOIN)
+K   - D23 (Full table)
+L   - D24 (Distinct)
+M   - D41 (Query over View)
+N   - D31 (Full Outer Join)
+O   - D27 (4-column projection)
+P   - D28 (Cartesian Product)
+
+================================================================================
+                              END OF REFERENCE
+================================================================================

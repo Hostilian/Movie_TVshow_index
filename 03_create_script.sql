@@ -311,6 +311,18 @@ CREATE INDEX idx_award_movie ON award(movie_id);
 CREATE INDEX idx_award_year ON award(year_awarded);
 
 -- ==============================================================================
+-- CREATE VIEW FOR CATEGORY M QUERIES (D41)
+-- ==============================================================================
+DROP VIEW IF EXISTS high_rated_movies;
+
+CREATE VIEW high_rated_movies AS
+SELECT movie_id, title, year, imdb_rating, director_id
+FROM movie
+WHERE imdb_rating > 7.5;
+
+COMMENT ON VIEW high_rated_movies IS 'View containing movies with IMDb rating above 7.5 for Category M queries';
+
+-- ==============================================================================
 -- VERIFICATION QUERY
 -- ==============================================================================
 -- Run this to verify all tables were created:
@@ -321,6 +333,11 @@ CREATE INDEX idx_award_year ON award(year_awarded);
 -- actor, award, country, director, genre, movie, movie_actor,
 -- movie_country, movie_genre, studio, user_rating
 
+-- Verify view was created:
+-- SELECT table_name FROM information_schema.views WHERE table_schema = 'public';
+-- Expected: high_rated_movies
+
 -- ==============================================================================
 -- END OF DDL SCRIPT
+-- Last Updated: January 6, 2026
 -- ==============================================================================
