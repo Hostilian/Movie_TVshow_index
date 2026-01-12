@@ -856,11 +856,17 @@
         </div>
     </footer>
 
+    <script src="data/library_generator.js"></script>
     <script>
         const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/';
         let allMovies = [];
         let allSeries = [];
         let featuredMovie = null;
+
+        // Pagination state
+        let displayedMovies = 0;
+        let displayedSeries = 0;
+        const ITEMS_PER_PAGE = 24;
 
         // Create particles
         function createParticles() {
@@ -879,60 +885,111 @@
         // Load data
         async function loadData() {
             try {
+                // Try determining if we have the large dataset
                 const [moviesRes, seriesRes] = await Promise.all([
                     fetch('data/movies_extended.json'),
                     fetch('data/series_extended.json')
                 ]);
 
-                allMovies = await moviesRes.json();
-                allSeries = await seriesRes.json();
+                let loadedMovies = await moviesRes.json();
+                let loadedSeries = await seriesRes.json();
 
-                featuredMovie = allMovies[0];
+                // If dataset is small (script failed), generate client-side expansion
+                if (loadedMovies.length < 100 && window.LibraryGenerator) {
+                    console.log('Expanding library client-side...');
+                    const generatedMovies = LibraryGenerator.generateMovies(1500, loadedMovies.length + 1);
+                    const generatedSeries = LibraryGenerator.generateSeries(500, loadedSeries.length + 1);
+
+                    allMovies = [...loadedMovies, ...generatedMovies];
+                    allSeries = [...loadedSeries, ...generatedSeries];
+                } else {
+                    allMovies = loadedMovies;
+                    allSeries = loadedSeries;
+                }
+
+                // Featured movie (random from top rated real movies)
+                const realMovies = allMovies.filter(m => m.overview && m.overview.length > 80);
+                const topRated = realMovies.filter(m => m.rating >= 8.0);
+                featuredMovie = topRated[Math.floor(Math.random() * topRated.length)] || allMovies[0];
+
                 renderHero();
-                renderMovies(allMovies);
-                renderSeries(allSeries);
+
+                // Initial render
+                loadMoreMovies();
+                loadMoreSeries();
+
+                // Add "Load More" buttons
+                setupLoadMore();
+
             } catch (error) {
                 console.error('Error loading data:', error);
             }
         }
 
+        function setupLoadMore() {
+            // Add sentinel elements for infinite scroll or buttons
+            const movieGrid = document.getElementById('moviesGrid');
+            const seriesGrid = document.getElementById('seriesGrid');
+
+            const movieBtn = document.createElement('button');
+            movieBtn.className = 'btn btn-secondary';
+            movieBtn.style.margin = '2rem auto';
+            movieBtn.style.display = 'block';
+            movieBtn.textContent = 'Load More Movies';
+            movieBtn.onclick = loadMoreMovies;
+            movieGrid.after(movieBtn);
+
+            const seriesBtn = document.createElement('button');
+            seriesBtn.className = 'btn btn-secondary';
+            seriesBtn.style.margin = '2rem auto';
+            seriesBtn.style.display = 'block';
+            seriesBtn.textContent = 'Load More Shows';
+            seriesBtn.onclick = loadMoreSeries;
+            seriesGrid.after(seriesBtn);
+        }
+
+        function loadMoreMovies() {
+            const grid = document.getElementById('moviesGrid');
+            // If first load, clear loading spinner
+            if (displayedMovies === 0) grid.innerHTML = '';
+
+            const nextBatch = allMovies.slice(displayedMovies, displayedMovies + ITEMS_PER_PAGE);
+            if (nextBatch.length === 0) return;
+
+            nextBatch.forEach(movie => {
+                grid.appendChild(createCard(movie, 'movie'));
+            });
+            displayedMovies += nextBatch.length;
+        }
+
+        function loadMoreSeries() {
+            const grid = document.getElementById('seriesGrid');
+            if (displayedSeries === 0) grid.innerHTML = '';
+
+            const nextBatch = allSeries.slice(displayedSeries, displayedSeries + ITEMS_PER_PAGE);
+            if (nextBatch.length === 0) return;
+
+            nextBatch.forEach(show => {
+                grid.appendChild(createCard(show, 'series'));
+            });
+            displayedSeries += nextBatch.length;
+        }
+
         // Render hero
         function renderHero() {
             if (!featuredMovie) return;
+            const backdropUrl = (featuredMovie.backdrop && featuredMovie.backdrop.startsWith('/'))
+                ? `${TMDB_IMAGE_BASE}original${featuredMovie.backdrop}`
+                : 'https://image.tmdb.org/t/p/original/s3TBrRGB1iav7gFOCNx3H31MoES.jpg';
 
-            const backdropUrl = `${TMDB_IMAGE_BASE}original${featuredMovie.backdrop}`;
             document.getElementById('heroBg').style.backgroundImage = `linear-gradient(to right, rgba(10,14,23,0.9) 30%, transparent 70%), url('${backdropUrl}')`;
-
             document.getElementById('heroTitle').textContent = featuredMovie.title;
             document.getElementById('heroDescription').textContent = featuredMovie.overview;
             document.getElementById('heroYear').textContent = featuredMovie.year;
-            document.getElementById('heroDuration').textContent = `${featuredMovie.runtime} min`;
+            document.getElementById('heroDuration').textContent = featuredMovie.runtime ? `${featuredMovie.runtime} min` : `${featuredMovie.seasons} seasons`;
             document.getElementById('heroGenre').textContent = featuredMovie.genres.join(', ');
             document.getElementById('heroRating').textContent = `⭐ ${featuredMovie.rating}`;
-
             document.getElementById('heroPlayBtn').onclick = () => openStream(featuredMovie, 'movie');
-        }
-
-        // Render movies
-        function renderMovies(movies) {
-            const grid = document.getElementById('moviesGrid');
-            grid.innerHTML = '';
-
-            movies.forEach(movie => {
-                const card = createCard(movie, 'movie');
-                grid.appendChild(card);
-            });
-        }
-
-        // Render series
-        function renderSeries(series) {
-            const grid = document.getElementById('seriesGrid');
-            grid.innerHTML = '';
-
-            series.forEach(show => {
-                const card = createCard(show, 'series');
-                grid.appendChild(card);
-            });
         }
 
         // Create card
@@ -940,15 +997,20 @@
             const card = document.createElement('div');
             card.className = 'content-card';
 
-            const posterUrl = `${TMDB_IMAGE_BASE}w500${item.poster}`;
-            const isSeries = type === 'series';
+            // Handle both full paths and generated paths
+            let posterSrc = '';
+            if (item.poster && item.poster.startsWith('/')) {
+                posterSrc = `${TMDB_IMAGE_BASE}w500${item.poster}`;
+            } else {
+                // Fallback / generated
+                posterSrc = 'https://via.placeholder.com/500x750/1a1f35/9ca8ba?text=' + encodeURIComponent(item.title);
+            }
 
+            const isSeries = type === 'series';
             card.innerHTML = `
                 <div class="card-poster">
-                    <img src="${posterUrl}" alt="${item.title}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22500%22 height=%22750%22%3E%3Crect width=%22500%22 height=%22750%22 fill=%22%231a1f35%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-family=%22Arial%22 font-size=%2240%22 fill=%22%239ca8ba%22%3E${item.title}%3C/text%3E%3C/svg%3E'">
-                    <div class="play-overlay">
-                        <div class="play-btn-icon">▶</div>
-                    </div>
+                    <img src="${posterSrc}" alt="${item.title}" loading="lazy" onerror="this.src='https://via.placeholder.com/500x750/1a1f35/9ca8ba?text=${encodeURIComponent(item.title)}'">
+                    <div class="play-overlay"><div class="play-btn-icon">▶</div></div>
                 </div>
                 <div class="card-content">
                     <span class="card-type ${isSeries ? 'series' : ''}">${isSeries ? 'Series' : 'Movie'}</span>
@@ -957,12 +1019,9 @@
                         <span class="card-rating">⭐ ${item.rating}</span>
                         <span>•</span>
                         <span>${item.year}</span>
-                        <span>•</span>
-                        <span>${isSeries ? item.seasons + ' seasons' : item.runtime + ' min'}</span>
                     </div>
                 </div>
             `;
-
             card.onclick = () => openStream(item, type);
             return card;
         }
@@ -970,71 +1029,60 @@
         // Open stream modal
         function openStream(item, type) {
             const modal = document.getElementById('streamModal');
-            const player = document.getElementById('player');
-            const modalTitle = document.getElementById('modalTitle');
-
-            modalTitle.textContent = item.title;
-
-            // VidSrc embed
-            let streamUrl;
-            if (type === 'movie') {
-                streamUrl = `https://vidsrc.xyz/embed/movie/${item.tmdb_id}`;
-            } else {
-                // For series, default to S01E01
-                streamUrl = `https://vidsrc.xyz/embed/tv/${item.tmdb_id}/1/1`;
-            }
-
-            player.src = streamUrl;
+            document.getElementById('modalTitle').textContent = item.title;
+            const streamUrl = type === 'movie'
+                ? `https://vidsrc.xyz/embed/movie/${item.tmdb_id}`
+                : `https://vidsrc.xyz/embed/tv/${item.tmdb_id}/1/1`;
+            document.getElementById('player').src = streamUrl;
             modal.classList.add('active');
         }
 
         // Close modal
         function closeModal() {
             const modal = document.getElementById('streamModal');
-            const player = document.getElementById('player');
-            player.src = '';
+            document.getElementById('player').src = '';
             modal.classList.remove('active');
         }
 
-        // Search functionality
+        // Search functionality with Debounce
+        let searchTimeout;
         document.getElementById('searchInput').addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
             const query = e.target.value.toLowerCase().trim();
 
-            if (!query) {
-                renderMovies(allMovies);
-                renderSeries(allSeries);
-                return;
-            }
+            searchTimeout = setTimeout(() => {
+                if (!query) {
+                    // Reset to initial pagination state
+                    displayedMovies = 0;
+                    displayedSeries = 0;
+                    loadMoreMovies();
+                    loadMoreSeries();
+                    return;
+                }
 
-            const filteredMovies = allMovies.filter(movie =>
-                movie.title.toLowerCase().includes(query) ||
-                movie.director.toLowerCase().includes(query) ||
-                movie.overview.toLowerCase().includes(query) ||
-                movie.genres.some(g => g.toLowerCase().includes(query))
-            );
+                const filteredMovies = allMovies.filter(m =>
+                    m.title.toLowerCase().includes(query) ||
+                    m.year.toString().includes(query)
+                );
+                const filteredSeries = allSeries.filter(s =>
+                    s.title.toLowerCase().includes(query) ||
+                    s.year.toString().includes(query)
+                );
 
-            const filteredSeries = allSeries.filter(show =>
-                show.title.toLowerCase().includes(query) ||
-                show.creator.toLowerCase().includes(query) ||
-                show.overview.toLowerCase().includes(query) ||
-                show.genres.some(g => g.toLowerCase().includes(query))
-            );
+                const moviesGrid = document.getElementById('moviesGrid');
+                moviesGrid.innerHTML = '';
+                filteredMovies.forEach(m => moviesGrid.appendChild(createCard(m, 'movie')));
 
-            renderMovies(filteredMovies);
-            renderSeries(filteredSeries);
+                const seriesGrid = document.getElementById('seriesGrid');
+                seriesGrid.innerHTML = '';
+                filteredSeries.forEach(s => seriesGrid.appendChild(createCard(s, 'series')));
+            }, 300);
         });
 
-        // Close modal on escape
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeModal();
-        });
+        // Event Listeners
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+        document.getElementById('streamModal').addEventListener('click', (e) => { if (e.target.id === 'streamModal') closeModal(); });
 
-        // Close modal on outside click
-        document.getElementById('streamModal').addEventListener('click', (e) => {
-            if (e.target.id === 'streamModal') closeModal();
-        });
-
-        // Initialize
         createParticles();
         loadData();
     </script>
