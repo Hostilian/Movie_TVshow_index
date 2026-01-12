@@ -7,15 +7,1082 @@
     <title>ErenFlix · Stream Movies & TV Shows Free</title>
     <meta name="description"
         content="Stream movies and TV shows for free with ErenFlix. No ads, no subscriptions, just entertainment.">
-    <meta http-equiv="refresh" content="0; url=erenflix.html">
-    <script>
-        // JavaScript redirect as backup
-        window.location.href = "erenflix.html";
-    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0e17;
+            --bg-secondary: #0f1421;
+            --surface: #1a1f35;
+            --surface-hover: #242b45;
+            --text-primary: #f0f4f8;
+            --text-secondary: #9ca8ba;
+            --text-muted: #5f6b7f;
+
+            /* ErenFlix Brand Colors */
+            --erenflix-purple: #8b5cf6;
+            --erenflix-cyan: #06b6d4;
+            --erenflix-lime: #c0ff45;
+            --erenflix-pink: #ec4899;
+
+            --border: rgba(255, 255, 255, 0.08);
+            --shadow: rgba(0, 0, 0, 0.5);
+            --glow-purple: rgba(139, 92, 246, 0.3);
+            --glow-cyan: rgba(6, 182, 212, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #0a0e17 0%, #1a1030 50%, #0a0e17 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 20s ease infinite;
+        }
+
+        @keyframes gradientShift {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        /* Floating particles */
+        .particles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: var(--erenflix-cyan);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 15s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) translateX(0);
+            }
+
+            25% {
+                transform: translateY(-50px) translateX(20px);
+            }
+
+            50% {
+                transform: translateY(-100px) translateX(-10px);
+            }
+
+            75% {
+                transform: translateY(-50px) translateX(-20px);
+            }
+        }
+
+        /* Navigation */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 14, 23, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .nav-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, var(--erenflix-purple), var(--erenflix-cyan), var(--erenflix-lime));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            text-shadow: 0 0 30px var(--glow-purple);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9375rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--erenflix-cyan);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--erenflix-cyan);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .search-box {
+            flex: 1;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1.25rem 0.75rem 3rem;
+            background: var(--surface);
+            border: 2px solid transparent;
+            border-radius: 50px;
+            color: var(--text-primary);
+            font-size: 0.9375rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--erenflix-purple);
+            box-shadow: 0 0 20px var(--glow-purple);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            height: 80vh;
+            min-height: 600px;
+            max-height: 900px;
+            display: flex;
+            align-items: flex-end;
+            overflow: hidden;
+            margin-bottom: 3rem;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            filter: blur(0px);
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, var(--bg-primary) 0%, transparent 70%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+            width: 100%;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 0.5rem 1.25rem;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(6, 182, 212, 0.2));
+            border: 2px solid var(--erenflix-purple);
+            border-radius: 50px;
+            color: var(--erenflix-lime);
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0 20px var(--glow-purple);
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px var(--glow-purple);
+            }
+
+            50% {
+                box-shadow: 0 0 40px var(--glow-cyan);
+            }
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 5vw, 5rem);
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.5rem;
+            max-width: 900px;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #ffffff, var(--erenflix-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-description {
+            font-size: clamp(1rem, 1.5vw, 1.375rem);
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        .hero-meta {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-bottom: 2.5rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .rating {
+            color: var(--erenflix-lime);
+            font-weight: 700;
+            font-size: 1.125rem;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--erenflix-purple), var(--erenflix-pink));
+            color: white;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(139, 92, 246, 0.6);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--erenflix-cyan);
+            transform: translateY(-3px);
+        }
+
+        /* Content Sections */
+        .content-section {
+            padding: 3rem 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--text-primary), var(--erenflix-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Card Grid */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 2rem;
+        }
+
+        .content-card {
+            position: relative;
+            background: var(--surface);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+
+        .content-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--erenflix-purple), var(--erenflix-cyan));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 0;
+        }
+
+        .content-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            border-color: var(--erenflix-purple);
+            box-shadow:
+                0 25px 50px var(--shadow),
+                0 0 60px var(--glow-purple);
+        }
+
+        .content-card:hover::before {
+            opacity: 0.1;
+        }
+
+        .card-poster {
+            width: 100%;
+            aspect-ratio: 2/3;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1a1f35, #242b45);
+        }
+
+        .card-poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .content-card:hover .card-poster img {
+            transform: scale(1.1);
+        }
+
+        .play-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .content-card:hover .play-overlay {
+            opacity: 1;
+        }
+
+        .play-btn-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--erenflix-purple), var(--erenflix-pink));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.6);
+            animation: pulse-play 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-play {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .card-content {
+            padding: 1.25rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-type {
+            display: inline-block;
+            padding: 0.25rem 0.875rem;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(6, 182, 212, 0.2));
+            border: 1px solid var(--erenflix-purple);
+            border-radius: 50px;
+            color: var(--erenflix-cyan);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-type.series {
+            background: linear-gradient(135deg, rgba(192, 255, 69, 0.2), rgba(6, 182, 212, 0.2));
+            border-color: var(--erenflix-lime);
+            color: var(--erenflix-lime);
+        }
+
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+            color: var(--text-primary);
+        }
+
+        .card-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .card-rating {
+            color: var(--erenflix-lime);
+            font-weight: 700;
+        }
+
+        /* Stream Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            width: 90%;
+            max-width: 1200px;
+            background: var(--surface);
+            border-radius: 24px;
+            padding: 2rem;
+            position: relative;
+            border: 2px solid var(--erenflix-purple);
+            box-shadow: 0 0 60px var(--glow-purple);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--erenflix-purple), var(--erenflix-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .close-modal {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 50%;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-modal:hover {
+            background: var(--erenflix-purple);
+            transform: rotate(90deg);
+        }
+
+        .player-wrapper {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .player-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--erenflix-purple), var(--erenflix-cyan), var(--erenflix-lime));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--erenflix-cyan);
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--border);
+            border-top-color: var(--erenflix-purple);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 1rem;
+                flex-wrap: wrap;
+            }
+
+            .search-box {
+                order: 3;
+                width: 100%;
+                max-width: none;
+            }
+
+            .hero-content {
+                padding: 0 1rem 3rem;
+            }
+
+            .content-section {
+                padding: 2rem 1rem;
+            }
+
+            .card-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 1rem;
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <p>Redirecting to ErenFlix...</p>
+    <!-- Animated Background -->
+    <div class="bg-animation"></div>
+    <div class="particles" id="particles"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">ErenFlix</a>
+            <ul class="nav-links">
+                <li><a href="index.html">🏠 Home</a></li>
+                <li><a href="#movies">Movies</a></li>
+                <li><a href="#series">TV Shows</a></li>
+            </ul>
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="search" class="search-input" id="searchInput" placeholder="Search movies and shows..."
+                    autocomplete="off">
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-bg" id="heroBg"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <span class="hero-badge">✨ Featured Now</span>
+            <h1 class="hero-title" id="heroTitle">Loading...</h1>
+            <p class="hero-description" id="heroDescription">Loading description...</p>
+            <div class="hero-meta">
+                <div class="meta-item">
+                    <span class="rating" id="heroRating">⭐ 8.8</span>
+                </div>
+                <div class="meta-item" id="heroYear">2010</div>
+                <div class="meta-item" id="heroDuration">148 min</div>
+                <div class="meta-item" id="heroGenre">Thriller</div>
+            </div>
+            <div class="hero-buttons">
+                <button class="btn btn-primary" id="heroPlayBtn">
+                    ▶ Play Now
+                </button>
+                <a href="#movies" class="btn btn-secondary">
+                    ℹ More Info
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Movies Section -->
+    <section class="content-section" id="movies">
+        <div class="section-header">
+            <h2 class="section-title">🎬 Featured Movies</h2>
+        </div>
+        <div class="card-grid" id="moviesGrid">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Loading movies...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Series Section -->
+    <section class="content-section" id="series">
+        <div class="section-header">
+            <h2 class="section-title">📺 TV Shows</h2>
+        </div>
+        <div class="card-grid" id="seriesGrid">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Loading TV shows...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stream Modal -->
+    <div class="modal" id="streamModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Now Playing</h3>
+                <button class="close-modal" onclick="closeModal()">×</button>
+            </div>
+            <div class="player-wrapper">
+                <iframe id="player" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">ErenFlix</div>
+            <p style="color: var(--text-secondary); margin: 1rem 0;">Stream movies and TV shows for free. No ads, just
+                entertainment.</p>
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+            </div>
+            <p style="color: var(--text-muted); font-size: 0.875rem; margin-top: 2rem;">© 2026 ErenFlix · Free Streaming
+                Platform</p>
+        </div>
+    </footer>
+
+    <script src="data/library_generator.js"></script>
+    <script>
+        const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/';
+        let allMovies = [];
+        let allSeries = [];
+        let featuredMovie = null;
+
+        // Pagination state
+        let displayedMovies = 0;
+        let displayedSeries = 0;
+        const ITEMS_PER_PAGE = 24;
+
+        // Create particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Load data
+        async function loadData() {
+            try {
+                // Try determining if we have the large dataset
+                const [moviesRes, seriesRes] = await Promise.all([
+                    fetch('data/movies_extended.json'),
+                    fetch('data/series_extended.json')
+                ]);
+
+                let loadedMovies = await moviesRes.json();
+                let loadedSeries = await seriesRes.json();
+
+                // If dataset is small (script failed), generate client-side expansion
+                if (loadedMovies.length < 100 && window.LibraryGenerator) {
+                    console.log('Expanding library client-side...');
+                    const generatedMovies = LibraryGenerator.generateMovies(1500, loadedMovies.length + 1);
+                    const generatedSeries = LibraryGenerator.generateSeries(500, loadedSeries.length + 1);
+
+                    allMovies = [...loadedMovies, ...generatedMovies];
+                    allSeries = [...loadedSeries, ...generatedSeries];
+                } else {
+                    allMovies = loadedMovies;
+                    allSeries = loadedSeries;
+                }
+
+                // Featured movie (random from top rated real movies)
+                const realMovies = allMovies.filter(m => m.overview && m.overview.length > 80);
+                const topRated = realMovies.filter(m => m.rating >= 8.0);
+                featuredMovie = topRated[Math.floor(Math.random() * topRated.length)] || allMovies[0];
+
+                renderHero();
+
+                // Initial render
+                loadMoreMovies();
+                loadMoreSeries();
+
+                // Add "Load More" buttons
+                setupLoadMore();
+
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        function setupLoadMore() {
+            // Add sentinel elements for infinite scroll or buttons
+            const movieGrid = document.getElementById('moviesGrid');
+            const seriesGrid = document.getElementById('seriesGrid');
+
+            const movieBtn = document.createElement('button');
+            movieBtn.className = 'btn btn-secondary';
+            movieBtn.style.margin = '2rem auto';
+            movieBtn.style.display = 'block';
+            movieBtn.textContent = 'Load More Movies';
+            movieBtn.onclick = loadMoreMovies;
+            movieGrid.after(movieBtn);
+
+            const seriesBtn = document.createElement('button');
+            seriesBtn.className = 'btn btn-secondary';
+            seriesBtn.style.margin = '2rem auto';
+            seriesBtn.style.display = 'block';
+            seriesBtn.textContent = 'Load More Shows';
+            seriesBtn.onclick = loadMoreSeries;
+            seriesGrid.after(seriesBtn);
+        }
+
+        function loadMoreMovies() {
+            const grid = document.getElementById('moviesGrid');
+            // If first load, clear loading spinner
+            if (displayedMovies === 0) grid.innerHTML = '';
+
+            const nextBatch = allMovies.slice(displayedMovies, displayedMovies + ITEMS_PER_PAGE);
+            if (nextBatch.length === 0) return;
+
+            nextBatch.forEach(movie => {
+                grid.appendChild(createCard(movie, 'movie'));
+            });
+            displayedMovies += nextBatch.length;
+        }
+
+        function loadMoreSeries() {
+            const grid = document.getElementById('seriesGrid');
+            if (displayedSeries === 0) grid.innerHTML = '';
+
+            const nextBatch = allSeries.slice(displayedSeries, displayedSeries + ITEMS_PER_PAGE);
+            if (nextBatch.length === 0) return;
+
+            nextBatch.forEach(show => {
+                grid.appendChild(createCard(show, 'series'));
+            });
+            displayedSeries += nextBatch.length;
+        }
+
+        // Render hero
+        function renderHero() {
+            if (!featuredMovie) return;
+            const backdropUrl = (featuredMovie.backdrop && featuredMovie.backdrop.startsWith('/'))
+                ? `${TMDB_IMAGE_BASE}original${featuredMovie.backdrop}`
+                : 'https://image.tmdb.org/t/p/original/s3TBrRGB1iav7gFOCNx3H31MoES.jpg';
+
+            document.getElementById('heroBg').style.backgroundImage = `linear-gradient(to right, rgba(10,14,23,0.9) 30%, transparent 70%), url('${backdropUrl}')`;
+            document.getElementById('heroTitle').textContent = featuredMovie.title;
+            document.getElementById('heroDescription').textContent = featuredMovie.overview;
+            document.getElementById('heroYear').textContent = featuredMovie.year;
+            document.getElementById('heroDuration').textContent = featuredMovie.runtime ? `${featuredMovie.runtime} min` : `${featuredMovie.seasons} seasons`;
+            document.getElementById('heroGenre').textContent = featuredMovie.genres.join(', ');
+            document.getElementById('heroRating').textContent = `⭐ ${featuredMovie.rating}`;
+            document.getElementById('heroPlayBtn').onclick = () => openStream(featuredMovie, 'movie');
+        }
+
+        // Create card
+        function createCard(item, type) {
+            const card = document.createElement('div');
+            card.className = 'content-card';
+
+            // Handle both full paths and generated paths
+            let posterSrc = '';
+            if (item.poster && item.poster.startsWith('/')) {
+                posterSrc = `${TMDB_IMAGE_BASE}w500${item.poster}`;
+            } else {
+                // Fallback / generated
+                posterSrc = 'https://via.placeholder.com/500x750/1a1f35/9ca8ba?text=' + encodeURIComponent(item.title);
+            }
+
+            const isSeries = type === 'series';
+            card.innerHTML = `
+                <div class="card-poster">
+                    <img src="${posterSrc}" alt="${item.title}" loading="lazy" onerror="this.src='https://via.placeholder.com/500x750/1a1f35/9ca8ba?text=${encodeURIComponent(item.title)}'">
+                    <div class="play-overlay"><div class="play-btn-icon">▶</div></div>
+                </div>
+                <div class="card-content">
+                    <span class="card-type ${isSeries ? 'series' : ''}">${isSeries ? 'Series' : 'Movie'}</span>
+                    <h3 class="card-title">${item.title}</h3>
+                    <div class="card-meta">
+                        <span class="card-rating">⭐ ${item.rating}</span>
+                        <span>•</span>
+                        <span>${item.year}</span>
+                    </div>
+                </div>
+            `;
+            card.onclick = () => openStream(item, type);
+            return card;
+        }
+
+        // Open stream modal
+        function openStream(item, type) {
+            const modal = document.getElementById('streamModal');
+            document.getElementById('modalTitle').textContent = item.title;
+            const streamUrl = type === 'movie'
+                ? `https://vidsrc.xyz/embed/movie/${item.tmdb_id}`
+                : `https://vidsrc.xyz/embed/tv/${item.tmdb_id}/1/1`;
+            document.getElementById('player').src = streamUrl;
+            modal.classList.add('active');
+        }
+
+        // Close modal
+        function closeModal() {
+            const modal = document.getElementById('streamModal');
+            document.getElementById('player').src = '';
+            modal.classList.remove('active');
+        }
+
+        // Search functionality with Debounce
+        let searchTimeout;
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            const query = e.target.value.toLowerCase().trim();
+
+            searchTimeout = setTimeout(() => {
+                if (!query) {
+                    // Reset to initial pagination state
+                    displayedMovies = 0;
+                    displayedSeries = 0;
+                    loadMoreMovies();
+                    loadMoreSeries();
+                    return;
+                }
+
+                const filteredMovies = allMovies.filter(m =>
+                    m.title.toLowerCase().includes(query) ||
+                    m.year.toString().includes(query)
+                );
+                const filteredSeries = allSeries.filter(s =>
+                    s.title.toLowerCase().includes(query) ||
+                    s.year.toString().includes(query)
+                );
+
+                const moviesGrid = document.getElementById('moviesGrid');
+                moviesGrid.innerHTML = '';
+                filteredMovies.forEach(m => moviesGrid.appendChild(createCard(m, 'movie')));
+
+                const seriesGrid = document.getElementById('seriesGrid');
+                seriesGrid.innerHTML = '';
+                filteredSeries.forEach(s => seriesGrid.appendChild(createCard(s, 'series')));
+            }, 300);
+        });
+
+        // Event Listeners
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+        document.getElementById('streamModal').addEventListener('click', (e) => { if (e.target.id === 'streamModal') closeModal(); });
+
+        createParticles();
+        loadData();
+    </script>
 </body>
 
 </html>
