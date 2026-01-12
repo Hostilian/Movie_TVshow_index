@@ -1,0 +1,355 @@
+[
+    {
+        "id": 1,
+        "tmdb_id": 27205,
+        "imdb_id": "tt1375666",
+        "title": "Inception",
+        "year": 2010,
+        "poster": "/ljsZTbVsrQSqZgWeep2B1QiDKuh.jpg",
+        "backdrop": "/s3TBrRGB1iav7gFOCNx3H31MoES.jpg",
+        "rating": 8.8,
+        "genres": [
+            "Action",
+            "Science Fiction",
+            "Adventure"
+        ],
+        "overview": "Cobb, a skilled thief who commits corporate espionage by infiltrating the subconscious of his targets is offered a chance to regain his old life as payment for a task considered to be impossible: inception, the implantation of another person's idea into a target's subconscious.",
+        "runtime": 148,
+        "director": "Christopher Nolan"
+    },
+    {
+        "id": 2,
+        "tmdb_id": 278,
+        "imdb_id": "tt0111161",
+        "title": "The Shawshank Redemption",
+        "year": 1994,
+        "poster": "/9cqNxx0GxF0bflZmeSMuL5tnGzr.jpg",
+        "backdrop": "/kXfqcdQKsToO0OUXHcrrNCHDBzO.jpg",
+        "rating": 9.3,
+        "genres": [
+            "Drama",
+            "Crime"
+        ],
+        "overview": "Framed in the 1940s for the double murder of his wife and her lover, upstanding banker Andy Dufresne begins a new life at the Shawshank prison, where he puts his accounting skills to work for an amoral warden. During his long stretch in prison, Dufresne comes to be admired by the other inmates.",
+        "runtime": 142,
+        "director": "Frank Darabont"
+    },
+    {
+        "id": 3,
+        "tmdb_id": 680,
+        "imdb_id": "tt0110912",
+        "title": "Pulp Fiction",
+        "year": 1994,
+        "poster": "/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg",
+        "backdrop": "/suaEOtk1N1sgg2MTM7oZd2cfVp3.jpg",
+        "rating": 8.9,
+        "genres": [
+            "Thriller",
+            "Crime"
+        ],
+        "overview": "A burger-loving hit man, his philosophical partner, a drug-addled gangster's moll and a washed-up boxer converge in this sprawling, comedic crime caper.",
+        "runtime": 154,
+        "director": "Quentin Tarantino"
+    },
+    {
+        "id": 4,
+        "tmdb_id": 155,
+        "imdb_id": "tt0468569",
+        "title": "The Dark Knight",
+        "year": 2008,
+        "poster": "/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
+        "backdrop": "/hkBaDkMWbLaf8B1lsWsKX7Ew3Xq.jpg",
+        "rating": 9.0,
+        "genres": [
+            "Drama",
+            "Action",
+            "Crime"
+        ],
+        "overview": "Batman raises the stakes in his war on crime. With the help of Lt. Jim Gordon and District Attorney Harvey Dent, Batman sets out to dismantle the remaining criminal organizations that plague the streets. The partnership proves to be effective, but they soon find themselves prey to a reign of chaos unleashed by a rising criminal mastermind known to the terrified citizens of Gotham as the Joker.",
+        "runtime": 152,
+        "director": "Christopher Nolan"
+    },
+    {
+        "id": 5,
+        "tmdb_id": 13,
+        "imdb_id": "tt0109830",
+        "title": "Forrest Gump",
+        "year": 1994,
+        "poster": "/arw2vcBveWOVZr6pxd9XTd1TdQa.jpg",
+        "backdrop": "/7c9UVPPiTPltoABeRJy2YAc9JFI.jpg",
+        "rating": 8.8,
+        "genres": [
+            "Comedy",
+            "Drama",
+            "Romance"
+        ],
+        "overview": "A man with a low IQ has accomplished great things in his life and been present during significant historic events—in each case, far exceeding what anyone imagined he could do. But despite all he has achieved, his one true love eludes him.",
+        "runtime": 142,
+        "director": "Robert Zemeckis"
+    },
+    {
+        "id": 6,
+        "tmdb_id": 157336,
+        "imdb_id": "tt0816692",
+        "title": "Interstellar",
+        "year": 2014,
+        "poster": "/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
+        "backdrop": "/pbrkL804c8yAv3zBZR4QPEafpAR.jpg",
+        "rating": 8.6,
+        "genres": [
+            "Adventure",
+            "Drama",
+            "Science Fiction"
+        ],
+        "overview": "The adventures of a group of explorers who make use of a newly discovered wormhole to surpass the limitations on human space travel and conquer the vast distances involved in an interstellar voyage.",
+        "runtime": 169,
+        "director": "Christopher Nolan"
+    },
+    {
+        "id": 7,
+        "tmdb_id": 603,
+        "imdb_id": "tt0133093",
+        "title": "The Matrix",
+        "year": 1999,
+        "poster": "/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg",
+        "backdrop": "/icmmSD4vTTDKOq2vvdulafOGw93.jpg",
+        "rating": 8.7,
+        "genres": [
+            "Action",
+            "Science Fiction"
+        ],
+        "overview": "Set in the 22nd century, The Matrix tells the story of a computer hacker who joins a group of underground insurgents fighting the vast and powerful computers who now rule the earth.",
+        "runtime": 136,
+        "director": "Lana Wachowski, Lilly Wachowski"
+    },
+    {
+        "id": 8,
+        "tmdb_id": 550,
+        "imdb_id": "tt0137523",
+        "title": "Fight Club",
+        "year": 1999,
+        "poster": "/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg",
+        "backdrop": "/hZkgoQYus5vegHoetLkCJzb17zJ.jpg",
+        "rating": 8.8,
+        "genres": [
+            "Drama"
+        ],
+        "overview": "A ticking-time-bomb insomniac and a slippery soap salesman channel primal male aggression into a shocking new form of therapy. Their concept catches on, with underground 'fight clubs' forming in every town, until an eccentric gets in the way and ignites an out-of-control spiral toward oblivion.",
+        "runtime": 139,
+        "director": "David Fincher"
+    },
+    {
+        "id": 9,
+        "tmdb_id": 769,
+        "imdb_id": "tt0099685",
+        "title": "Goodfellas",
+        "year": 1990,
+        "poster": "/aKuFiU82s5ISJpGZp7YkIr3kCUd.jpg",
+        "backdrop": "/sw7mordbZxgITU877yTpZCud90M.jpg",
+        "rating": 8.7,
+        "genres": [
+            "Drama",
+            "Crime"
+        ],
+        "overview": "The true story of Henry Hill, a half-Irish, half-Sicilian Brooklyn kid who is adopted by neighbourhood gangsters at an early age and climbs the ranks of a Mafia family under the guidance of Jimmy Conway.",
+        "runtime": 145,
+        "director": "Martin Scorsese"
+    },
+    {
+        "id": 10,
+        "tmdb_id": 238,
+        "imdb_id": "tt0068646",
+        "title": "The Godfather",
+        "year": 1972,
+        "poster": "/3bhkrj58Vtu7enYsRolD1fZdja1.jpg",
+        "backdrop": "/tmU7GeKVybMWFButWEGl2M4GeiP.jpg",
+        "rating": 9.2,
+        "genres": [
+            "Drama",
+            "Crime"
+        ],
+        "overview": "Spanning the years 1945 to 1955, a chronicle of the fictional Italian-American Corleone crime family. When organized crime family patriarch, Vito Corleone barely survives an attempt on his life, his youngest son, Michael steps in to take care of the would-be killers, launching a campaign of bloody revenge.",
+        "runtime": 175,
+        "director": "Francis Ford Coppola"
+    },
+    {
+        "id": 11,
+        "tmdb_id": 424,
+        "imdb_id": "tt0108052",
+        "title": "Schindler's List",
+        "year": 1993,
+        "poster": "/sF1U4EUQS8YHUYjNl3pMGNIQyr0.jpg",
+        "backdrop": "/l0qVZIpXtIo7km9u5Yqh0nKPOr5.jpg",
+        "rating": 8.9,
+        "genres": [
+            "Drama",
+            "History",
+            "War"
+        ],
+        "overview": "The true story of how businessman Oskar Schindler saved over a thousand Jewish lives from the Nazis while they worked as slaves in his factory during World War II.",
+        "runtime": 195,
+        "director": "Steven Spielberg"
+    },
+    {
+        "id": 12,
+        "tmdb_id": 857,
+        "imdb_id": "tt0120815",
+        "title": "Saving Private Ryan",
+        "year": 1998,
+        "poster": "/uqx37ACOGRG4SJJgAvpUYONjagf.jpg",
+        "backdrop": "/5XKFZRLKJgGHYLACeShPxP4jGpn.jpg",
+        "rating": 8.6,
+        "genres": [
+            "Drama",
+            "History",
+            "War"
+        ],
+        "overview": "As U.S. troops storm the beaches of Normandy, three brothers lie dead on the battlefield, with a fourth trapped behind enemy lines. Ranger captain John Miller and seven men are tasked with penetrating German-held territory and bringing the boy home.",
+        "runtime": 169,
+        "director": "Steven Spielberg"
+    },
+    {
+        "id": 13,
+        "tmdb_id": 274,
+        "imdb_id": "tt0102926",
+        "title": "The Silence of the Lambs",
+        "year": 1991,
+        "poster": "/uS9m8OBk1A8eM9I042bx8XXpqAq.jpg",
+        "backdrop": "/q3iXZfM3PeJnX2WI5f3dpNPbAjf.jpg",
+        "rating": 8.6,
+        "genres": [
+            "Crime",
+            "Drama",
+            "Thriller"
+        ],
+        "overview": "Clarice Starling is a top student at the FBI's training academy. Jack Crawford wants Clarice to interview Dr. Hannibal Lecter, a brilliant psychiatrist who is also a violent psychopath, serving life behind bars for various acts of murder and cannibalism.",
+        "runtime": 118,
+        "director": "Jonathan Demme"
+    },
+    {
+        "id": 14,
+        "tmdb_id": 807,
+        "imdb_id": "tt0114369",
+        "title": "Se7en",
+        "year": 1995,
+        "poster": "/6yoghtyTpznpBik8EngEmJskVUO.jpg",
+        "backdrop": "/ba3V3N4i0zyQ0e0a2jVfZHxPJpL.jpg",
+        "rating": 8.6,
+        "genres": [
+            "Crime",
+            "Mystery",
+            "Thriller"
+        ],
+        "overview": "Two homicide detectives are on a desperate hunt for a serial killer whose crimes are based on the 'seven deadly sins' in this dark and haunting film that takes viewers from the tortured remains of one victim to the next.",
+        "runtime": 127,
+        "director": "David Fincher"
+    },
+    {
+        "id": 15,
+        "tmdb_id": 98,
+        "imdb_id": "tt0172495",
+        "title": "Gladiator",
+        "year": 2000,
+        "poster": "/ty8TGRuvJLPUmAR1H1nRIsgwvim.jpg",
+        "backdrop": "/2oZklIzUbvZXXzIFzv7Hi68d6xf.jpg",
+        "rating": 8.5,
+        "genres": [
+            "Action",
+            "Drama",
+            "Adventure"
+        ],
+        "overview": "In the year 180, the death of emperor Marcus Aurelius throws the Roman Empire into chaos. Maximus is one of the Roman army's most capable and trusted generals and a key advisor to the emperor. As Marcus' devious son Commodus ascends to the throne, Maximus is set to be executed.",
+        "runtime": 155,
+        "director": "Ridley Scott"
+    },
+    {
+        "id": 16,
+        "tmdb_id": 496243,
+        "imdb_id": "tt4154796",
+        "title": "Parasite",
+        "year": 2019,
+        "poster": "/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg",
+        "backdrop": "/TU9NIjwzjoKPwQHoHshkFcQUCG.jpg",
+        "rating": 8.5,
+        "genres": [
+            "Comedy",
+            "Thriller",
+            "Drama"
+        ],
+        "overview": "All unemployed, Ki-taek's family takes peculiar interest in the wealthy and glamorous Parks for their livelihood until they get entangled in an unexpected incident.",
+        "runtime": 133,
+        "director": "Bong Joon-ho"
+    },
+    {
+        "id": 17,
+        "tmdb_id": 372058,
+        "imdb_id": "tt4633694",
+        "title": "Spider-Man: Into the Spider-Verse",
+        "year": 2018,
+        "poster": "/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg",
+        "backdrop": "/uTJCRJ5s61qkNlWHfPNvDd8IwEF.jpg",
+        "rating": 8.4,
+        "genres": [
+            "Action",
+            "Adventure",
+            "Animation"
+        ],
+        "overview": "Bitten by a radioactive spider in the subway, Brooklyn teenager Miles Morales suddenly develops mysterious powers that transform him into the one and only Spider-Man. When he meets Peter Parker, he soon realizes that there are many others who share his special, high-flying talents.",
+        "runtime": 117,
+        "director": "Bob Persichetti, Peter Ramsey, Rodney Rothman"
+    },
+    {
+        "id": 18,
+        "tmdb_id": 129,
+        "imdb_id": "tt0245429",
+        "title": "Spirited Away",
+        "year": 2001,
+        "poster": "/39wmItIWsg5sZMyRUHLkWBcuVCM.jpg",
+        "backdrop": "/Ab8mkHmkYADjU7wQiOkia9BzGvS.jpg",
+        "rating": 8.5,
+        "genres": [
+            "Animation",
+            "Family",
+            "Fantasy"
+        ],
+        "overview": "A young girl, Chihiro, becomes trapped in a strange new world of spirits. When her parents undergo a mysterious transformation, she must call upon the courage she never knew she had to free her family.",
+        "runtime": 125,
+        "director": "Hayao Miyazaki"
+    },
+    {
+        "id": 19,
+        "tmdb_id": 19404,
+        "imdb_id": "tt1345836",
+        "title": "The Dark Knight Rises",
+        "year": 2012,
+        "poster": "/hr0L2aueqlP2BYUblTTjmtn0hw4.jpg",
+        "backdrop": "/f6ljQGv7WnJuwBPty017oPWfqjx.jpg",
+        "rating": 8.1,
+        "genres": [
+            "Action",
+            "Crime",
+            "Drama"
+        ],
+        "overview": "Following the death of District Attorney Harvey Dent, Batman assumes responsibility for Dent's crimes to protect the late attorney's reputation and is subsequently hunted by the Gotham City Police Department. Eight years later, Batman encounters the mysterious Selina Kyle and the villainous Bane, a new terrorist leader who overwhelms Gotham's finest.",
+        "runtime": 164,
+        "director": "Christopher Nolan"
+    },
+    {
+        "id": 20,
+        "tmdb_id": 497,
+        "imdb_id": "tt0172495",
+        "title": "The Green Mile",
+        "year": 1999,
+        "poster": "/8VG8fDNiy50H4FedGwdSVUPoaJe.jpg",
+        "backdrop": "/l6hQWH9eDksNJNiXWYRkWqikOdu.jpg",
+        "rating": 8.5,
+        "genres": [
+            "Fantasy",
+            "Drama",
+            "Crime"
+        ],
+        "overview": "A supernatural tale set on death row in a Southern prison, where gentle giant John Coffey possesses the mysterious power to heal people's ailments. When the cell block's head guard, Paul Edgecomb, recognizes Coffey's miraculous gift, he tries desperately to help stave off the condemned man's execution.",
+        "runtime": 189,
+        "director": "Frank Darabont"
+    }
+]

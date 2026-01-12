@@ -1,0 +1,188 @@
+[
+    {
+        "id": 1,
+        "tmdb_id": 1396,
+        "imdb_id": "tt0903747",
+        "title": "Breaking Bad",
+        "year": 2008,
+        "seasons": 5,
+        "poster": "/3xn
+
+WjtZdVdLVs0xJmKDvNRnnlUm.jpg","backdrop": "/tsRy63Mu5cu8etL1X7ZLyf7UP1M.jpg",
+        "rating": 9.5,
+        "genres": [
+            "Drama",
+            "Crime"
+        ],
+        "overview": "When Walter White, a New Mexico chemistry teacher, is diagnosed with Stage III cancer and given a prognosis of only two years left to live. He becomes filled with a sense of fearlessness and an unrelenting desire to secure his family's financial future at any cost as he enters the dangerous world of drugs and crime.",
+        "creator": "Vince Gilligan",
+        "network": "AMC"
+    },
+    {
+        "id": 2,
+        "tmdb_id": 46952,
+        "imdb_id": "tt2306299",
+        "title": "The Viking",
+        "year": 2015,
+        "seasons": 6,
+        "poster": "/bQLrHIRNEkE3PdIWQrZHynQZazu.jpg",
+        "backdrop": "/A30ZqEooDe9U03e1xCWhU6ETKxV.jpg",
+        "rating": 8.3,
+        "genres": [
+            "Action",
+            "Adventure",
+            "Drama"
+        ],
+        "overview": "The adventures of Ragnar Lothbrok, the greatest hero of his age. The series tells thesagas of Ragnar's band of Viking brothers and his family, as he rises to become King of the Viking tribes.",
+        "creator": "Michael Hirst",
+        "network": "History"
+    },
+    {
+        "id": 3,
+        "tmdb_id": 60625,
+        "imdb_id": "tt3398228",
+        "title": "Rick and Morty",
+        "year": 2013,
+        "seasons": 7,
+        "poster": "/gdIrmf2DdY5mgN6ycVP0XlzKzbE.jpg",
+        "backdrop": "/aKz3lXU71wqdslC1IYRC3yHD6yw.jpg",
+        "rating": 8.7,
+        "genres": [
+            "Animation",
+            "Comedy",
+            "Sci-Fi"
+        ],
+        "overview": "Rick is a mentally-unbalanced but scientifically gifted old man who has recently reconnected with his family. He spends most of his time involving his young grandson Morty in dangerous, outlandish adventures throughout space and alternate universes.",
+        "creator": "Justin Roiland, Dan Harmon",
+        "network": "Adult Swim"
+    },
+    {
+        "id": 4,
+        "tmdb_id": 87108,
+        "imdb_id": "tt5311514",
+        "title": "Chernobyl",
+        "year": 2019,
+        "seasons": 1,
+        "poster": "/hlLXt2tOPT6RRnjiUmoxyG1LTFi.jpg",
+        "backdrop": "/900tHlUYUkp7Ol04XFSoAaEIXcT.jpg",
+        "rating": 8.7,
+        "genres": [
+            "Drama"
+        ],
+        "overview": "The true story of one of the worst man-made catastrophes in history, and the brave men and women who fought to save Europe from unimaginable disaster.",
+        "creator": "Craig Mazin",
+        "network": "HBO"
+    },
+    {
+        "id": 5,
+        "tmdb_id": 70523,
+        "imdb_id": "tt5753856",
+        "title": "Dark",
+        "year": 2017,
+        "seasons": 3,
+        "poster": "/z9F5i0rrXoNXpB0wPPhbvSlPZTW.jpg",
+        "backdrop": "/oquiJTIhHRWPm7X1LVNyfPP52XH.jpg",
+        "rating": 8.8,
+        "genres": [
+            "Crime",
+            "Drama",
+            "Mystery"
+        ],
+        "overview": "A missing child causes four families to help each other for answers. What they could not imagine is that this mystery would be connected to innumerable other secrets of the small town.",
+        "creator": "Baran bo Odar, Jantje Friese",
+        "network": "Netflix"
+    },
+    {
+        "id": 6,
+        "tmdb_id": 1399,
+        "imdb_id": "tt0944947",
+        "title": "Game of Thrones",
+        "year": 2011,
+        "seasons": 8,
+        "poster": "/1XS1oqL89opfnbLl8WnZY1O1uJx.jpg",
+        "backdrop": "/2OMB0ynKlyIenMJWI2Dy9IWT4c.jpg",
+        "rating": 8.3,
+        "genres": [
+            "Sci-Fi & Fantasy",
+            "Drama",
+            "Action & Adventure"
+        ],
+        "overview": "Seven noble families fight for control of the mythical land of Westeros. Friction between the houses leads to full-scale war. All while a very ancient evil awakens in the farthest north. Amidst the war, a neglected military order of misfits, the Night's Watch, is all that stands between the realms of men and icy horrors beyond.",
+        "creator": "David Benioff, D.B. Weiss",
+        "network": "HBO"
+    },
+    {
+        "id": 7,
+        "tmdb_id": 66732,
+        "imdb_id": "tt4574334",
+        "title": "Stranger Things",
+        "year": 2016,
+        "seasons": 4,
+        "poster": "/49WJfeN0moxb9IPfGn8AIqMGskD.jpg",
+        "backdrop": "/56v2KjBlU4XaOv9rVYEQypROD7P.jpg",
+        "rating": 8.6,
+        "genres": [
+            "Sci-Fi & Fantasy",
+            "Mystery",
+            "Drama"
+        ],
+        "overview": "When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces, and one strange girl.",
+        "creator": "The Duffer Brothers",
+        "network": "Netflix"
+    },
+    {
+        "id": 8,
+        "tmdb_id": 60735,
+        "imdb_id": "tt3107288",
+        "title": "The Flash",
+        "year": 2014,
+        "seasons": 9,
+        "poster": "/lJA2RCMfsWoskqlQhXPSLFQGXEJ.jpg",
+        "backdrop": "/9QusGjxcYvfPD1THg6oW3RJuMWT.jpg",
+        "rating": 7.7,
+        "genres": [
+            "Drama",
+            "Sci-Fi & Fantasy"
+        ],
+        "overview": "After a particle accelerator causes a freak storm, CSI Investigator Barry Allen is struck by lightning and falls into a coma. Months later he awakens with the power of super speed, granting him the ability to move through Central City like an unseen guardian angel.",
+        "creator": "Greg Berlanti, Geoff Johns, Andrew Kreisberg",
+        "network": "The CW"
+    },
+    {
+        "id": 9,
+        "tmdb_id": 63174,
+        "imdb_id": "tt3920596",
+        "title": "Lucifer",
+        "year": 2016,
+        "seasons": 6,
+        "poster": "/ekZobS8isE6mA53RAiGDG93hBxL.jpg",
+        "backdrop": "/4EYPN5mVIhKLfxGruy7Dy41dTVn.jpg",
+        "rating": 8.5,
+        "genres": [
+            "Crime",
+            "Sci-Fi & Fantasy"
+        ],
+        "overview": "Bored and unhappy as the Lord of Hell, Lucifer Morningstar abandoned his throne and retired to Los Angeles, where he owns Lux, an upscale nightclub. Charming, charismatic and devilishly handsome, Lucifer is enjoying his retirement, indulging in a few of his favorite things.",
+        "creator": "Tom Kapinos",
+        "network": "Fox, Netflix"
+    },
+    {
+        "id": 10,
+        "tmdb_id": 94605,
+        "imdb_id": "tt11126994",
+        "title": "Arcane",
+        "year": 2021,
+        "seasons": 2,
+        "poster": "/fqldf2t8ztc9aiwn3k6mlX3TV0V.jpg",
+        "backdrop": "/rkB4LyZHo1NHXFEDHl9vSD9r1lI.jpg",
+        "rating": 8.9,
+        "genres": [
+            "Animation",
+            "Sci-Fi & Fantasy",
+            "Action & Adventure"
+        ],
+        "overview": "Amid the stark discord of twin cities Piltover and Zaun, two sisters fight on rival sides of a war between magic technologies and clashing convictions.",
+        "creator": "Christian Linke, Alex Yee",
+        "network": "Netflix"
+    }
+]
