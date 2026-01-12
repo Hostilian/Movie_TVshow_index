@@ -1,0 +1,99 @@
+-- ==============================================================================
+-- FIXED RA QUERIES FOR PORTAL
+-- ==============================================================================
+
+-- D1 (A)
+MOVIE[title, year]
+
+-- D2 (A)
+MOVIE[title]
+
+-- D3 (H3)
+MOVIE[movie_id] \ AWARD[movie_id]
+
+-- D4 (F1)
+MOVIE <* DIRECTOR(name='Christopher Nolan')
+
+-- D5 (D1)
+actor <* movie_actor
+
+-- D6 (D2)
+actor <* movie_actor <* movie_genre <* genre
+
+-- D7 (F1)
+(MOVIE(year > 2015)) <* DIRECTOR
+
+-- D8 (F2)
+(MOVIE <* DIRECTOR)[title, name]
+
+-- D9 (F3)
+((MOVIE(imdb_rating > 8)) <* DIRECTOR)[title, name]
+
+-- D10 (F4)
+(MOVIE <* DIRECTOR)[name, title, imdb_rating]
+
+-- D11 (F5)
+(MOVIE_GENRE <* GENRE)[genre_name, movie_id]
+
+-- D12 (G1)
+MOVIE(imdb_rating > 8)
+
+-- D13 (G2)
+MOVIE
+
+-- D14 (A)
+MOVIE[movie_id, title, year]
+
+-- D15 (H1)
+DIRECTOR[name] \/ ACTOR[name]
+
+-- D16 (H2)
+MOVIE[movie_id] /\ AWARD[movie_id]
+
+-- D17 (H3)
+DIRECTOR[director_id] \ MOVIE[director_id]
+
+-- D18 (G4)
+MOVIE <* AWARD
+
+-- D19 (F2)
+MOVIE <* AWARD
+
+-- D20 (J)
+MOVIE <* AWARD
+
+-- D21 (J)
+MOVIE <* AWARD
+
+-- D22 (J)
+MOVIE <* AWARD
+
+-- D23 (K)
+MOVIE
+
+-- D24 (L)
+MOVIE[year]
+
+-- D25 (P - Cartesian)
+GENRE * COUNTRY
+
+-- D26 (D1N)
+DIRECTOR !< MOVIE
+
+-- D27 (N - Full Outer)
+MOVIE >!< AWARD
+
+-- D28 (I2)
+DIRECTOR
+
+-- D37 (G3)
+MOVIE
+
+-- D41 (M)
+high_rated_movies
+
+-- D47 (O)
+MOVIE
+
+-- D48 (P)
+USER_RATING \ (USER_RATING <* MOVIE)

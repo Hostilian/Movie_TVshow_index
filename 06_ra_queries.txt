@@ -1,0 +1,117 @@
+-- ==============================================================================
+-- MOVIE DATABASE - RELATIONAL ALGEBRA QUERIES
+-- Database Systems (EIE36E) Project
+--
+-- BIE-DBS Cookbook Compliant - 3rd Iteration
+-- 10 Required RA Queries
+--
+-- Student: Ozturk Eren
+-- Login: xozte001
+-- Date: 2025-11-30
+-- ==============================================================================
+
+-- ============================================================================
+-- 1. CATEGORY A: PROJECTION
+-- Natural Language: Show only the title and year columns from all movies.
+-- ============================================================================
+-- SQL (A-1):
+-- SELECT DISTINCT title, year FROM movie;
+
+-- Relational Algebra:
+movie[title, year]
+
+-- ============================================================================
+-- 2. CATEGORY B: SELECTION
+-- Natural Language: Find all movies released after 2010.
+-- ============================================================================
+-- SQL (B-1):
+-- SELECT DISTINCT * FROM movie WHERE year > 2010;
+
+-- Relational Algebra:
+movie(year > 2010)
+
+-- ============================================================================
+-- 3. CATEGORY C: PROJECTION + SELECTION
+-- Natural Language: Show title and imdb_rating for movies rated above 8.0.
+-- ============================================================================
+-- SQL (C-1):
+-- SELECT DISTINCT title, imdb_rating FROM movie WHERE imdb_rating > 8.0;
+
+-- Relational Algebra:
+movie(imdb_rating > 8.0)[title, imdb_rating]
+
+-- ============================================================================
+-- 4. CATEGORY D: NATURAL JOIN
+-- Natural Language: Join movie with director table to see all movie details with director info.
+-- ============================================================================
+-- SQL (D1-1):
+-- SELECT DISTINCT * FROM movie JOIN director USING (director_id);
+
+-- Relational Algebra:
+movie * director
+
+-- ============================================================================
+-- 5. CATEGORY F: JOIN WITH SELECTION
+-- Natural Language: Get movies with their directors for films released after 2015.
+-- ============================================================================
+-- SQL (F1-1):
+-- SELECT DISTINCT * FROM movie JOIN director USING (director_id) WHERE year > 2015;
+
+-- Relational Algebra:
+(movie(year > 2015)) * director
+
+-- ============================================================================
+-- 6. CATEGORY F: JOIN WITH PROJECTION
+-- Natural Language: Get only movie title and director name.
+-- ============================================================================
+-- SQL (F2-1):
+-- SELECT DISTINCT title, name FROM movie JOIN director USING (director_id);
+
+-- Relational Algebra:
+(movie * director)[title, name]
+
+-- ============================================================================
+-- 7. CATEGORY H: UNION
+-- Natural Language: Get all names from director and actor tables.
+-- ============================================================================
+-- SQL (H1-1):
+-- SELECT name FROM director UNION SELECT name FROM actor;
+
+-- Relational Algebra:
+director[name] ∪ actor[name]
+
+-- ============================================================================
+-- 8. CATEGORY H: INTERSECTION
+-- Natural Language: Find movies (ids) that are in both Action AND Sci-Fi genres.
+-- ============================================================================
+-- SQL (H2-1):
+-- SELECT movie_id FROM movie_genre JOIN genre USING (genre_id) WHERE genre_name = 'Action'
+-- INTERSECT
+-- SELECT movie_id FROM movie_genre JOIN genre USING (genre_id) WHERE genre_name = 'Sci-Fi';
+
+-- Relational Algebra:
+(movie_genre * genre(genre_name = 'Action'))[movie_id] ∩ (movie_genre * genre(genre_name = 'Sci-Fi'))[movie_id]
+
+-- ============================================================================
+-- 9. CATEGORY H: DIFFERENCE (MINUS)
+-- Natural Language: Find directors who have NOT directed any movie (in the database).
+-- ============================================================================
+-- SQL (H3-1):
+-- SELECT director_id FROM director EXCEPT SELECT director_id FROM movie;
+
+-- Relational Algebra:
+director[director_id] \ movie[director_id]
+
+-- ============================================================================
+-- 10. CATEGORY M: SELF-JOIN (Renaming)
+-- Natural Language: Find movie sequels (sequel title and original title).
+-- ============================================================================
+-- SQL (M-1):
+-- SELECT m1.title, m2.title FROM movie m1 JOIN movie m2 ON m1.sequel_of = m2.movie_id;
+
+-- Relational Algebra:
+(movie[title -> sequel_title, sequel_of] * movie[movie_id -> sequel_of, title -> original_title])[sequel_title, original_title]
+
+-- ==============================================================================
+-- END OF RA QUERIES
+-- ==============================================================================

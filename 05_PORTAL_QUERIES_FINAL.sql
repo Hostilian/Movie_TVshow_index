@@ -45,11 +45,8 @@ FROM AWARD;
 -- RA: MOVIE <* (DIRECTOR(name='Christopher Nolan'))
 SELECT DISTINCT *
 FROM MOVIE
-NATURAL JOIN (
-    SELECT DISTINCT *
-    FROM DIRECTOR
-    WHERE name = 'Christopher Nolan'
-) R1;
+JOIN DIRECTOR USING (director_id)
+WHERE name = 'Christopher Nolan';
 
 -- ============================================================================
 -- D5: Find actors who have appeared in every genre (Universal Quantification).
@@ -84,12 +81,9 @@ SELECT DISTINCT a.* FROM actor a WHERE NOT EXISTS (SELECT genre_id FROM genre g 
 -- ============================================================================
 -- RA: (MOVIE(year > 2015)) <* DIRECTOR
 SELECT DISTINCT *
-FROM (
-    SELECT DISTINCT *
-    FROM MOVIE
-    WHERE year > 2015
-) R1
-NATURAL JOIN DIRECTOR;
+FROM MOVIE
+JOIN DIRECTOR USING (director_id)
+WHERE year > 2015;
 
 -- ============================================================================
 -- D8: List movie titles together with director names.
@@ -98,7 +92,7 @@ NATURAL JOIN DIRECTOR;
 -- RA: (MOVIE <* DIRECTOR)[title, name]
 SELECT title, name
 FROM MOVIE
-NATURAL JOIN DIRECTOR;
+JOIN DIRECTOR USING (director_id);
 
 -- ============================================================================
 -- D9: Display titles and director names only for movies rated above 8.0.
@@ -106,12 +100,9 @@ NATURAL JOIN DIRECTOR;
 -- ============================================================================
 -- RA: ((MOVIE(imdb_rating > 8)) <* DIRECTOR)[title, name]
 SELECT title, name
-FROM (
-    SELECT DISTINCT *
-    FROM MOVIE
-    WHERE imdb_rating > 8
-) R1
-NATURAL JOIN DIRECTOR;
+FROM MOVIE
+JOIN DIRECTOR USING (director_id)
+WHERE imdb_rating > 8;
 
 -- ============================================================================
 -- D10: Show director names alongside their movie titles and IMDb ratings.
@@ -120,7 +111,7 @@ NATURAL JOIN DIRECTOR;
 -- RA: (MOVIE <* DIRECTOR)[name, title, imdb_rating]
 SELECT name, title, imdb_rating
 FROM MOVIE
-NATURAL JOIN DIRECTOR;
+JOIN DIRECTOR USING (director_id);
 
 -- ============================================================================
 -- D11: Show each genre with the IDs of movies assigned to it.
@@ -129,7 +120,7 @@ NATURAL JOIN DIRECTOR;
 -- RA: (MOVIE_GENRE <* GENRE)[genre_name, movie_id]
 SELECT genre_name, movie_id
 FROM MOVIE_GENRE
-NATURAL JOIN GENRE;
+JOIN GENRE USING (genre_id);
 
 -- ============================================================================
 -- D12: List all IMDb ratings from the movie table.
@@ -206,7 +197,7 @@ ORDER BY movie_id;
 -- RA: MOVIE <* AWARD
 SELECT *
 FROM MOVIE
-NATURAL JOIN AWARD
+JOIN AWARD USING (movie_id)
 ORDER BY movie_id;
 
 -- ============================================================================
@@ -274,7 +265,7 @@ ORDER BY movie_id;
 -- RA: STUDIO <* COUNTRY
 SELECT *
 FROM studio
-NATURAL JOIN country;
+JOIN country USING (country_id);
 
 -- ============================================================================
 -- D27: Display movie title, release year, IMDb rating, and runtime.
