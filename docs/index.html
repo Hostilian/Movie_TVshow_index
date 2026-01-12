@@ -1,28 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Indexed Catalogue · Movies & Series</title>
-    <meta name="description" content="Compact index of curated movie and television catalogue entries with searchable classifications.">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Database Hub · Choose Your Interface</title>
+    <meta name="description" content="Browse our movie and TV series database through three distinct interfaces: Classic Index, Modern Streaming, or Minimal Directory.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #06080d;
-            --fg: #f4f6fb;
-            --fg-muted: #9ca7bb;
-            --surface: #0e131d;
-            --surface-alt: #121927;
-            --border: #1f2b3d;
-            --accent: #4ecdf6;
-            --accent-soft: rgba(78, 205, 246, 0.12);
-            --accent-strong: #d0ff45;
-            --danger: #ff6b6b;
-            --font-base: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-            --font-mono: "Cascadia Code", "Fira Code", "SFMono-Regular", monospace;
-            --radius: 10px;
+            --bg-dark: #0a0e17;
+            --bg-darker: #050810;
+            --text-primary: #f0f4f8;
+            --text-secondary: #9ca8ba;
+            --accent-blue: #4ecdf6;
+            --accent-purple: #a78bfa;
+            --accent-green: #d0ff45;
+            --accent-orange: #ff8c42;
+            --surface: #15192a;
+            --surface-glow: rgba(78, 205, 246, 0.08);
+            --border: rgba(255, 255, 255, 0.08);
+            --shadow: rgba(0, 0, 0, 0.5);
         }
 
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
 
@@ -31,830 +35,506 @@
         }
 
         body {
-            margin: 0;
-            font-family: var(--font-base);
-            background: var(--bg);
-            color: var(--fg);
-            line-height: 1.55;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-darker);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        a {
-            color: inherit;
-        }
-
-        header {
-            position: sticky;
+        /* Animated gradient background */
+        .bg-gradient {
+            position: fixed;
             top: 0;
-            z-index: 20;
-            backdrop-filter: blur(14px);
-            background: rgba(6, 8, 13, 0.92);
-            border-bottom: 1px solid var(--border);
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, 
+                var(--bg-darker) 0%, 
+                #0f1421 25%, 
+                #1a1f35 50%, 
+                #0f1421 75%, 
+                var(--bg-darker) 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
         }
 
-        .masthead {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 1rem 1.5rem;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
 
-        .brand {
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            font-size: 1rem;
+        /* Floating orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            animation: float 20s ease-in-out infinite;
         }
 
-        .masthead-nav {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem;
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--accent-blue);
+            top: -200px;
+            left: -200px;
+            animation-delay: 0s;
         }
 
-        .masthead-nav a {
-            text-decoration: none;
-            padding: 0.45rem 0.9rem;
-            border-radius: 999px;
-            border: 1px solid transparent;
-            font-size: 0.9rem;
-            color: var(--fg-muted);
-            transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+        .orb-2 {
+            width: 500px;
+            height: 500px;
+            background: var(--accent-purple);
+            bottom: -250px;
+            right: -250px;
+            animation-delay: 7s;
         }
 
-        .masthead-nav a:hover,
-        .masthead-nav a:focus {
-            color: var(--accent);
-            border-color: var(--accent);
-            outline: none;
+        .orb-3 {
+            width: 350px;
+            height: 350px;
+            background: var(--accent-green);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: 3s;
         }
 
-        .masthead-nav .is-active {
-            color: var(--bg);
-            background: var(--accent);
-            border-color: var(--accent);
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(50px, -50px) scale(1.1); }
+            66% { transform: translate(-50px, 50px) scale(0.9); }
         }
 
-        main {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 3rem 1.5rem 4rem;
-            display: flex;
-            flex-direction: column;
-            gap: 3rem;
-        }
-
-        .intro {
-            display: grid;
-            gap: 1rem;
-        }
-
-        .intro h1 {
-            font-size: clamp(1.8rem, 2.6vw, 2.4rem);
-            margin: 0;
-            letter-spacing: 0.04em;
-        }
-
-        .intro p {
-            max-width: 640px;
-            color: var(--fg-muted);
-        }
-
-        .metrics {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-        }
-
-        .metric-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1rem 1.25rem;
-            display: grid;
-            gap: 0.35rem;
-        }
-
-        .metric-label {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.09em;
-            color: var(--fg-muted);
-        }
-
-        .metric-value {
-            font-size: 1.65rem;
-            font-family: var(--font-mono);
-        }
-
-        .controls {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1.25rem;
-            display: grid;
-            gap: 1rem;
-        }
-
-        .controls h2 {
-            margin: 0;
-            font-size: 1.1rem;
-            letter-spacing: 0.05em;
-        }
-
-        .control-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-            align-items: center;
-        }
-
-        .control-row label {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            color: var(--fg-muted);
-            letter-spacing: 0.08em;
-        }
-
-        .search-box {
-            flex: 1 1 220px;
+        /* Header */
+        header {
+            text-align: center;
+            padding: 4rem 2rem 2rem;
             position: relative;
+            z-index: 1;
         }
 
-        .search-box input {
-            width: 100%;
-            padding: 0.6rem 0.85rem;
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            background: var(--surface-alt);
-            color: var(--fg);
-            font-size: 0.95rem;
-        }
-
-        .search-box input::placeholder {
-            color: var(--fg-muted);
-        }
-
-        .pill-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-
-        .pill-btn {
-            border: 1px solid var(--border);
-            background: var(--surface-alt);
-            color: var(--fg-muted);
-            padding: 0.45rem 0.9rem;
-            border-radius: 999px;
-            font-size: 0.85rem;
-            letter-spacing: 0.05em;
-            cursor: pointer;
-            transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
-        }
-
-        .pill-btn[aria-pressed="true"] {
-            color: var(--bg);
-            background: var(--accent);
-            border-color: var(--accent);
-        }
-
-        .pill-btn:focus-visible {
-            outline: 2px solid var(--accent);
-            outline-offset: 2px;
-        }
-
-        .table-wrap {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            overflow: hidden;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.95rem;
-        }
-
-        caption {
-            caption-side: top;
-            text-align: left;
-            padding: 1rem 1.25rem 0.5rem;
-            font-size: 0.95rem;
-            color: var(--fg-muted);
-        }
-
-        thead {
-            background: var(--surface-alt);
-            font-size: 0.8rem;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--fg-muted);
-        }
-
-        th,
-        td {
-            padding: 0.75rem 1.25rem;
-            border-bottom: 1px solid var(--border);
-            text-align: left;
-        }
-
-        tbody tr:hover {
-            background: var(--accent-soft);
-        }
-
-        .type-pill {
+        .logo {
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            min-width: 72px;
-            border-radius: 999px;
-            padding: 0.2rem 0.6rem;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px var(--shadow);
+            border-color: var(--accent-blue);
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+        }
+
+        .subtitle {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 1rem;
+            font-weight: 400;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, rgba(78, 205, 246, 0.1), rgba(167, 139, 250, 0.1));
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--accent-blue);
+            margin-top: 0.5rem;
+        }
+
+        /* Main content */
+        main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .interfaces-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(350px, 100%), 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        /* Interface cards */
+        .interface-card {
+            position: relative;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .interface-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--card-gradient-start), var(--card-gradient-end));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: -1;
+        }
+
+        .interface-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--card-accent);
+            box-shadow: 
+                0 20px 60px var(--shadow),
+                0 0 60px var(--card-glow);
+        }
+
+        .interface-card:hover::before {
+            opacity: 0.08;
+        }
+
+        .interface-card:active {
+            transform: translateY(-4px);
+        }
+
+        /* Card specific colors */
+        .card-original {
+            --card-accent: var(--accent-blue);
+            --card-gradient-start: rgba(78, 205, 246, 0.15);
+            --card-gradient-end: rgba(78, 205, 246, 0.05);
+            --card-glow: rgba(78, 205, 246, 0.2);
+        }
+
+        .card-nyumatflix {
+            --card-accent: var(--accent-purple);
+            --card-gradient-start: rgba(167, 139, 250, 0.15);
+            --card-gradient-end: rgba(167, 139, 250, 0.05);
+            --card-glow: rgba(167, 139, 250, 0.2);
+        }
+
+        .card-sargarmi {
+            --card-accent: var(--accent-green);
+            --card-gradient-start: rgba(208, 255, 69, 0.15);
+            --card-gradient-end: rgba(208, 255, 69, 0.05);
+            --card-glow: rgba(208, 255, 69, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.25rem;
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            line-height: 1;
+            flex-shrink: 0;
+            filter: drop-shadow(0 4px 12px var(--card-glow));
+            transition: transform 0.3s ease;
+        }
+
+        .interface-card:hover .card-icon {
+            transform: scale(1.1) rotate(-5deg);
+        }
+
+        .card-title-group {
+            flex: 1;
+        }
+
+        .card-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .card-label {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--card-accent);
+            color: var(--bg-dark);
+            border-radius: 50px;
             font-size: 0.75rem;
             font-weight: 600;
-            letter-spacing: 0.08em;
             text-transform: uppercase;
-            background: var(--surface-alt);
-            border: 1px solid var(--border);
-        }
-
-        .type-movie {
-            color: var(--accent);
-        }
-
-        .type-series {
-            color: var(--accent-strong);
-        }
-
-        .index-section {
-            display: grid;
-            gap: 1rem;
-        }
-
-        .index-section h2 {
-            margin: 0;
-            font-size: 1.1rem;
             letter-spacing: 0.05em;
         }
 
-        .alphabet-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        .card-description {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        .card-features {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
             gap: 0.75rem;
         }
 
-        .alphabet-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 0.75rem 0.9rem;
-            display: grid;
-            gap: 0.35rem;
+        .card-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
         }
 
-        .alphabet-card strong {
-            font-family: var(--font-mono);
-            font-size: 1rem;
-            color: var(--accent);
-        }
-
-        .alphabet-card span {
+        .card-features li::before {
+            content: '✦';
+            color: var(--card-accent);
             font-size: 0.75rem;
-            color: var(--fg-muted);
+            flex-shrink: 0;
         }
 
-        .taxonomy-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1rem;
-        }
-
-        .taxonomy-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1rem 1.25rem;
-            display: grid;
-            gap: 0.4rem;
-        }
-
-        .taxonomy-card h3 {
-            margin: 0;
-            font-size: 0.95rem;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--fg-muted);
-        }
-
-        .taxonomy-card ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            display: grid;
-            gap: 0.3rem;
-        }
-
-        .taxonomy-card li {
+        .card-footer {
+            margin-top: auto;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-cta {
+            font-weight: 600;
+            color: var(--card-accent);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: gap 0.3s ease;
+        }
+
+        .interface-card:hover .card-cta {
             gap: 0.75rem;
-            font-size: 0.9rem;
         }
 
-        .taxonomy-card li span {
-            color: var(--fg-muted);
-            font-size: 0.75rem;
+        .card-meta {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            opacity: 0.7;
         }
 
-        .empty-state {
-            padding: 1rem 1.25rem;
-            color: var(--danger);
-            font-family: var(--font-mono);
-            font-size: 0.9rem;
-        }
-
+        /* Footer */
         footer {
-            padding: 2rem 1.5rem 3rem;
             text-align: center;
-            font-size: 0.75rem;
-            color: var(--fg-muted);
+            padding: 3rem 2rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
         }
 
-        @media (max-width: 700px) {
-            th,
-            td {
-                padding-inline: 0.85rem;
+        footer a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: var(--accent-purple);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                padding: 3rem 1.5rem 1.5rem;
+            }
+
+            main {
+                padding: 2rem 1.5rem;
+            }
+
+            .interfaces-grid {
+                gap: 1.5rem;
+            }
+
+            .interface-card {
+                padding: 2rem;
+            }
+
+            .card-icon {
+                font-size: 2.5rem;
+            }
+
+            .card-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Background effects -->
+    <div class="bg-gradient">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- Header -->
     <header>
-        <div class="masthead">
-            <div class="brand">Indexed Catalogue</div>
-            <nav class="masthead-nav" aria-label="Primary">
-                <a class="is-active" href="#complete-index">Index</a>
-                <a href="#dimensions">Dimensions</a>
-                <a href="#taxonomy">Taxonomy</a>
-            </nav>
+        <div class="logo">
+            <span class="logo-icon">🎬</span>
+            <span class="logo-text">Movie Database</span>
         </div>
+        <h1>Choose Your Experience</h1>
+        <p class="subtitle">
+            Browse our curated collection of movies and TV series through three distinct interfaces, 
+            each designed for a different browsing style.
+        </p>
+        <span class="badge">✨ Three Unique Interfaces</span>
     </header>
 
+    <!-- Main content -->
     <main>
-        <section class="intro" aria-labelledby="introduction">
-            <h1 id="introduction">Movies & Television Index</h1>
-            <p>
-                A minimal catalogue focused on indexable metadata: every entry lists its steward, producing studio,
-                release year, and running length. Use the controls to slice the catalogue, or browse the alphabetical
-                keys and taxonomy extracts for quick orientation.
-            </p>
-        </section>
-
-        <section class="metrics" aria-label="Aggregate figures">
-            <article class="metric-card">
-                <span class="metric-label">Catalogued Titles</span>
-                <span class="metric-value" data-metric="total">—</span>
-                <span class="metric-label">Movies & Series tracked</span>
-            </article>
-            <article class="metric-card">
-                <span class="metric-label">Movies</span>
-                <span class="metric-value" data-metric="movies">—</span>
-                <span class="metric-label">Feature-length records</span>
-            </article>
-            <article class="metric-card">
-                <span class="metric-label">Series</span>
-                <span class="metric-value" data-metric="series">—</span>
-                <span class="metric-label">Serialized television entries</span>
-            </article>
-            <article class="metric-card">
-                <span class="metric-label">Distinct Stewards</span>
-                <span class="metric-value" data-metric="creators">—</span>
-                <span class="metric-label">Directors or showrunners</span>
-            </article>
-        </section>
-
-        <section class="controls" aria-labelledby="controls-heading">
-            <div class="index-section">
-                <div class="control-row">
-                    <h2 id="controls-heading">Filter Catalogue</h2>
-                </div>
-                <div class="control-row">
-                    <label for="search">Search</label>
-                    <div class="search-box">
-                        <input id="search" name="search" type="search" placeholder="Title, steward, or studio" autocomplete="off">
+        <div class="interfaces-grid">
+            <!-- Original Interface Card -->
+            <a href="original.html" class="interface-card card-original">
+                <div class="card-header">
+                    <div class="card-icon">📊</div>
+                    <div class="card-title-group">
+                        <h2 class="card-title">Classic Index</h2>
+                        <span class="card-label">Original</span>
                     </div>
                 </div>
-                <div class="control-row" role="group" aria-label="Filter by type">
-                    <label>Type</label>
-                    <div class="pill-group" id="typeFilters">
-                        <button type="button" class="pill-btn" data-filter="all" aria-pressed="true">All</button>
-                        <button type="button" class="pill-btn" data-filter="Movie" aria-pressed="false">Movies</button>
-                        <button type="button" class="pill-btn" data-filter="Series" aria-pressed="false">Series</button>
+                <p class="card-description">
+                    A refined, data-focused catalogue interface with powerful search and filtering capabilities. 
+                    Perfect for users who value metadata, organization, and comprehensive overview.
+                </p>
+                <ul class="card-features">
+                    <li>Advanced search and filtering</li>
+                    <li>Alphabetical keys and taxonomy</li>
+                    <li>Aggregate statistics and metrics</li>
+                    <li>Clean, professional dark theme</li>
+                </ul>
+                <div class="card-footer">
+                    <span class="card-cta">
+                        Explore Index
+                        <span aria-hidden="true">→</span>
+                    </span>
+                    <span class="card-meta">Data-driven</span>
+                </div>
+            </a>
+
+            <!-- NyumatFlix Interface Card -->
+            <a href="nyumatflix.html" class="interface-card card-nyumatflix">
+                <div class="card-header">
+                    <div class="card-icon">🎥</div>
+                    <div class="card-title-group">
+                        <h2 class="card-title">Modern Streaming</h2>
+                        <span class="card-label">NyumatFlix</span>
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <section class="table-wrap" id="complete-index">
-            <table>
-                <caption id="table-caption">Index entries (loading…)</caption>
-                <thead>
-                    <tr>
-                        <th scope="col">Title</th>
-                        <th scope="col">Type</th>
-                        <th scope="col">Year</th>
-                        <th scope="col">Duration</th>
-                        <th scope="col">Steward</th>
-                        <th scope="col">Studio</th>
-                    </tr>
-                </thead>
-                <tbody id="index-body" aria-live="polite">
-                    <tr>
-                        <td colspan="6" class="empty-state">Loading catalogue…</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-
-        <section class="index-section" id="dimensions" aria-labelledby="alphabetical-heading">
-            <h2 id="alphabetical-heading">Alphabetical Keys</h2>
-            <p class="intro-note" style="color: var(--fg-muted); max-width: 640px;">
-                Each card lists the first titles within a letter band and the count currently in view. Use it to jump to
-                clusters or confirm coverage.
-            </p>
-            <div class="alphabet-grid" id="alphabet-grid">
-                <div class="alphabet-card">
-                    <strong>—</strong>
-                    <span>Waiting for catalogue.</span>
+                <p class="card-description">
+                    A visually rich, Netflix-inspired interface with hero sections, content carousels, 
+                    and immersive design. Ideal for discovering content through beautiful visuals.
+                </p>
+                <ul class="card-features">
+                    <li>Hero featured content</li>
+                    <li>Horizontal scrollable carousels</li>
+                    <li>Rich gradients and animations</li>
+                    <li>Card-based modern design</li>
+                </ul>
+                <div class="card-footer">
+                    <span class="card-cta">
+                        Start Streaming
+                        <span aria-hidden="true">→</span>
+                    </span>
+                    <span class="card-meta">Visual-first</span>
                 </div>
-            </div>
-        </section>
+            </a>
 
-        <section class="index-section" id="taxonomy" aria-labelledby="taxonomy-heading">
-            <h2 id="taxonomy-heading">Taxonomy Extracts</h2>
-            <div class="taxonomy-grid">
-                <article class="taxonomy-card" aria-live="polite">
-                    <h3>Dominant Categories</h3>
-                    <ul data-taxonomy="categories">
-                        <li><span>Loading…</span></li>
-                    </ul>
-                </article>
-                <article class="taxonomy-card">
-                    <h3>Prolific Stewards</h3>
-                    <ul data-taxonomy="creators">
-                        <li><span>Loading…</span></li>
-                    </ul>
-                </article>
-                <article class="taxonomy-card">
-                    <h3>Studios in Catalogue</h3>
-                    <ul data-taxonomy="studios">
-                        <li><span>Loading…</span></li>
-                    </ul>
-                </article>
-            </div>
-        </section>
+            <!-- Sargarmi Interface Card -->
+            <a href="sargarmi.html" class="interface-card card-sargarmi">
+                <div class="card-header">
+                    <div class="card-icon">📁</div>
+                    <div class="card-title-group">
+                        <h2 class="card-title">Minimal Directory</h2>
+                        <span class="card-label">Sargarmi</span>
+                    </div>
+                </div>
+                <p class="card-description">
+                    A no-frills, file server-style directory listing. Ultra-fast, ultra-light, 
+                    and ultra-minimal for users who prefer simplicity and speed above all.
+                </p>
+                <ul class="card-features">
+                    <li>File server directory layout</li>
+                    <li>Sortable table columns</li>
+                    <li>Zero images, maximum speed</li>
+                    <li>Minimalist aesthetic</li>
+                </ul>
+                <div class="card-footer">
+                    <span class="card-cta">
+                        Browse Files
+                        <span aria-hidden="true">→</span>
+                    </span>
+                    <span class="card-meta">Speed-focused</span>
+                </div>
+            </a>
+        </div>
     </main>
 
+    <!-- Footer -->
     <footer>
-        This index is static and intentionally image-free to emphasise metadata, structure, and performance-first delivery.
+        <p>Movie Database Project · Three interfaces, one comprehensive catalogue</p>
     </footer>
-
-    <script>
-        (function () {
-            const state = {
-                dataset: [],
-                filtered: [],
-                type: "all",
-                query: ""
-            };
-
-            const selectors = {
-                metrics: {
-                    total: document.querySelector('[data-metric="total"]'),
-                    movies: document.querySelector('[data-metric="movies"]'),
-                    series: document.querySelector('[data-metric="series"]'),
-                    creators: document.querySelector('[data-metric="creators"]')
-                },
-                tableBody: document.getElementById('index-body'),
-                tableCaption: document.getElementById('table-caption'),
-                alphabetGrid: document.getElementById('alphabet-grid'),
-                taxonomy: {
-                    categories: document.querySelector('[data-taxonomy="categories"]'),
-                    creators: document.querySelector('[data-taxonomy="creators"]'),
-                    studios: document.querySelector('[data-taxonomy="studios"]')
-                },
-                searchInput: document.getElementById('search'),
-                typeFilters: document.getElementById('typeFilters')
-            };
-
-            const movieGenres = {
-                "Inception": ["Science Fiction", "Thriller"],
-                "The Shawshank Redemption": ["Drama"],
-                "Pulp Fiction": ["Crime", "Drama"],
-                "The Dark Knight": ["Action", "Crime"],
-                "Forrest Gump": ["Drama", "Romance"],
-                "Interstellar": ["Science Fiction", "Adventure"],
-                "The Matrix": ["Science Fiction", "Action"],
-                "Fight Club": ["Drama", "Thriller"],
-                "Goodfellas": ["Crime", "Drama"],
-                "The Godfather": ["Crime", "Drama"],
-                "Schindler's List": ["Drama", "Historical"],
-                "Saving Private Ryan": ["War", "Drama"],
-                "The Silence of the Lambs": ["Thriller", "Crime"],
-                "Se7en": ["Thriller", "Crime"],
-                "Gladiator": ["Action", "Historical"]
-            };
-
-            const curatedSeries = []; // Now fetched from data/series.json
-
-            function normaliseMovies(movies) {
-                return movies.map((movie) => {
-                    const categories = movieGenres[movie.title] || ["Unclassified"];
-                    return {
-                        id: `movie-${movie.movie_id}`,
-                        title: movie.title,
-                        type: "Movie",
-                        releaseYear: movie.release_year,
-                        durationLabel: `${movie.duration_minutes} min`,
-                        durationValue: movie.duration_minutes,
-                        steward: movie.director_name,
-                        studio: movie.studio_name,
-                        categories
-                    };
-                });
-            }
-
-            function normaliseSeries(seriesList) {
-                return seriesList.map((series) => ({
-                    id: series.id,
-                    title: series.title,
-                    type: "Series",
-                    releaseYear: series.release_year,
-                    durationLabel: `${series.seasons} season${series.seasons > 1 ? "s" : ""}`,
-                    durationValue: series.seasons,
-                    steward: series.steward,
-                    studio: series.studio,
-                    categories: series.categories
-                }));
-            }
-
-            function updateMetrics(dataset) {
-                const total = dataset.length;
-                const movies = dataset.filter((item) => item.type === "Movie").length;
-                const series = dataset.filter((item) => item.type === "Series").length;
-                const creators = new Set(dataset.map((item) => item.steward)).size;
-
-                selectors.metrics.total.textContent = total;
-                selectors.metrics.movies.textContent = movies;
-                selectors.metrics.series.textContent = series;
-                selectors.metrics.creators.textContent = creators;
-            }
-
-            function applyFilters() {
-                const query = state.query.trim().toLowerCase();
-                const type = state.type;
-
-                state.filtered = state.dataset.filter((item) => {
-                    if (type !== "all" && item.type !== type) {
-                        return false;
-                    }
-
-                    if (!query) {
-                        return true;
-                    }
-
-                    const haystack = `${item.title} ${item.steward} ${item.studio}`.toLowerCase();
-                    return haystack.includes(query);
-                });
-
-                renderTable(state.filtered);
-                renderAlphabet(state.filtered);
-                renderTaxonomy(state.dataset);
-            }
-
-            function renderTable(rows) {
-                selectors.tableBody.innerHTML = "";
-
-                if (rows.length === 0) {
-                    const emptyRow = document.createElement("tr");
-                    const cell = document.createElement("td");
-                    cell.colSpan = 6;
-                    cell.className = "empty-state";
-                    cell.textContent = "No entries match the current filters.";
-                    emptyRow.appendChild(cell);
-                    selectors.tableBody.appendChild(emptyRow);
-                } else {
-                    rows.sort((a, b) => a.title.localeCompare(b.title, "en", { sensitivity: "base" }));
-                    const fragment = document.createDocumentFragment();
-
-                    rows.forEach((item) => {
-                        const row = document.createElement("tr");
-
-                        const titleCell = document.createElement("td");
-                        titleCell.textContent = item.title;
-                        row.appendChild(titleCell);
-
-                        const typeCell = document.createElement("td");
-                        const pill = document.createElement("span");
-                        pill.className = `type-pill ${item.type === "Movie" ? "type-movie" : "type-series"}`;
-                        pill.textContent = item.type;
-                        typeCell.appendChild(pill);
-                        row.appendChild(typeCell);
-
-                        const yearCell = document.createElement("td");
-                        yearCell.textContent = item.releaseYear || "—";
-                        row.appendChild(yearCell);
-
-                        const durationCell = document.createElement("td");
-                        durationCell.textContent = item.durationLabel;
-                        row.appendChild(durationCell);
-
-                        const stewardCell = document.createElement("td");
-                        stewardCell.textContent = item.steward;
-                        row.appendChild(stewardCell);
-
-                        const studioCell = document.createElement("td");
-                        studioCell.textContent = item.studio;
-                        row.appendChild(studioCell);
-
-                        fragment.appendChild(row);
-                    });
-
-                    selectors.tableBody.appendChild(fragment);
-                }
-
-                selectors.tableCaption.textContent = `Index entries (${rows.length.toString()} currently visible)`;
-            }
-
-            function renderAlphabet(rows) {
-                selectors.alphabetGrid.innerHTML = "";
-
-                if (rows.length === 0) {
-                    const card = document.createElement("div");
-                    card.className = "alphabet-card";
-                    card.innerHTML = "<strong>Ø</strong><span>Empty result set.</span>";
-                    selectors.alphabetGrid.appendChild(card);
-                    return;
-                }
-
-                const buckets = new Map();
-
-                rows.forEach((item) => {
-                    const initial = /^[A-Z]/i.test(item.title) ? item.title[0].toUpperCase() : "#";
-                    if (!buckets.has(initial)) {
-                        buckets.set(initial, []);
-                    }
-                    buckets.get(initial).push(item.title);
-                });
-
-                const sortedKeys = Array.from(buckets.keys()).sort((a, b) => a.localeCompare(b));
-                const fragment = document.createDocumentFragment();
-
-                sortedKeys.forEach((letter) => {
-                    const titles = buckets.get(letter);
-                    titles.sort((a, b) => a.localeCompare(b, "en", { sensitivity: "base" }));
-                    const preview = titles.slice(0, 4).join(", ");
-
-                    const card = document.createElement("div");
-                    card.className = "alphabet-card";
-
-                    const letterEl = document.createElement("strong");
-                    letterEl.textContent = letter;
-                    card.appendChild(letterEl);
-
-                    const countEl = document.createElement("span");
-                    countEl.textContent = `${titles.length} entr${titles.length === 1 ? "y" : "ies"}`;
-                    card.appendChild(countEl);
-
-                    const previewEl = document.createElement("span");
-                    previewEl.textContent = preview;
-                    card.appendChild(previewEl);
-
-                    fragment.appendChild(card);
-                });
-
-                selectors.alphabetGrid.appendChild(fragment);
-            }
-
-            function renderTaxonomy(dataset) {
-                populateList(selectors.taxonomy.categories, aggregateCategories(dataset));
-                populateList(selectors.taxonomy.creators, aggregateCount(dataset, "steward"));
-                populateList(selectors.taxonomy.studios, aggregateCount(dataset, "studio"));
-            }
-
-            function aggregateCategories(dataset) {
-                const tally = new Map();
-                dataset.forEach((item) => {
-                    item.categories.forEach((category) => {
-                        const key = category || "Unclassified";
-                        tally.set(key, (tally.get(key) || 0) + 1);
-                    });
-                });
-
-                return Array.from(tally.entries())
-                    .sort((a, b) => b[1] - a[1])
-                    .slice(0, 6);
-            }
-
-            function aggregateCount(dataset, key) {
-                const tally = new Map();
-                dataset.forEach((item) => {
-                    const value = item[key] || "Unknown";
-                    tally.set(value, (tally.get(value) || 0) + 1);
-                });
-
-                return Array.from(tally.entries())
-                    .sort((a, b) => b[1] - a[1])
-                    .slice(0, 6);
-            }
-
-            function populateList(listElement, entries) {
-                listElement.innerHTML = "";
-
-                if (!entries.length) {
-                    const placeholder = document.createElement("li");
-                    placeholder.textContent = "No data";
-                    listElement.appendChild(placeholder);
-                    return;
-                }
-
-                const fragment = document.createDocumentFragment();
-                entries.forEach(([label, count]) => {
-                    const item = document.createElement("li");
-                    const name = document.createElement("span");
-                    name.textContent = label;
-                    const amount = document.createElement("span");
-                    amount.textContent = count.toString();
-                    item.appendChild(name);
-                    item.appendChild(amount);
-                    fragment.appendChild(item);
-                });
-
-                listElement.appendChild(fragment);
-            }
-
-            function loadDataset() {
-                Promise.all([
-                    fetch("data/movies.json").then(res => {
-                        if (!res.ok) throw new Error(`Failed to load movies: ${res.status}`);
-                        return res.json();
-                    }),
-                    fetch("data/series.json").then(res => {
-                        if (!res.ok) throw new Error(`Failed to load series: ${res.status}`);
-                        return res.json();
-                    })
-                ])
-                .then(([movies, series]) => {
-                    const normalisedMovies = normaliseMovies(movies);
-                    const normalisedSeries = normaliseSeries(series);
-                    state.dataset = [...normalisedMovies, ...normalisedSeries];
-                    updateMetrics(state.dataset);
-                    applyFilters();
-                })
-                .catch((error) => {
-                    console.error(error);
-                    selectors.tableBody.innerHTML = "";
-                    const errorRow = document.createElement("tr");
-                    const cell = document.createElement("td");
-                    cell.colSpan = 6;
-                    cell.className = "empty-state";
-                    cell.textContent = "Catalogue data failed to load.";
-                    errorRow.appendChild(cell);
-                    selectors.tableBody.appendChild(errorRow);
-                    selectors.tableCaption.textContent = "Index entries (unavailable)";
-                });
-            }
-
-            selectors.searchInput.addEventListener('input', (event) => {
-                state.query = event.target.value;
-                applyFilters();
-            });
-
-            selectors.typeFilters.addEventListener('click', (event) => {
-                if (event.target instanceof HTMLButtonElement) {
-                    const filter = event.target.dataset.filter;
-                    if (!filter) {
-                        return;
-                    }
-
-                    state.type = filter === "all" ? "all" : filter;
-
-                    Array.from(selectors.typeFilters.children).forEach((child) => {
-                        if (child instanceof HTMLButtonElement) {
-                            child.setAttribute('aria-pressed', child === event.target ? 'true' : 'false');
-                        }
-                    });
-
-                    applyFilters();
-                }
-            });
-
-            loadDataset();
-        })();
-    </script>
 </body>
 </html>
