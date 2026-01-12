@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>s1.moviedb.local - /catalogue/</title>
+    <meta name="description" content="Directory listing of movies and TV series database">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            color: #000000;
+            padding: 20px;
+            line-height: 1.4;
+        }
+
+        h1 {
+            font-size: 18px;
+            font-weight: normal;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .breadcrumb {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .breadcrumb a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        thead {
+            background: #f5f5f5;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            text-align: left;
+            padding: 8px 12px;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        th:hover {
+            background: #e8e8e8;
+        }
+
+        th::after {
+            content: ' ↕';
+            color: #999;
+            font-size: 10px;
+        }
+
+        th.sorted-asc::after {
+            content: ' ↑';
+            color: #000;
+        }
+
+        th.sorted-desc::after {
+            content: ' ↓';
+            color: #000;
+        }
+
+        td {
+            padding: 6px 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+        .icon {
+            display: inline-block;
+            width: 20px;
+            text-align: center;
+            margin-right: 5px;
+        }
+
+        .name {
+            color: #0066cc;
+            text-decoration: none;
+        }
+
+        .name:hover {
+            text-decoration: underline;
+        }
+
+        .type-movie {
+            color: #0066cc;
+        }
+
+        .type-series {
+            color: #0099cc;
+        }
+
+        .modified {
+            color: #666;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        .size {
+            color: #666;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            text-align: right;
+        }
+
+        .type {
+            color: #666;
+        }
+
+        footer {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+            font-size: 11px;
+            color: #999;
+            text-align: center;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 15px;
+            padding: 8px 15px;
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            color: #333;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .back-link:hover {
+            background: #e8e8e8;
+        }
+
+        .stats {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f9f9f9;
+            border: 1px solid #eee;
+            font-size: 12px;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            .modified,
+            .size {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a href="index.html" class="back-link">← Home</a>
+
+    <h1>s1.moviedb.local - /catalogue/</h1>
+
+    <div class="breadcrumb">
+        <a href="index.html">root</a> / <a href="#">catalogue</a>
+    </div>
+
+    <table id="directoryTable">
+        <thead>
+            <tr>
+                <th data-sort="name">Name</th>
+                <th data-sort="modified">Modified</th>
+                <th data-sort="type">Type</th>
+                <th data-sort="size">Size</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            <tr>
+                <td colspan="4" style="text-align: center; padding: 20px; color: #999;">Loading directory contents...
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="stats" id="stats">
+        Loading...
+    </div>
+
+    <footer>
+        Directory listing generated by MovieDB Server/1.0 · <a href="index.html"
+            style="color: #0066cc; text-decoration: none;">Home</a> · <a href="original.html"
+            style="color: #0066cc; text-decoration: none;">Classic View</a> · <a href="nyumatflix.html"
+            style="color: #0066cc; text-decoration: none;">Modern View</a>
+    </footer>
+
+    <script>
+        let allItems = [];
+        let currentSort = { column: 'name', order: 'asc' };
+
+        // Genre mapping for movies
+        const movieGenres = {
+            "Inception": ["Science Fiction", "Thriller"],
+            "The Shawshank Redemption": ["Drama"],
+            "Pulp Fiction": ["Crime", "Drama"],
+            "The Dark Knight": ["Action", "Crime"],
+            "Forrest Gump": ["Drama", "Romance"],
+            "Interstellar": ["Science Fiction", "Adventure"],
+            "The Matrix": ["Science Fiction", "Action"],
+            "Fight Club": ["Drama", "Thriller"],
+            "Goodfellas": ["Crime", "Drama"],
+            "The Godfather": ["Crime", "Drama"],
+            "Schindler's List": ["Drama", "Historical"],
+            "Saving Private Ryan": ["War", "Drama"],
+            "The Silence of the Lambs": ["Thriller", "Crime"],
+            "Se7en": ["Thriller", "Crime"],
+            "Gladiator": ["Action", "Historical"]
+        };
+
+        // Format file size
+        function formatSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+            return (bytes / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
+        }
+
+        // Format date
+        function formatDate(date) {
+            const d = new Date(date);
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            const hours = String(d.getHours()).padStart(2, '0');
+            const minutes = String(d.getMinutes()).padStart(2, '0');
+            return `${month}/${day}/${year} ${hours}:${minutes} PM`;
+        }
+
+        // Generate pseudo-random but consistent date based on title
+        function generateDate(title, baseYear) {
+            const hash = title.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+            const month = (hash % 12) + 1;
+            const day = (hash % 28) + 1;
+            const hour = hash % 24;
+            const minute = hash % 60;
+            return new Date(baseYear, month - 1, day, hour, minute);
+        }
+
+        // Load data
+        async function loadData() {
+            try {
+                const [moviesRes, seriesRes] = await Promise.all([
+                    fetch('data/movies.json'),
+                    fetch('data/series.json')
+                ]);
+
+                const movies = await moviesRes.json();
+                const series = await seriesRes.json();
+
+                // Convert to directory items
+                allItems = [
+                    ...movies.map(movie => {
+                        const genres = movieGenres[movie.title] || ["Unclassified"];
+                        // Estimate file size based on duration (rough approximation: 1 min = ~10 MB in HD)
+                        const estimatedSize = movie.duration_minutes * 10 * 1024 * 1024;
+
+                        return {
+                            name: `${movie.title} (${movie.release_year}).mkv`,
+                            icon: '🎬',
+                            type: 'Movie',
+                            typeClass: 'type-movie',
+                            modified: generateDate(movie.title, movie.release_year),
+                            size: estimatedSize,
+                            director: movie.director_name,
+                            duration: movie.duration_minutes,
+                            genre: genres[0]
+                        };
+                    }),
+                    ...series.map(show => {
+                        // TV series as folders (directories)
+                        const episodeEstimate = show.seasons * 10; // ~10 episodes per season
+                        const estimatedSize = episodeEstimate * 45 * 10 * 1024 * 1024; // 45 min average
+
+                        return {
+                            name: `${show.title} (${show.release_year})`,
+                            icon: '📁',
+                            type: 'Series Folder',
+                            typeClass: 'type-series',
+                            modified: generateDate(show.title, show.release_year),
+                            size: estimatedSize,
+                            director: show.steward,
+                            seasons: show.seasons,
+                            genre: show.categories[0]
+                        };
+                    })
+                ];
+
+                renderTable();
+                updateStats();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('tableBody').innerHTML = `
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding: 20px; color: #ff0000;">
+                            Error loading directory contents
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // Sort data
+        function sortData(column) {
+            if (currentSort.column === column) {
+                currentSort.order = currentSort.order === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.column = column;
+                currentSort.order = 'asc';
+            }
+
+            allItems.sort((a, b) => {
+                let aVal, bVal;
+
+                switch (column) {
+                    case 'name':
+                        aVal = a.name.toLowerCase();
+                        bVal = b.name.toLowerCase();
+                        break;
+                    case 'modified':
+                        aVal = a.modified.getTime();
+                        bVal = b.modified.getTime();
+                        break;
+                    case 'type':
+                        aVal = a.type.toLowerCase();
+                        bVal = b.type.toLowerCase();
+                        break;
+                    case 'size':
+                        aVal = a.size;
+                        bVal = b.size;
+                        break;
+                    default:
+                        return 0;
+                }
+
+                if (aVal < bVal) return currentSort.order === 'asc' ? -1 : 1;
+                if (aVal > bVal) return currentSort.order === 'asc' ? 1 : -1;
+                return 0;
+            });
+
+            renderTable();
+            updateSortIndicators();
+        }
+
+        // Update sort indicators
+        function updateSortIndicators() {
+            document.querySelectorAll('th').forEach(th => {
+                th.classList.remove('sorted-asc', 'sorted-desc');
+            });
+
+            const activeTh = document.querySelector(`th[data-sort="${currentSort.column}"]`);
+            if (activeTh) {
+                activeTh.classList.add(currentSort.order === 'asc' ? 'sorted-asc' : 'sorted-desc');
+            }
+        }
+
+        // Render table
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            allItems.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <span class="icon">${item.icon}</span>
+                        <a href="#" class="name ${item.typeClass}">${item.name}</a>
+                    </td>
+                    <td class="modified">${formatDate(item.modified)}</td>
+                    <td class="type">${item.type}</td>
+                    <td class="size">${formatSize(item.size)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Update stats
+        function updateStats() {
+            const movieCount = allItems.filter(i => i.type === 'Movie').length;
+            const seriesCount = allItems.filter(i => i.type === 'Series Folder').length;
+            const totalSize = allItems.reduce((sum, item) => sum + item.size, 0);
+
+            document.getElementById('stats').innerHTML = `
+                ${allItems.length} items (${movieCount} movies, ${seriesCount} series) · Total size: ${formatSize(totalSize)}
+            `;
+        }
+
+        // Event listeners
+        document.querySelectorAll('th[data-sort]').forEach(th => {
+            th.addEventListener('click', () => {
+                sortData(th.getAttribute('data-sort'));
+            });
+        });
+
+        // Load on page load
+        loadData();
+    </script>
+</body>
+
+</html>
