@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Database Hub · Choose Your Interface</title>
-    <meta name="description" content="Browse our movie and TV series database through three distinct interfaces: Classic Index, Modern Streaming, or Minimal Directory.">
+    <meta name="description"
+        content="Browse our movie and TV series database through three distinct interfaces: Classic Index, Modern Streaming, or Minimal Directory.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --bg-dark: #0a0e17;
@@ -51,19 +54,26 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            background: linear-gradient(135deg, 
-                var(--bg-darker) 0%, 
-                #0f1421 25%, 
-                #1a1f35 50%, 
-                #0f1421 75%, 
-                var(--bg-darker) 100%);
+            background: linear-gradient(135deg,
+                    var(--bg-darker) 0%,
+                    #0f1421 25%,
+                    #1a1f35 50%,
+                    #0f1421 75%,
+                    var(--bg-darker) 100%);
             background-size: 400% 400%;
             animation: gradientShift 15s ease infinite;
         }
 
         @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
         }
 
         /* Floating orbs */
@@ -104,9 +114,19 @@
         }
 
         @keyframes float {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(50px, -50px) scale(1.1); }
-            66% { transform: translate(-50px, 50px) scale(0.9); }
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                transform: translate(50px, -50px) scale(1.1);
+            }
+
+            66% {
+                transform: translate(-50px, 50px) scale(0.9);
+            }
         }
 
         /* Header */
@@ -142,8 +162,15 @@
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
         }
 
         .logo-text {
@@ -232,7 +259,7 @@
         .interface-card:hover {
             transform: translateY(-8px);
             border-color: var(--card-accent);
-            box-shadow: 
+            box-shadow:
                 0 20px 60px var(--shadow),
                 0 0 60px var(--card-glow);
         }
@@ -411,6 +438,7 @@
 
         /* Accessibility */
         @media (prefers-reduced-motion: reduce) {
+
             *,
             *::before,
             *::after {
@@ -421,6 +449,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Background effects -->
     <div class="bg-gradient">
@@ -437,7 +466,7 @@
         </div>
         <h1>Choose Your Experience</h1>
         <p class="subtitle">
-            Browse our curated collection of movies and TV series through three distinct interfaces, 
+            Browse our curated collection of movies and TV series through three distinct interfaces,
             each designed for a different browsing style.
         </p>
         <span class="badge">✨ Three Unique Interfaces</span>
@@ -456,7 +485,7 @@
                     </div>
                 </div>
                 <p class="card-description">
-                    A refined, data-focused catalogue interface with powerful search and filtering capabilities. 
+                    A refined, data-focused catalogue interface with powerful search and filtering capabilities.
                     Perfect for users who value metadata, organization, and comprehensive overview.
                 </p>
                 <ul class="card-features">
@@ -474,24 +503,24 @@
                 </div>
             </a>
 
-            <!-- NyumatFlix Interface Card -->
-            <a href="nyumatflix.html" class="interface-card card-nyumatflix">
+            <!-- ErenFlix Interface Card -->
+            <a href="erenflix.html" class="interface-card card-nyumatflix">
                 <div class="card-header">
                     <div class="card-icon">🎥</div>
                     <div class="card-title-group">
                         <h2 class="card-title">Modern Streaming</h2>
-                        <span class="card-label">NyumatFlix</span>
+                        <span class="card-label">ErenFlix</span>
                     </div>
                 </div>
                 <p class="card-description">
-                    A visually rich, Netflix-inspired interface with hero sections, content carousels, 
-                    and immersive design. Ideal for discovering content through beautiful visuals.
+                    Stunning streaming platform with vibrant colors, real movie posters from TMDB,
+                    and integrated free streaming. Watch movies and shows instantly with VidSrc.
                 </p>
                 <ul class="card-features">
-                    <li>Hero featured content</li>
-                    <li>Horizontal scrollable carousels</li>
-                    <li>Rich gradients and animations</li>
-                    <li>Card-based modern design</li>
+                    <li>Real movie posters from TMDB</li>
+                    <li>Free streaming with VidSrc</li>
+                    <li>Vibrant purple/cyan design</li>
+                    <li>Animated particles and glows</li>
                 </ul>
                 <div class="card-footer">
                     <span class="card-cta">
@@ -512,7 +541,7 @@
                     </div>
                 </div>
                 <p class="card-description">
-                    A no-frills, file server-style directory listing. Ultra-fast, ultra-light, 
+                    A no-frills, file server-style directory listing. Ultra-fast, ultra-light,
                     and ultra-minimal for users who prefer simplicity and speed above all.
                 </p>
                 <ul class="card-features">
@@ -537,4 +566,5 @@
         <p>Movie Database Project · Three interfaces, one comprehensive catalogue</p>
     </footer>
 </body>
+
 </html>
