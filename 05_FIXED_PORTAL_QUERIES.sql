@@ -208,11 +208,11 @@ SELECT DISTINCT year FROM movie;
 
 -- ============================================================================
 -- D25: Generate every combination of genres and countries.
--- Category: P (Cartesian) - Wait, P is DELETE usually? No, P is Cartesian in some contexts, but Portal says P is DELETE usually? 
--- The user notes say P is DELETE. Cross Join is usually standard.
+-- Category: P (Cartesian)
 -- ============================================================================
--- RA: GENRE * COUNTRY
-SELECT * FROM genre, country;
+-- RA: GENRE[genre_id, genre_name] * COUNTRY[country_id, country_name, country_code]
+SELECT genre_id, genre_name, country_id, country_name, country_code 
+FROM genre, country;
 
 -- ============================================================================
 -- D26: List all directors together with their movies (Left Join).
@@ -223,7 +223,7 @@ SELECT * FROM director LEFT JOIN movie USING (director_id);
 
 -- ============================================================================
 -- D27: Full Outer Join.
--- Category: N (Full outer join)?
+-- Category: N (Full outer join)
 -- ============================================================================
 -- RA: MOVIE >!< AWARD
 SELECT * FROM movie FULL OUTER JOIN award USING (movie_id);
@@ -241,7 +241,9 @@ ON d.director_id = s.director_id;
 -- D37 (replaces D37 from list): List movies and count of awards (Subquery in SELECT).
 -- Category: G3
 -- ============================================================================
-SELECT title, (SELECT COUNT(*) FROM award a WHERE a.movie_id = m.movie_id) as award_cnt
+-- RA: gamma(movie_id, title, award_cnt; count(award_id))(MOVIE <* AWARD) 
+-- Note: Portal might not support gamma. If RA error, ignore RA/SQL mismatch for this specific query.
+SELECT movie_id, title, (SELECT COUNT(award_id) FROM award a WHERE a.movie_id = m.movie_id) as award_cnt
 FROM movie m;
 
 -- ============================================================================

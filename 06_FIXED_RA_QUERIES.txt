@@ -75,7 +75,7 @@ MOVIE
 MOVIE[year]
 
 -- D25 (P - Cartesian)
-GENRE * COUNTRY
+GENRE[genre_id, genre_name] * COUNTRY[country_id, country_name, country_code]
 
 -- D26 (D1N)
 DIRECTOR !< MOVIE
