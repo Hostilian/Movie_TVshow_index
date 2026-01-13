@@ -1,0 +1,299 @@
+==============================================================================
+ONLY COPY THE QUERIES LISTED BELOW
+Updates: 
+1. RESTORED RA for ALL categories (as requested). 
+   - For Updates/Deletes: RA describes the "Target Set".
+   - For Aggregations: RA describes the "Base Relation".
+   - For Outer Joins: RA uses "Inner Join" approximation.
+2. DIVISION used for D5/D6.
+3. Strict Syntax (Upper case, correct symbols).
+==============================================================================
+
+Query: D3
+Category: B, H2
+SQL:
+SELECT movie_id FROM movie
+MINUS
+SELECT movie_id FROM award;
+RA:
+MOVIE[movie_id] \ AWARD[movie_id]
+
+------------------------------------------------------------------------------
+
+Query: D4
+Category: C, F1
+SQL:
+SELECT DISTINCT m.title
+FROM movie m
+JOIN director d ON m.director_id = d.director_id
+WHERE d.name = 'Christopher Nolan';
+RA:
+(MOVIE * DIRECTOR)(name = 'Christopher Nolan')[title]
+
+------------------------------------------------------------------------------
+
+Query: D5
+Category: D1 (Division)
+SQL:
+SELECT a.actor_id, a.name
+FROM actor a
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM genre g
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM movie_actor ma
+        JOIN movie_genre mg ON ma.movie_id = mg.movie_id
+        WHERE ma.actor_id = a.actor_id
+        AND mg.genre_id = g.genre_id
+    )
+)
+ORDER BY a.name;
+RA:
+((MOVIE_ACTOR * MOVIE_GENRE)[actor_id, genre_id] ÷ GENRE[genre_id]) * ACTOR
+
+------------------------------------------------------------------------------
+
+Query: D6
+Category: D2 (Division Check)
+SQL:
+SELECT DISTINCT a.* 
+FROM actor a 
+WHERE NOT EXISTS (
+    SELECT genre_id 
+    FROM genre g 
+    WHERE NOT EXISTS (
+        SELECT 1 
+        FROM movie_actor ma 
+        JOIN movie_genre mg ON ma.movie_id = mg.movie_id 
+        WHERE ma.actor_id = a.actor_id 
+        AND mg.genre_id = g.genre_id
+    )
+) 
+ORDER BY a.actor_id;
+RA:
+((MOVIE_ACTOR * MOVIE_GENRE)[actor_id, genre_id] ÷ GENRE[genre_id]) * ACTOR
+
+------------------------------------------------------------------------------
+
+Query: D7
+Category: F2
+SQL:
+SELECT m.title, d.name 
+FROM movie m 
+JOIN director d ON m.director_id = d.director_id;
+RA:
+(MOVIE * DIRECTOR)[title, name]
+
+------------------------------------------------------------------------------
+
+Query: D8
+Category: F2
+SQL:
+SELECT m.title, d.name 
+FROM movie m 
+JOIN director d ON m.director_id = d.director_id;
+RA:
+(MOVIE * DIRECTOR)[title, name]
+
+------------------------------------------------------------------------------
+
+Query: D9
+Category: F2
+SQL:
+SELECT m.title, d.name 
+FROM movie m 
+JOIN director d ON m.director_id = d.director_id
+WHERE m.imdb_rating > 8;
+RA:
+(MOVIE(imdb_rating > 8) * DIRECTOR)[title, name]
+
+------------------------------------------------------------------------------
+
+Query: D10
+Category: F2
+SQL:
+SELECT d.name, m.title 
+FROM movie m 
+JOIN director d ON m.director_id = d.director_id;
+RA:
+(MOVIE * DIRECTOR)[name, title]
+
+------------------------------------------------------------------------------
+
+Query: D11
+Category: F1
+SQL:
+SELECT g.genre_name, mg.movie_id 
+FROM movie_genre mg 
+JOIN genre g ON mg.genre_id = g.genre_id;
+RA:
+(MOVIE_GENRE * GENRE)[genre_name, movie_id]
+
+------------------------------------------------------------------------------
+
+Query: D15
+Category: K (Complex Select)
+SQL:
+SELECT studio_id, COUNT(*) as movie_cnt
+FROM movie
+WHERE year > 2000
+GROUP BY studio_id
+HAVING COUNT(*) >= 1
+ORDER BY movie_cnt DESC;
+RA:
+MOVIE(year > 2000)
+
+------------------------------------------------------------------------------
+
+Query: D18
+Category: G4
+SQL:
+SELECT * FROM movie m
+WHERE EXISTS (SELECT 1 FROM award a WHERE a.movie_id = m.movie_id);
+RA:
+MOVIE <* AWARD
+
+------------------------------------------------------------------------------
+
+Query: D19
+Category: F1
+SQL:
+SELECT m.title, a.award_name 
+FROM movie m 
+JOIN award a ON m.movie_id = a.movie_id;
+RA:
+(MOVIE * AWARD)[title, award_name]
+
+------------------------------------------------------------------------------
+
+Query: D20
+Category: J
+SQL:
+SELECT movie_id, title FROM movie m WHERE EXISTS (SELECT 1 FROM award a WHERE a.movie_id = m.movie_id);
+RA:
+MOVIE <* AWARD
+
+------------------------------------------------------------------------------
+
+Query: D21
+Category: J
+SQL:
+SELECT movie_id, title FROM movie WHERE movie_id IN (SELECT movie_id FROM award);
+RA:
+MOVIE <* AWARD
+
+------------------------------------------------------------------------------
+
+Query: D22
+Category: J
+SQL:
+SELECT DISTINCT m.movie_id, m.title FROM movie m JOIN award a ON m.movie_id = a.movie_id;
+RA:
+MOVIE <* AWARD
+
+------------------------------------------------------------------------------
+
+Query: D25
+Category: F3
+SQL:
+SELECT genre_id, genre_name, country_id, country_name, country_code 
+FROM genre, country;
+RA:
+GENRE * COUNTRY
+
+------------------------------------------------------------------------------
+
+Query: D26
+Category: F4 (Left Join)
+SQL:
+SELECT d.name, m.title
+FROM director d
+LEFT JOIN movie m ON d.director_id = m.director_id;
+RA:
+DIRECTOR * MOVIE
+
+------------------------------------------------------------------------------
+
+Query: D27
+Category: F5 (Full Join)
+SQL:
+SELECT m.title, a.award_name
+FROM movie m
+FULL OUTER JOIN award a ON m.movie_id = a.movie_id;
+RA:
+MOVIE * AWARD
+
+------------------------------------------------------------------------------
+
+Query: D28
+Category: G2
+SQL:
+SELECT d.name, s.avg_r
+FROM director d
+JOIN (SELECT director_id, AVG(imdb_rating) as avg_r FROM movie GROUP BY director_id) s
+ON d.director_id = s.director_id;
+RA:
+DIRECTOR * MOVIE
+
+------------------------------------------------------------------------------
+
+Query: D37
+Category: G3
+SQL:
+SELECT movie_id, title, 
+       (SELECT COUNT(*) FROM award a WHERE a.movie_id = m.movie_id) as aw_count
+FROM movie m;
+RA:
+MOVIE
+
+------------------------------------------------------------------------------
+
+Query: D47
+Category: O
+SQL:
+UPDATE movie
+SET imdb_rating = imdb_rating + 0.1
+WHERE movie_id IN (SELECT movie_id FROM award);
+RA:
+MOVIE <* AWARD
+
+------------------------------------------------------------------------------
+
+Query: D48
+Category: P
+SQL:
+DELETE FROM user_rating
+WHERE movie_id NOT IN (SELECT movie_id FROM movie);
+RA:
+USER_RATING !<* MOVIE
+
+------------------------------------------------------------------------------
+
+Query: D49 (New for Category N)
+Category: N
+SQL:
+INSERT INTO award (award_name, category, year_awarded, movie_id, is_winner)
+SELECT 'Critic Choice', 'Excellence', 2026, movie_id, TRUE
+FROM movie
+WHERE imdb_rating > 9.0;
+RA:
+MOVIE(imdb_rating > 9.0)
+
+------------------------------------------------------------------------------
+
+Query: D50 (New for I1)
+Category: I1
+SQL:
+SELECT COUNT(*), MAX(imdb_rating), MIN(year) FROM movie;
+RA:
+MOVIE
+
+------------------------------------------------------------------------------
+
+Query: D51 (New for I2)
+Category: I2
+SQL:
+SELECT year, COUNT(*) FROM movie GROUP BY year;
+RA:
+MOVIE

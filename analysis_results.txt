@@ -1,0 +1,27 @@
+Query  | Status     | Result     | Natural Join? | Update Needed?
+-----------------------------------------------------------------
+D3     | Success    | Equal      | True          | YES ['Uses NATURAL JOIN']
+D4     | Warning    | Equal      | True          | YES ['Status: Warning', 'Uses NATURAL JOIN']
+D5     | Warning    | Equal      | True          | YES ['Status: Warning', 'Uses NATURAL JOIN']
+D6     | Warning    | Equal      | True          | YES ['Status: Warning', 'Uses NATURAL JOIN']
+D7     | Warning    | Equal      | True          | YES ['Status: Warning', 'Uses NATURAL JOIN']
+D8     | Warning    | Equal      | True          | YES ['Status: Warning', 'Uses NATURAL JOIN']
+D9     | Warning    | Equal      | True          | YES ['Status: Warning', 'Uses NATURAL JOIN']
+D10    | Warning    | Equal      | True          | YES ['Status: Warning', 'Uses NATURAL JOIN']
+D11    | Success    | Equal      | True          | YES ['Uses NATURAL JOIN']
+D15    | Success    | Equal      | True          | YES ['Uses NATURAL JOIN']
+D18    | Success    | Equal      | True          | YES ['Uses NATURAL JOIN']
+D19    | Warning    | Equal      | True          | YES ['Status: Warning', 'Uses NATURAL JOIN']
+D20    | Success    | Equal      | True          | YES ['Uses NATURAL JOIN']
+D21    | Success    | Equal      | True          | YES ['Uses NATURAL JOIN']
+D22    | Success    | Equal      | True          | YES ['Uses NATURAL JOIN']
+D25    | Success    | Equal      | True          | YES ['Uses NATURAL JOIN']
+D26    | Success    | Equal      | True          | YES ['Uses NATURAL JOIN']
+D27    | Success    | Equal      | True          | YES ['Uses NATURAL JOIN']
+D28    | Warning    | Equal      | True          | YES ['Status: Warning', 'Uses NATURAL JOIN']
+D37    | Warning    | Equal      | True          | YES ['Status: Warning', 'Uses NATURAL JOIN']
+D47    | Warning    | Equal      | True          | YES ['\\Status: Warning', 'Uses NATURAL JOIN']
+D48    | Warning    | Equal      | True          | YES ['Status: Warning', 'Uses NATURAL JOIN']
+D49    | Missing    | N/A        | N/A           | YES (Add New)
+D50    | Missing    | N/A        | N/A           | YES (Add New)
+D51    | Missing    | N/A        | N/A           | YES (Add New)

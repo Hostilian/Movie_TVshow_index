@@ -8,11 +8,11 @@ MOVIE[title, year]
 -- D2 (A)
 MOVIE[title]
 
--- D3 (H3)
+-- D3 (B, H2)
 MOVIE[movie_id] \ AWARD[movie_id]
 
--- D4 (F1)
-MOVIE <* DIRECTOR(name='Christopher Nolan')
+-- D4 (C, F1)
+{MOVIE [director_id = director_id] DIRECTOR}(name = 'Christopher Nolan')[title]
 
 -- D5 (D1)
 actor <* movie_actor
@@ -20,20 +20,20 @@ actor <* movie_actor
 -- D6 (D2)
 actor <* movie_actor <* movie_genre <* genre
 
--- D7 (F1)
-(MOVIE(year > 2015)) <* DIRECTOR
+-- D7 (F2)
+{MOVIE [director_id = director_id] DIRECTOR}[title, name]
 
 -- D8 (F2)
-(MOVIE <* DIRECTOR)[title, name]
+{MOVIE [director_id = director_id] DIRECTOR}[title, name]
 
--- D9 (F3)
-((MOVIE(imdb_rating > 8)) <* DIRECTOR)[title, name]
+-- D9 (F2)
+{MOVIE(imdb_rating > 8) [director_id = director_id] DIRECTOR}[title, name]
 
--- D10 (F4)
-(MOVIE <* DIRECTOR)[name, title, imdb_rating]
+-- D10 (F2)
+{MOVIE [director_id = director_id] DIRECTOR}[name, title]
 
--- D11 (F5)
-(MOVIE_GENRE <* GENRE)[genre_name, movie_id]
+-- D11 (F1)
+{MOVIE_GENRE [genre_id = genre_id] GENRE}[genre_name, movie_id]
 
 -- D12 (G1)
 MOVIE(imdb_rating > 8)
